@@ -94,9 +94,13 @@
   .axis-t{fill:var(--ink-3);font-size:9px;letter-spacing:.08em}
   .quad-t{fill:var(--ink-4);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase}
   .dot{cursor:pointer}
-  .dot .node{transition:stroke .1s ease,stroke-width .1s ease}
+  .dot .node{transition:r .5s cubic-bezier(.2,.85,.3,1),stroke .1s ease,stroke-width .1s ease}
+  .dot .hiring{transition:r .5s cubic-bezier(.2,.85,.3,1),opacity .35s ease}
   .dot:hover .node{stroke:var(--accent);stroke-width:3}
-  .dot-lbl{fill:var(--ink-3);font-size:9px;pointer-events:none}
+  .dot-lbl{fill:var(--ink-3);font-size:9px;pointer-events:none;transition:fill .3s ease,font-weight .3s ease}
+  @media(prefers-reduced-motion:reduce){.dot .node,.dot .hiring{transition:none}}
+  .topcap{margin:2px 12px 12px;font-size:12.5px;color:var(--ink-2);line-height:1.5}
+  .topcap b{color:var(--accent-ink)} .topcap .pk{font-weight:700;color:var(--ink)}
   .dot-lbl.hi{fill:var(--ink);font-weight:700;font-size:9.5px}
 
   .insight{margin:10px 10px 12px;border-left:3px solid var(--accent);background:var(--accent-bg);
@@ -335,6 +339,7 @@
           <span class="k"><span class="swatch" style="background:var(--ink-3);border:2px solid var(--owned)"></span> Purple ring = Pfizer already sells a drug here</span>
           <span class="k"><span class="mono" style="font-size:10px;color:var(--ink-3)">bigger dot = better fit for your strategy</span></span>
         </div>
+        <div class="topcap" id="topcap"></div>
         <div class="insight" id="insight"></div>
       </div>
 
@@ -2862,26 +2867,24 @@ function drawPlot(animate){
   s+=`<g clip-path="url(#pc)">`;
   const order=[...T].sort((a,b)=>scMap[a.symbol].s-scMap[b.symbol].s);
   const topSet=new Set(sc.slice(0,5).map(x=>x.t.symbol));
-  // true positions + sizes
-  const pts=order.map(t=>({t, x:px(t.bio), y:py(t.whitespace), r:4+(scMap[t.symbol].s/100)*6, hi:topSet.has(t.symbol)}));
-  // collision resolution: nudge overlapping dots apart so EVERY dot is visible, keeping each near its true spot
-  const X0=px(0),X1=px(1),Y0=M.t,Y1=PH-M.b;
-  for(let iter=0;iter<140;iter++){ let moved=false;
+  const RREF=13, VR=v=>3+(v/100)*13;  // layout uses fixed RREF so positions never shift; VR is the score-driven visible size
+  const pts=order.map(t=>({t, x:px(t.bio), y:py(t.whitespace), vr:VR(scMap[t.symbol].s), hi:topSet.has(t.symbol)}));
+  const X0=px(0),X1=px(1),Y0=M.t,Y1=PH-M.b, MIN=2*RREF+2;
+  for(let iter=0;iter<160;iter++){ let moved=false;
     for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){ const a=pts[i],b=pts[j];
-      let dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy); const min=a.r+b.r+2;
+      let dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy);
       if(d<0.01){dx=(i%2?1:-1)*(1+i*0.01);dy=(j%2?1:-1);d=Math.hypot(dx,dy)||1;}
-      if(d<min){const p=(min-d)/2,ux=dx/d,uy=dy/d; a.x-=ux*p;a.y-=uy*p;b.x+=ux*p;b.y+=uy*p;moved=true;} }
-    pts.forEach(p=>{p.x=Math.max(X0+p.r,Math.min(X1-p.r,p.x));p.y=Math.max(Y0+p.r,Math.min(Y1-p.r,p.y));});
+      if(d<MIN){const p=(MIN-d)/2,ux=dx/d,uy=dy/d; a.x-=ux*p;a.y-=uy*p;b.x+=ux*p;b.y+=uy*p;moved=true;} }
+    pts.forEach(p=>{p.x=Math.max(X0+RREF,Math.min(X1-RREF,p.x));p.y=Math.max(Y0+RREF,Math.min(Y1-RREF,p.y));});
     if(!moved)break; }
-  // draw dots at resolved positions
   pts.forEach((p,di)=>{ const t=p.t, col=riskColor(t.failrisk);
     const ring=t.pfizer_owned?`stroke="var(--owned)" stroke-width="2.5"`:`stroke="var(--panel)" stroke-width="1.75"`;
     const dly=animate?` style="animation-delay:${di*11}ms"`:``;
     s+=`<g class="dot${animate?' anim':''}" data-sym="${t.symbol}"${dly}>`;
-    if(p.hi) s+=`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${(p.r+3.5).toFixed(1)}" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity=".5"/>`;
-    s+=`<circle class="node" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${p.r.toFixed(1)}" fill="${col}" ${ring}/>`;
-    s+=`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${(p.r+4).toFixed(1)}" fill="transparent" pointer-events="all"/></g>`; });
-  const labels=pts.map(p=>({t:p.t,x:p.x,y:p.y,r:p.r,hi:p.hi}));
+    s+=`<circle class="hiring" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${(p.vr+3.5).toFixed(1)}" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="${p.hi?'.55':'0'}"/>`;
+    s+=`<circle class="node" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${p.vr.toFixed(1)}" fill="${col}" ${ring}/>`;
+    s+=`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${(RREF+3).toFixed(1)}" fill="transparent" pointer-events="all"/></g>`; });
+  const labels=pts.map(p=>({t:p.t,x:p.x,y:p.y,r:RREF,hi:p.hi}));
   // label EVERY target: pick a side, declutter vertically within columns, leader-line the movers
   const FLOOR=py(0.12);
   labels.forEach(l=>{ l.side=l.x>px(.80)?'L':'R'; l.up=l.y>FLOOR;
@@ -2900,7 +2903,7 @@ function drawPlot(animate){
   labels.forEach(l=>{ if(Math.abs(l.ly-l.y)>l.r+4){
     const ex=(l.side==='R'?l.x+l.r:l.x-l.r), tx=(l.side==='R'?l.lx-2:l.lx+2);
     s+=`<line x1="${ex.toFixed(1)}" y1="${l.y.toFixed(1)}" x2="${tx.toFixed(1)}" y2="${(l.ly-3).toFixed(1)}" stroke="var(--line)" stroke-width="1"/>`; } });
-  labels.forEach(l=>{ s+=`<text class="dot-lbl ${l.hi?'hi':''}" x="${l.lx.toFixed(1)}" y="${l.ly.toFixed(1)}" text-anchor="${l.side==='R'?'start':'end'}">${l.t.symbol}</text>`; });
+  labels.forEach(l=>{ s+=`<text class="dot-lbl ${l.hi?'hi':''}" data-sym="${l.t.symbol}" x="${l.lx.toFixed(1)}" y="${l.ly.toFixed(1)}" text-anchor="${l.side==='R'?'start':'end'}">${l.t.symbol}</text>`; });
   s+=`</g>`;
   svg.innerHTML=s;
   svg.querySelectorAll('.dot').forEach(g=>{
@@ -2908,7 +2911,23 @@ function drawPlot(animate){
     g.addEventListener('mouseenter',()=>showTip(g));
     g.addEventListener('mouseleave',hideTip);
   });
-  drawBoard(sc); drawInsight(sc);
+  drawBoard(sc); drawInsight(sc); updateTopCap(sc);
+}
+// weight/preset changes: restyle dots IN PLACE (animate size + winners) without moving positions
+function restyleForPosture(){
+  const sc=scored(posture); const scMap=Object.fromEntries(sc.map(x=>[x.t.symbol,x]));
+  const top=new Set(sc.slice(0,5).map(x=>x.t.symbol)); const VR=v=>3+(v/100)*13;
+  document.querySelectorAll('#plot .dot').forEach(g=>{ const sym=g.dataset.sym; const rec=scMap[sym]; if(!rec)return;
+    const r=VR(rec.s);
+    const node=g.querySelector('.node'); if(node)node.setAttribute('r',r.toFixed(1));
+    const ring=g.querySelector('.hiring'); if(ring){ring.setAttribute('r',(r+3.5).toFixed(1)); ring.setAttribute('opacity',top.has(sym)?'.55':'0');}
+  });
+  document.querySelectorAll('#plot .dot-lbl').forEach(el=>{ const sym=el.getAttribute('data-sym'); if(sym)el.classList.toggle('hi',top.has(sym)); });
+  drawBoard(sc); drawInsight(sc); updateTopCap(sc);
+}
+function updateTopCap(sc){ const el=document.getElementById('topcap'); if(!el)return;
+  const t3=sc.slice(0,3).map(x=>x.t.symbol).join(' &middot; ');
+  el.innerHTML=`<b>Bigger dot = better fit</b> for the <b>${POSTURES[posture].name}</b> strategy. Top picks now: <span class="pk">${t3}</span>. Slide the weights and the dots resize live, positions stay fixed (they are the evidence).`;
 }
 function showTip(g){
   const sym=g.dataset.sym, t=byId[sym]; const x=scored(posture).find(y=>y.t.symbol===sym);
@@ -3029,7 +3048,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMemo();});
 const ps=document.getElementById('postures');
 const WDEF=[['wB','Biology','sci'],['wD','Druggability','sci'],['wW','Open field','biz'],['wF','De-risk','biz'],['wR','Portfolio fit','biz']];
 function refreshAll(){[...ps.children].forEach(c=>c.setAttribute('aria-pressed',c.dataset.k===posture));
-  drawPlot(); if(cmpSel&&cmpSel.size&&document.getElementById('v-cmp').classList.contains('on'))drawCompare();}
+  restyleForPosture(); if(cmpSel&&cmpSel.size&&document.getElementById('v-cmp').classList.contains('on'))drawCompare();}
 PRESET_KEYS.forEach(k=>{const p=POSTURES[k];const b=document.createElement('button');b.dataset.k=k;
   b.setAttribute('aria-pressed',k===posture);b.innerHTML=`<span class="dotm mono">${p.mark}</span> ${p.name}`;
   b.addEventListener('click',()=>{posture=k;syncSliders(k);refreshAll();});ps.appendChild(b);});
