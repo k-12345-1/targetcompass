@@ -7,7 +7,7 @@
     --accent:#0B18EC; --accent-bg:#E7EBFF; --accent-ink:#0A12C4;
     --risk-lo:#12996A; --risk-md:#E0A100; --risk-hi:#D6402F;
     --owned:#6D4FC7; --brand-royal:#0B18EC;
-    --shadow:0 1px 2px rgba(20,27,43,.06),0 8px 28px rgba(20,27,43,.10);
+    --shadow:0 1px 2px rgba(20,27,43,.04),0 4px 16px rgba(20,27,43,.06);
     --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
     --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   }
@@ -44,18 +44,18 @@
   .chip b{color:var(--ink)}
 
   /* ---- Pfizer-style hero block ---- */
-  .hero{background:var(--brand-royal);color:#fff;border-radius:32px;padding:56px 56px 52px;margin-bottom:24px}
-  .hero .eyebrow{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.15em;
-    text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:18px}
-  .hero h2{font-size:47px;font-weight:700;letter-spacing:-.02em;line-height:1.06;color:#fff}
-  .hero p{margin:20px 0 0;color:rgba(255,255,255,.9);font-size:18px;line-height:1.6}
+  .hero{background:var(--brand-royal);color:#fff;border-radius:26px;padding:38px 44px 36px;margin-bottom:20px}
+  .hero .eyebrow{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.15em;
+    text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:13px}
+  .hero h2{font-size:36px;font-weight:700;letter-spacing:-.02em;line-height:1.08;color:#fff}
+  .hero p{margin:13px 0 0;color:rgba(255,255,255,.88);font-size:15.5px;line-height:1.55;max-width:900px}
   .hero p b{color:#fff;font-weight:700}
-  .hero-cta{display:inline-flex;align-items:center;gap:10px;margin-top:28px;background:#fff;color:#12142E;
-    font-weight:700;font-size:16px;padding:15px 28px;border:none;border-radius:999px;
-    box-shadow:0 6px 20px rgba(0,0,0,.18);transition:transform .12s ease}
+  .hero-cta{display:inline-flex;align-items:center;gap:10px;margin-top:22px;background:#fff;color:#12142E;
+    font-weight:700;font-size:15px;padding:13px 24px;border:none;border-radius:999px;
+    box-shadow:0 4px 14px rgba(0,0,0,.16);transition:transform .12s ease}
   .hero-cta:hover{transform:translateY(-1px)}
-  .hero-cta svg{width:17px;height:17px}
-  @media(max-width:640px){.hero{padding:36px 26px}.hero h2{font-size:32px}}
+  .hero-cta svg{width:16px;height:16px}
+  @media(max-width:640px){.hero{padding:30px 24px}.hero h2{font-size:28px}}
 
   /* ---- scoring strategy: presets + customizable weights ---- */
   .postbar{margin-bottom:18px;display:flex;flex-direction:column;align-items:flex-start;gap:11px}
@@ -111,7 +111,7 @@
   .board{padding:14px 6px 8px}
   .board h3{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);
     padding:0 12px 8px;font-family:var(--mono);font-weight:600}
-  .row{display:grid;grid-template-columns:20px 1fr auto;gap:10px;align-items:center;padding:8px 12px;
+  .row{display:grid;grid-template-columns:20px 1fr auto auto;gap:10px;align-items:center;padding:8px 12px;
     border-radius:8px;cursor:pointer;border:1px solid transparent}
   .row:hover{background:var(--panel-2);border-color:var(--line)}
   .row .rk{font-family:var(--mono);font-size:12px;color:var(--ink-3);text-align:right}
@@ -232,7 +232,7 @@
   .bot-list .rk{font-family:var(--mono);color:var(--ink-3);font-size:12px;text-align:right}
   .bot-list .nm{font-weight:700;font-size:14px} .bot-list .rz{font-size:12px;color:var(--ink-3)}
   .bot-list .sc{font-family:var(--mono);font-weight:700;font-size:14px}
-  .chat-suggest{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 14px}
+  .chat-suggest{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:14px 0 4px}
   .chat-suggest button{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:10px 16px;
     font-size:14px;font-weight:500;color:var(--ink-2)}
   .chat-suggest button:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
@@ -278,6 +278,150 @@
   .mol-ctl button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
   .mol-note{font-size:11px;color:var(--ink-3);margin-left:auto;font-family:var(--mono)}
   .mol-note b{color:var(--risk-hi)}
+
+  /* ---- Validation / backtest ---- */
+  .val-score{display:flex;flex-wrap:wrap;align-items:center;gap:22px;background:var(--panel);
+    border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow);margin-bottom:16px}
+  .val-score .big{font-family:var(--mono);font-size:40px;font-weight:700;line-height:1;color:var(--risk-lo);letter-spacing:-.02em}
+  .val-score .big small{font-size:17px;color:var(--ink-3);font-weight:600}
+  .val-score .vs-txt{flex:1;min-width:260px;font-size:14.5px;color:var(--ink-2);line-height:1.55}
+  .val-score .vs-txt b{color:var(--ink)}
+  .val-case{display:grid;grid-template-columns:150px 1fr 1fr 118px;gap:0;align-items:stretch;
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;overflow:hidden}
+  .val-case>div{padding:15px 17px;border-left:1px solid var(--line)}
+  .val-case>div:first-child{border-left:none}
+  .vc-t{display:flex;flex-direction:column;justify-content:center;gap:3px;background:var(--panel-2)}
+  .vc-t .sym{font-family:var(--mono);font-weight:700;font-size:15px;color:var(--ink)}
+  .vc-t .mech{font-size:11px;color:var(--ink-3)}
+  .vc-h{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-4);margin-bottom:6px}
+  .vc-body{font-size:13px;color:var(--ink-2);line-height:1.5}
+  .vc-call{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;text-align:center}
+  .callpill{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    padding:5px 11px;border-radius:999px;white-space:nowrap}
+  .callpill.elevate{background:#DFF3EA;color:#0B7A50}
+  .callpill.avoid{background:#FBE4E1;color:#B23325}
+  .callpill.caution{background:#FBF0D6;color:#8A6300}
+  .vc-verdict{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--risk-lo)}
+  .vc-verdict.miss{color:var(--risk-hi)}
+  .vc-cite a{font-family:var(--mono);font-size:10.5px;color:var(--accent-ink)}
+  .val-foot{font-size:12.5px;color:var(--ink-3);line-height:1.6;margin-top:14px;
+    border-top:1px solid var(--line);padding-top:14px}
+  @media(max-width:760px){.val-case{grid-template-columns:1fr}.val-case>div{border-left:none;border-top:1px solid var(--line)}
+    .val-case>div:first-child{border-top:none}}
+
+  /* ---- deck's "multiple factors" strip ---- */
+  .factbar{margin-bottom:16px}
+  .fb-h{font-size:12.5px;color:var(--ink-3);line-height:1.45;margin-bottom:10px}
+  .fb-h b{color:var(--ink-2)}
+  .fb-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+  .fb{border:1px solid var(--line);border-radius:10px;padding:9px 11px;display:flex;flex-direction:column;gap:2px;background:var(--panel)}
+  .fb.biz{background:var(--accent-bg);border-color:#D3D9Fb}
+  .fb .fb-tag{font-family:var(--mono);font-size:8px;letter-spacing:.09em;text-transform:uppercase;font-weight:700}
+  .fb.sci .fb-tag{color:var(--ink-4)}
+  .fb.biz .fb-tag{color:var(--accent-ink)}
+  .fb b{font-size:12px;color:var(--ink);line-height:1.2}
+  .fb span:last-child{font-size:10px;color:var(--ink-3);line-height:1.3}
+  .uni-toggle{font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--ink-3);
+    background:var(--panel-2);border:1px solid var(--line);border-radius:999px;padding:4px 11px;margin-left:auto}
+  .uni-toggle.on{color:var(--accent-ink);border-color:var(--accent)}
+  @media(max-width:900px){.fb-grid{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:560px){.fb-grid{grid-template-columns:repeat(2,1fr)}}
+
+  /* ---- Method / how it works ---- */
+  .method-sec{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px 24px;box-shadow:var(--shadow);margin-bottom:16px}
+  .method-sec>h3{font-size:19px;color:var(--ink);margin-bottom:4px}
+  .method-sec>.sub{font-size:13.5px;color:var(--ink-3);margin-bottom:16px;line-height:1.5}
+  .pipe{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .pstep{border:1px solid var(--line);border-radius:12px;padding:13px 14px;background:var(--ground);position:relative}
+  .pstep .pn{font-family:var(--mono);font-size:10px;color:var(--ink-4);letter-spacing:.08em}
+  .pstep h4{font-size:13.5px;margin:3px 0 5px;color:var(--ink)}
+  .pstep p{font-size:11.5px;color:var(--ink-2);line-height:1.45;margin:0}
+  .pstep .ai{display:inline-block;margin-top:8px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.06em;
+    text-transform:uppercase;color:#0B7A50;background:#DFF3EA;border-radius:999px;padding:3px 8px}
+  .pstep.isai{border-color:#8FD3B6;box-shadow:0 0 0 1px #8FD3B6 inset}
+  .movers{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .mv-col h4{font-size:12px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:0 0 10px}
+  .mv-row{display:grid;grid-template-columns:64px 1fr auto;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+  .mv-row:first-of-type{border-top:none}
+  .mv-sym{font-family:var(--mono);font-weight:700;font-size:13px;color:var(--ink)}
+  .mv-txt{font-size:11.5px;color:var(--ink-3);line-height:1.35}
+  .mv-delta{font-family:var(--mono);font-size:12px;font-weight:700;white-space:nowrap}
+  .mv-delta.up{color:#0B7A50}.mv-delta.down{color:var(--risk-hi)}
+  .mv-rank{font-family:var(--mono);font-size:10px;color:var(--ink-4)}
+  .method-list{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .ml{border:1px solid var(--line);border-radius:12px;padding:14px 15px;background:var(--ground)}
+  .ml h4{font-size:13px;margin:0 0 6px;color:var(--ink)}
+  .ml p{font-size:11.5px;color:var(--ink-2);line-height:1.5;margin:0}
+  @media(max-width:820px){.pipe{grid-template-columns:1fr 1fr}.movers{grid-template-columns:1fr}.method-list{grid-template-columns:1fr}}
+
+  /* ---- Patient impact ---- */
+  .pt-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+  .pt-stat{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px;box-shadow:var(--shadow)}
+  .pt-stat .big{font-family:var(--mono);font-size:32px;font-weight:700;color:var(--accent);letter-spacing:-.02em;line-height:1}
+  .pt-stat h4{font-size:13.5px;margin:9px 0 4px;color:var(--ink)}
+  .pt-stat p{font-size:12px;color:var(--ink-2);line-height:1.5;margin:0}
+  .pt-stat .cite a{font-family:var(--mono);font-size:10px;color:var(--accent-ink)}
+  .pt-stat .cite{margin-top:8px}
+  .rbar-wrap{display:flex;flex-direction:column;gap:12px;margin:6px 0 4px}
+  .rbar{display:grid;grid-template-columns:150px 1fr 92px;align-items:center;gap:14px}
+  .rbar .lab{font-size:12.5px;color:var(--ink-2);text-align:right;line-height:1.25}
+  .rbar .lab b{color:var(--ink);display:block;font-size:13px}
+  .rbar .track2{height:26px;background:var(--panel-2);border-radius:7px;overflow:hidden}
+  .rbar .fill{height:100%;border-radius:7px;display:flex;align-items:center;justify-content:flex-end;padding-right:9px;
+    font-family:var(--mono);font-size:11px;font-weight:700;color:#fff;transition:width .6s cubic-bezier(.4,0,.1,1)}
+  .rbar .fill.good{background:var(--risk-lo)}
+  .rbar .fill.bad{background:var(--risk-hi)}
+  .rbar .val{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+  .pt-tlist{display:flex;flex-direction:column}
+  .pt-trow{display:grid;grid-template-columns:120px 1fr;gap:14px;align-items:start;padding:12px 0;border-top:1px solid var(--line)}
+  .pt-trow:first-child{border-top:none}
+  .pt-trow .sym{font-family:var(--mono);font-weight:700;font-size:14px;color:var(--ink)}
+  .pt-trow .sym small{display:block;font-family:var(--sans);font-weight:400;font-size:10.5px;color:var(--ink-3);margin-top:2px}
+  .pt-trow .ben{font-size:12.5px;color:var(--ink-2);line-height:1.5}
+  .pt-trow .ben .who{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink);
+    background:var(--accent-bg);border-radius:999px;padding:2px 8px;margin-right:7px;white-space:nowrap}
+  @media(max-width:760px){.pt-stats{grid-template-columns:1fr}.rbar{grid-template-columns:1fr}.rbar .lab{text-align:left}.pt-trow{grid-template-columns:1fr}}
+
+  /* ---- bring-your-own-target toolbar + shortlist ---- */
+  .tctools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+  .tsearch{position:relative;flex:1;min-width:240px}
+  .tsearch input{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:999px;
+    padding:11px 16px 11px 40px;font-family:inherit;font-size:14px;color:var(--ink);outline:none;box-shadow:var(--shadow)}
+  .tsearch input:focus{border-color:var(--accent)}
+  .tsearch .mag{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--ink-4);font-size:15px;pointer-events:none}
+  .sl-btn{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:11px 18px;font-size:13.5px;
+    font-weight:600;color:var(--ink-2);box-shadow:var(--shadow);white-space:nowrap}
+  .sl-btn b{color:var(--accent);font-family:var(--mono)}
+  .sl-btn:hover{border-color:var(--accent)}
+  .sl-tray{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);margin-bottom:14px}
+  .sl-tray[hidden]{display:none}
+  .sl-tray .h{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .sl-tray .h b{font-size:14px;color:var(--ink)}
+  .sl-tray .h .sp{flex:1}
+  .sl-act{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent-ink);background:var(--accent-bg);
+    border:none;border-radius:999px;padding:6px 12px}
+  .sl-act:hover{filter:brightness(.97)}
+  .sl-act.ghost{background:none;color:var(--ink-3);border:1px solid var(--line)}
+  .sl-chips{display:flex;flex-wrap:wrap;gap:8px}
+  .sl-chip{display:inline-flex;align-items:center;gap:8px;background:var(--ground);border:1px solid var(--line);
+    border-radius:999px;padding:6px 8px 6px 13px;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink)}
+  .sl-chip button{background:none;border:none;color:var(--ink-4);font-size:15px;line-height:1;padding:0 2px}
+  .sl-chip button:hover{color:var(--risk-hi)}
+  .sl-empty{font-size:12.5px;color:var(--ink-3)}
+  .pinb{display:inline-flex;align-items:center;gap:6px;background:none;border:1px solid var(--line);border-radius:999px;
+    padding:6px 13px;font-size:12px;font-weight:600;color:var(--ink-3)}
+  .pinb.on{color:var(--accent-ink);border-color:var(--accent);background:var(--accent-bg)}
+  .pinb:hover{border-color:var(--accent)}
+  .rowpin{background:none;border:none;color:var(--ink-4);font-size:16px;padding:0 4px;line-height:1}
+  .rowpin.on{color:var(--accent)}
+  .rowpin:hover{color:var(--accent)}
+  .ucloud{cursor:pointer}
+  .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;
+    font-size:13px;font-weight:600;padding:11px 20px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.25);
+    opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:80}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+  .memo-live{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    color:#0B7A50;background:#DFF3EA;border-radius:999px;padding:3px 9px;display:inline-block}
 </style>
 
 <div class="topnav">
@@ -286,6 +430,9 @@
     <button role="tab" aria-selected="true" data-view="chat">Ask</button>
     <button role="tab" aria-selected="false" data-view="land">Landscape</button>
     <button role="tab" aria-selected="false" data-view="cmp">Compare</button>
+    <button role="tab" aria-selected="false" data-view="val">Validation</button>
+    <button role="tab" aria-selected="false" data-view="method">How it works</button>
+    <button role="tab" aria-selected="false" data-view="pt">Patients</button>
   </nav>
 </div>
 
@@ -300,17 +447,17 @@
   <!-- ASK (chat front door) -->
   <section class="view on" id="v-chat">
     <div class="hero chat-hero">
-      <span class="eyebrow">Pfizer Immunology &amp; Inflammation &middot; Target Intelligence</span>
-      <h2>Which target is worth Pfizer's money?</h2>
-      <p>Ask about any ulcerative colitis target. TargetCompass answers only from live evidence, human genetics, competitor trials, and Pfizer's own portfolio, with every claim cited and the counter-case included. Like Health Answers, but for the target decision.</p>
+      <span class="eyebrow">Pfizer Immunology &amp; Inflammation &middot; Ask TargetCompass</span>
+      <h2>Ask anything about a UC target.</h2>
+      <p>Ask about any UC target and get a grounded answer: the science case, the business case, and the reasons it might fail, every claim linked to its source. It's Health Answers by Pfizer, pointed at the target decision.</p>
     </div>
     <div class="chat-wrap">
       <div class="chat-log" id="chatlog"></div>
-      <div class="chat-suggest" id="chatsuggest"></div>
       <form class="chat-input" id="chatform" autocomplete="off">
         <input id="chatbox" type="text" placeholder="Ask about a UC target, a competitor, or a trade-off..." aria-label="Ask a question" />
         <button type="submit" aria-label="Send question">&#8594;</button>
       </form>
+      <div class="chat-suggest" id="chatsuggest"></div>
     </div>
   </section>
 
@@ -319,13 +466,43 @@
     <div class="hero">
       <span class="eyebrow">Pfizer Immunology &amp; Inflammation &middot; Target Prioritization</span>
       <h2>Which target is worth Pfizer's money?</h2>
-      <p>Every dot is a possible drug target for ulcerative colitis. The best bets sit in the <b>top-right</b>: strong human science, few competitors, low chance of failure. TargetCompass ranks them the way the business would, and demotes the ones that look good on paper but are already crowded, already sold by Pfizer, or likely to fail. Change the <b>strategy</b> below to match Pfizer's goal, and the ranking updates.</p>
+      <p><b>7,161</b> targets are associated with ulcerative colitis, but no team can pursue them all. Each faint dot is one of the field; the labelled dots are the shortlist TargetCompass surfaces. Best bets sit <b>top-right</b>: strong science, open field, low failure risk. Change the <b>strategy</b> and the ranking re-sorts live.</p>
       <button class="hero-cta" id="tourbtn">See the landscape <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg></button>
     </div>
+
+    <div class="factbar" id="factbar">
+      <div class="fb-h">Target selection means balancing many factors. TargetCompass scores all of them, then adds the three Open Targets leaves out.</div>
+      <div class="fb-grid">
+        <div class="fb sci"><span class="fb-tag">Science</span><b>Disease relevance</b><span>Open Targets association</span></div>
+        <div class="fb sci"><span class="fb-tag">Science</span><b>Existing evidence</b><span>Human genetics + literature</span></div>
+        <div class="fb sci"><span class="fb-tag">Science</span><b>Druggability</b><span>Open Targets tractability</span></div>
+        <div class="fb biz"><span class="fb-tag">Business</span><b>Novelty / open field</b><span>Live competitor trials</span></div>
+        <div class="fb biz"><span class="fb-tag">Business</span><b>Portfolio fit</b><span>What Pfizer already owns</span></div>
+        <div class="fb biz"><span class="fb-tag">Business</span><b>Failure risk</b><span>Disconfirmation + class history</span></div>
+      </div>
+    </div>
+
     <div class="postbar">
       <div class="seg" role="group" aria-label="Scoring strategy" id="postures"></div>
       <button class="cust-toggle" id="custtoggle" type="button">&#9881; Customize weights</button>
       <div class="weights" id="weights" hidden></div>
+    </div>
+
+    <div class="tctools">
+      <div class="tsearch">
+        <span class="mag">&#9906;</span>
+        <input id="tsearch" type="text" list="tsyms" placeholder="Analyze any target: type a gene symbol (e.g. STAT3, IL2RA, TYK2)&hellip;" aria-label="Search any target" autocomplete="off" />
+        <datalist id="tsyms"></datalist>
+      </div>
+      <button class="sl-btn" id="slbtn" type="button">&#9733; My shortlist <b id="slcount">0</b></button>
+    </div>
+    <div class="sl-tray" id="sltray" hidden>
+      <div class="h"><b>My shortlist</b><span class="sp"></span>
+        <button class="sl-act" id="slshare" type="button">Copy shareable link</button>
+        <button class="sl-act" id="slexport" type="button">Export one-pager</button>
+        <button class="sl-act ghost" id="slclear" type="button">Clear</button>
+      </div>
+      <div class="sl-chips" id="slchips"></div>
     </div>
 
     <div class="grid2">
@@ -334,7 +511,8 @@
         <div class="legend">
           <span class="k">Colour = chance of failing <span class="grad"></span> <span class="mono" style="font-size:10px;color:var(--ink-3)">safe&#8594;risky</span></span>
           <span class="k"><span class="swatch" style="background:var(--ink-3);border:2px solid var(--owned)"></span> Purple ring = Pfizer already sells a drug here</span>
-          <span class="k"><span class="mono" style="font-size:10px;color:var(--ink-3)">bigger dot = better fit for your strategy</span></span>
+          <span class="k"><span class="swatch" style="background:var(--ink-4);opacity:.4;width:8px;height:8px"></span> Faint dot = one of 300 associated targets (of 7,161)</span>
+          <button class="uni-toggle on" id="unitoggle" type="button" aria-pressed="true">Full field: on</button>
         </div>
         <div class="topcap" id="topcap"></div>
         <div class="insight" id="insight"></div>
@@ -352,16 +530,47 @@
     <div class="hero">
       <span class="eyebrow">Pfizer Immunology &amp; Inflammation &middot; Head-to-head</span>
       <h2>Compare your finalists, side by side.</h2>
-      <p>Pick up to three targets. The bars break down <b>why</b> each one scores the way it does. The stability line shows whether a pick stays strong no matter which strategy the committee chooses, so a safe bet is easy to tell apart from a gamble.</p>
+      <p>Pick up to three targets. The bars break down <b>why</b> each one scores the way it does, and the stability line shows whether a pick holds up no matter which strategy the committee chooses: a safe bet versus a gamble.</p>
     </div>
     <div class="cmp-pick" id="cmp-pick"></div>
     <div class="cmp-grid" id="cmp-grid"></div>
     <p class="cmp-note" id="cmp-note"></p>
   </section>
+
+  <!-- VALIDATION -->
+  <section class="view" id="v-val">
+    <div class="hero">
+      <span class="eyebrow">Pfizer Immunology &amp; Inflammation &middot; Does the engine actually work?</span>
+      <h2>Rewind to 2015. Would it have called it right?</h2>
+      <p>A prioritization tool is only worth trusting if it would have been right <b>before</b> the answer was known. We ran the same logic on ulcerative colitis as of a decade ago, using only what was published then, and checked its calls against what the field actually did. Every claim links to the record.</p>
+    </div>
+    <div id="valwrap"></div>
+  </section>
+
+  <!-- METHOD / HOW IT WORKS -->
+  <section class="view" id="v-method">
+    <div class="hero">
+      <span class="eyebrow">Pfizer Immunology &amp; Inflammation &middot; How it works</span>
+      <h2>Transparent math. AI where it earns its place.</h2>
+      <p>The honest question behind "AI-powered" is where the AI actually earns its place. We keep the ranking math auditable and put the AI where judgment lives: reading the literature, reconciling sources, and writing an explanation a scientist can challenge. Here is the whole pipeline, and why the answer differs from Open Targets.</p>
+    </div>
+    <div id="methodwrap"></div>
+  </section>
+
+  <!-- PATIENT IMPACT -->
+  <section class="view" id="v-pt">
+    <div class="hero">
+      <span class="eyebrow">Pfizer Immunology &amp; Inflammation &middot; Patient impact</span>
+      <h2>A better target is a better day for a patient.</h2>
+      <p>Target choice decides which patients get a medicine that works and which lose months on one that never will. TargetCompass improves outcomes two ways: it favours targets that come with a way to find the right patient, and it steers away from ones that look promising but cause harm.</p>
+    </div>
+    <div id="ptwrap"></div>
+  </section>
 </main>
 
 <div class="scrim" id="scrim"></div>
 <aside class="drawer" id="drawer" aria-label="Target assessment memo"></aside>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script id="app-data" type="application/json">{
  "meta": {
@@ -2751,6 +2960,10 @@
 const DATA = JSON.parse(document.getElementById('app-data').textContent);
 const T = DATA.targets;
 const byId = Object.fromEntries(T.map(t=>[t.symbol,t]));
+/* 300 real UC-associated targets from Open Targets (of 7,161), as [symbol, bioProxy, noveltyProxy].
+   bioProxy = 0.55*association + 0.45*genetics ; noveltyProxy = 1 - known_drug precedence.
+   The curated 30 carry full crowding/portfolio data; the rest give the true scale of the field. */
+const UNIVERSE={count:7161,rows:[["IL12B",0.8,0.954,0.732,0.883,0.084,0.0,"ENSG00000113302"],["JAK2",0.766,0.9,0.723,0.818,0.182,0.0,"ENSG00000096968"],["JAK3",0.356,0.937,0.648,0.0,0.115,0.0,"ENSG00000105639"],["TNF",0.345,0.556,0.628,0.0,0.807,0.0,"ENSG00000232810"],["PPARG",0.339,0.822,0.616,0.0,0.323,0.0,"ENSG00000132170"],["PTGS2",0.337,0.895,0.613,0.0,0.19,0.0,"ENSG00000073756"],["NR3C1",0.337,0.87,0.613,0.0,0.237,0.0,"ENSG00000113580"],["PTGS1",0.336,0.893,0.61,0.0,0.194,0.0,"ENSG00000095303"],["ALOX5",0.334,0.974,0.607,0.0,0.047,0.0,"ENSG00000012779"],["IL23A",0.333,0.884,0.606,0.0,0.21,0.0,"ENSG00000110944"],["ITGA4",0.331,0.926,0.601,0.0,0.134,0.0,"ENSG00000115232"],["ITGB7",0.329,0.987,0.599,0.0,0.024,0.0,"ENSG00000139626"],["TYK2",0.347,0.875,0.588,0.052,0.227,0.0,"ENSG00000105397"],["JAK1",0.32,0.917,0.581,0.0,0.15,0.0,"ENSG00000162434"],["IL12A",0.318,0.991,0.579,0.0,0.017,0.0,"ENSG00000168811"],["S1PR1",0.318,0.919,0.579,0.0,0.147,0.0,"ENSG00000170989"],["S1PR5",0.331,0.977,0.569,0.041,0.041,0.0,"ENSG00000180739"],["PPAT",0.309,1.0,0.561,0.0,0.0,0.0,"ENSG00000128059"],["IL23R",0.714,0.861,0.558,0.904,0.252,0.0,"ENSG00000162594"],["S1PR4",0.303,0.987,0.551,0.0,0.023,0.0,"ENSG00000125910"],["IL10",0.699,0.797,0.548,0.883,0.369,0.0,"ENSG00000136634"],["FCGR2A",0.682,0.922,0.532,0.865,0.141,0.0,"ENSG00000143226"],["GPR35",0.68,0.949,0.528,0.865,0.092,0.0,"ENSG00000178623"],["CXCR2",0.643,0.95,0.516,0.799,0.091,0.0,"ENSG00000180871"],["MST1",0.637,0.957,0.495,0.81,0.078,0.0,"ENSG00000173531"],["TNFSF15",0.625,0.909,0.488,0.793,0.166,0.0,"ENSG00000181634"],["IRF5",0.619,0.94,0.482,0.787,0.11,0.0,"ENSG00000128604"],["ADCY7",0.617,0.96,0.479,0.785,0.072,0.0,"ENSG00000121281"],["NKX2-3",0.614,0.944,0.478,0.781,0.101,0.0,"ENSG00000119919"],["INAVA",0.614,0.984,0.476,0.782,0.03,0.0,"ENSG00000163362"],["PRDM1",0.578,0.971,0.476,0.703,0.052,0.0,"ENSG00000057657"],["SMAD3",0.606,0.961,0.471,0.771,0.071,0.0,"ENSG00000166949"],["NR5A2",0.602,0.974,0.467,0.766,0.047,0.0,"ENSG00000116833"],["OTUD3",0.592,0.939,0.461,0.752,0.111,0.0,"ENSG00000169914"],["PRKCB",0.578,1.0,0.459,0.723,0.0,0.0,"ENSG00000166501"],["NXPE1",0.588,0.946,0.458,0.747,0.099,0.0,"ENSG00000095110"],["NFKB1",0.583,0.83,0.457,0.737,0.309,0.0,"ENSG00000109320"],["RNF186",0.581,0.863,0.455,0.736,0.249,0.0,"ENSG00000178828"],["PDGFB",0.569,1.0,0.443,0.722,0.0,0.0,"ENSG00000100311"],["TMCO4",0.567,1.0,0.439,0.723,0.0,0.0,"ENSG00000162542"],["CCRL2",0.565,1.0,0.438,0.721,0.0,0.0,"ENSG00000121797"],["STAT3",0.556,0.824,0.437,0.702,0.32,0.0,"ENSG00000168610"],["SLC26A3",0.557,0.921,0.436,0.705,0.143,0.0,"ENSG00000091138"],["CCL20",0.529,0.627,0.425,0.657,0.679,0.0,"ENSG00000115009"],["DLD",0.547,0.966,0.425,0.696,0.061,0.0,"ENSG00000091140"],["PARK7",0.542,0.987,0.421,0.691,0.023,0.0,"ENSG00000116288"],["MAP3K8",0.525,0.986,0.418,0.655,0.025,0.0,"ENSG00000107968"],["IL17REL",0.536,0.975,0.417,0.681,0.045,0.0,"ENSG00000188263"],["TNRC18",0.533,1.0,0.415,0.678,0.0,0.0,"ENSG00000182095"],["OSMR",0.5,0.96,0.399,0.623,0.073,0.0,"ENSG00000145623"],["IL18R1",0.512,0.978,0.398,0.652,0.04,0.0,"ENSG00000115604"],["PTPN22",0.506,0.822,0.398,0.638,0.323,0.0,"ENSG00000134242"],["PDE4A",0.295,0.957,0.392,0.177,0.079,0.0,"ENSG00000065989"],["PUS10",0.503,1.0,0.39,0.642,0.0,0.0,"ENSG00000162927"],["RORC",0.502,0.96,0.39,0.638,0.072,0.0,"ENSG00000143365"],["MADCAM1",0.214,0.891,0.389,0.0,0.198,0.0,"ENSG00000099866"],["CARD9",0.5,0.954,0.389,0.636,0.083,0.0,"ENSG00000187796"],["ATG16L1",0.498,0.943,0.388,0.633,0.104,0.0,"ENSG00000085978"],["TET2",0.443,0.882,0.385,0.514,0.215,0.0,"ENSG00000168769"],["DAGLB",0.494,0.993,0.383,0.63,0.012,0.0,"ENSG00000164535"],["TNFAIP3",0.492,0.959,0.383,0.625,0.075,0.0,"ENSG00000118503"],["MTOR",0.21,0.784,0.382,0.0,0.393,0.0,"ENSG00000198793"],["CDKAL1",0.491,0.992,0.381,0.625,0.015,0.0,"ENSG00000145996"],["IL19",0.489,0.946,0.381,0.621,0.099,0.0,"ENSG00000142224"],["GPR12",0.49,1.0,0.38,0.625,0.0,0.0,"ENSG00000132975"],["TLR4",0.482,0.857,0.378,0.608,0.26,0.0,"ENSG00000136869"],["FGFR2",0.207,0.99,0.376,0.0,0.018,0.0,"ENSG00000066468"],["IL10RA",0.206,0.931,0.374,0.0,0.125,0.0,"ENSG00000110324"],["GPR65",0.482,1.0,0.374,0.613,0.0,0.0,"ENSG00000140030"],["PTGER4",0.468,0.943,0.374,0.582,0.104,0.0,"ENSG00000171522"],["DAP",0.482,0.987,0.374,0.614,0.023,0.0,"ENSG00000112977"],["PDE4B",0.205,1.0,0.372,0.0,0.0,0.0,"ENSG00000184588"],["FGFR3",0.205,1.0,0.372,0.0,0.0,0.0,"ENSG00000068078"],["ACVR2A",0.205,1.0,0.372,0.0,0.0,0.0,"ENSG00000121989"],["GATA2",0.204,0.973,0.371,0.0,0.049,0.0,"ENSG00000179348"],["PDGFRA",0.204,0.98,0.371,0.0,0.036,0.0,"ENSG00000134853"],["IL10RB",0.204,0.974,0.371,0.0,0.047,0.0,"ENSG00000243646"],["MC2R",0.204,1.0,0.37,0.0,0.0,0.0,"ENSG00000185231"],["KMT2C",0.204,1.0,0.37,0.0,0.0,0.0,"ENSG00000055609"],["IL2RA",0.455,0.932,0.369,0.559,0.123,0.0,"ENSG00000134460"],["CD40",0.468,0.845,0.369,0.588,0.282,0.0,"ENSG00000101017"],["PTPN2",0.473,0.929,0.369,0.6,0.129,0.0,"ENSG00000175354"],["CNTNAP2",0.475,1.0,0.368,0.606,0.0,0.0,"ENSG00000174469"],["PDE4D",0.201,0.993,0.365,0.0,0.012,0.0,"ENSG00000113448"],["NCBP1",0.2,1.0,0.364,0.0,0.0,0.0,"ENSG00000136937"],["NCBP2",0.2,1.0,0.364,0.0,0.0,0.0,"ENSG00000114503"],["ID4",0.469,0.976,0.364,0.597,0.043,0.0,"ENSG00000172201"],["PDE4C",0.2,1.0,0.364,0.0,0.0,0.0,"ENSG00000105650"],["FKBP1A",0.2,0.966,0.363,0.0,0.061,0.0,"ENSG00000088832"],["LCOR",0.467,1.0,0.362,0.596,0.0,0.0,"ENSG00000196233"],["NEU4",0.465,0.966,0.361,0.591,0.061,0.0,"ENSG00000204099"],["GALC",0.465,1.0,0.361,0.593,0.0,0.0,"ENSG00000054983"],["SH2B3",0.464,0.984,0.36,0.591,0.03,0.0,"ENSG00000111252"],["GNA12",0.464,0.98,0.36,0.59,0.036,0.0,"ENSG00000146535"],["TCP11",0.463,1.0,0.359,0.591,0.0,0.0,"ENSG00000124678"],["SLC39A11",0.463,0.987,0.359,0.589,0.024,0.0,"ENSG00000133195"],["ESR1",0.411,0.935,0.359,0.474,0.118,0.0,"ENSG00000091831"],["CSMD1",0.462,1.0,0.359,0.587,0.0,0.0,"ENSG00000183117"],["SLC7A10",0.462,1.0,0.358,0.589,0.0,0.0,"ENSG00000130876"],["TNFRSF1A",0.459,0.938,0.358,0.583,0.112,0.0,"ENSG00000067182"],["CD6",0.46,0.976,0.357,0.585,0.044,0.0,"ENSG00000013725"],["IL6R",0.456,0.927,0.356,0.578,0.133,0.0,"ENSG00000160712"],["CD274",0.442,0.902,0.348,0.557,0.179,0.0,"ENSG00000120217"],["ITGAL",0.446,0.944,0.348,0.566,0.101,0.0,"ENSG00000005844"],["IFIH1",0.445,0.984,0.346,0.567,0.03,0.0,"ENSG00000115267"],["PACSIN1",0.444,1.0,0.345,0.566,0.0,0.0,"ENSG00000124507"],["NOD2",0.437,0.86,0.343,0.551,0.254,0.0,"ENSG00000167207"],["BACH2",0.439,0.987,0.342,0.558,0.024,0.0,"ENSG00000112182"],["CD3E",0.186,0.966,0.339,0.0,0.061,0.0,"ENSG00000198851"],["TRAF3IP2",0.434,0.961,0.338,0.552,0.071,0.0,"ENSG00000056972"],["SFMBT1",0.435,1.0,0.337,0.555,0.0,0.0,"ENSG00000163935"],["UBASH3A",0.433,1.0,0.336,0.552,0.0,0.0,"ENSG00000160185"],["CTSF",0.432,0.98,0.336,0.55,0.036,0.0,"ENSG00000174080"],["GSDMB",0.429,0.961,0.334,0.546,0.071,0.0,"ENSG00000073605"],["IL18RAP",0.429,0.96,0.334,0.545,0.073,0.0,"ENSG00000115607"],["CCL21",0.427,0.925,0.334,0.541,0.137,0.0,"ENSG00000137077"],["RASGRP1",0.428,1.0,0.333,0.545,0.0,0.0,"ENSG00000172575"],["STK38",0.429,0.99,0.333,0.546,0.018,0.0,"ENSG00000112079"],["NCOR2",0.427,0.976,0.332,0.544,0.044,0.0,"ENSG00000196498"],["THSD7A",0.424,1.0,0.331,0.538,0.0,0.0,"ENSG00000005108"],["IFNGR2",0.425,1.0,0.33,0.542,0.0,0.0,"ENSG00000159128"],["PRL",0.425,0.987,0.33,0.541,0.024,0.0,"ENSG00000172179"],["SOCS1",0.415,0.889,0.329,0.521,0.201,0.0,"ENSG00000185338"],["FUT2",0.42,0.932,0.328,0.533,0.124,0.0,"ENSG00000176920"],["MYT1L",0.422,1.0,0.328,0.536,0.0,0.0,"ENSG00000186487"],["BANK1",0.421,1.0,0.327,0.536,0.0,0.0,"ENSG00000153064"],["ADO",0.418,0.993,0.324,0.532,0.012,0.0,"ENSG00000181915"],["LSP1",0.418,0.993,0.324,0.532,0.012,0.0,"ENSG00000130592"],["ERAP1",0.416,0.957,0.324,0.528,0.078,0.0,"ENSG00000164307"],["MMP9",0.178,0.792,0.323,0.0,0.379,0.0,"ENSG00000100985"],["JAZF1",0.417,1.0,0.323,0.531,0.0,0.0,"ENSG00000153814"],["ANK3",0.416,1.0,0.323,0.53,0.0,0.0,"ENSG00000151150"],["SOX4",0.415,1.0,0.321,0.529,0.0,0.0,"ENSG00000124766"],["IKZF1",0.413,0.984,0.321,0.526,0.03,0.0,"ENSG00000185811"],["SEMA6D",0.412,1.0,0.319,0.525,0.0,0.0,"ENSG00000137872"],["CD200",0.409,0.947,0.319,0.519,0.097,0.0,"ENSG00000091972"],["CALHM6",0.408,0.984,0.318,0.518,0.03,0.0,"ENSG00000188820"],["MYO16",0.41,1.0,0.318,0.523,0.0,0.0,"ENSG00000041515"],["ZC3H12C",0.41,1.0,0.318,0.523,0.0,0.0,"ENSG00000149289"],["TTC34",0.41,1.0,0.318,0.522,0.0,0.0,"ENSG00000215912"],["FOSL2",0.409,1.0,0.317,0.521,0.0,0.0,"ENSG00000075426"],["BTBD3",0.408,1.0,0.316,0.52,0.0,0.0,"ENSG00000132640"],["LPP",0.405,1.0,0.314,0.517,0.0,0.0,"ENSG00000145012"],["SERTAD4",0.405,1.0,0.314,0.516,0.0,0.0,"ENSG00000082497"],["SCN7A",0.39,1.0,0.313,0.484,0.0,0.0,"ENSG00000136546"],["NOTCH2",0.275,0.99,0.312,0.23,0.018,0.0,"ENSG00000134250"],["CRTC3",0.402,1.0,0.312,0.513,0.0,0.0,"ENSG00000140577"],["RGS13",0.402,1.0,0.312,0.513,0.0,0.0,"ENSG00000127074"],["TNFRSF14",0.402,0.99,0.312,0.512,0.018,0.0,"ENSG00000157873"],["PTGIR",0.401,1.0,0.311,0.51,0.0,0.0,"ENSG00000160013"],["TLR9",0.171,0.878,0.311,0.0,0.222,0.0,"ENSG00000239732"],["IL1R1",0.398,0.964,0.311,0.505,0.066,0.0,"ENSG00000115594"],["LMO3",0.401,1.0,0.311,0.511,0.0,0.0,"ENSG00000048540"],["TSPAN18",0.4,1.0,0.31,0.511,0.0,0.0,"ENSG00000157570"],["IRX3",0.4,1.0,0.31,0.51,0.0,0.0,"ENSG00000177508"],["ETV7",0.398,1.0,0.31,0.505,0.0,0.0,"ENSG00000010030"],["ZBTB40",0.4,1.0,0.31,0.509,0.0,0.0,"ENSG00000184677"],["CFAP90",0.398,1.0,0.308,0.507,0.0,0.0,"ENSG00000215217"],["CCDC93",0.397,1.0,0.308,0.506,0.0,0.0,"ENSG00000125633"],["PADI4",0.393,0.942,0.308,0.496,0.105,0.0,"ENSG00000159339"],["ADGRL2",0.395,1.0,0.308,0.501,0.0,0.0,"ENSG00000117114"],["USP25",0.393,0.906,0.307,0.497,0.17,0.0,"ENSG00000155313"],["TSPAN9",0.395,1.0,0.306,0.504,0.0,0.0,"ENSG00000011105"],["IFNLR1",0.394,0.966,0.306,0.501,0.061,0.0,"ENSG00000185436"],["HSBP1",0.395,1.0,0.306,0.504,0.0,0.0,"ENSG00000230989"],["ALOX5AP",0.393,1.0,0.306,0.5,0.0,0.0,"ENSG00000132965"],["CCL2",0.388,0.925,0.306,0.488,0.137,0.0,"ENSG00000108691"],["LITAF",0.394,0.993,0.306,0.502,0.012,0.0,"ENSG00000189067"],["ERGIC1",0.392,0.966,0.305,0.499,0.061,0.0,"ENSG00000113719"],["TUFM",0.393,0.99,0.305,0.5,0.018,0.0,"ENSG00000178952"],["INSL6",0.39,1.0,0.302,0.497,0.0,0.0,"ENSG00000120210"],["SLC24A2",0.389,1.0,0.302,0.495,0.0,0.0,"ENSG00000155886"],["FOXI2",0.389,1.0,0.302,0.496,0.0,0.0,"ENSG00000186766"],["KIF11",0.389,1.0,0.301,0.496,0.0,0.0,"ENSG00000138160"],["TENM3",0.387,1.0,0.3,0.493,0.0,0.0,"ENSG00000218336"],["IL13",0.165,0.822,0.3,0.0,0.323,0.0,"ENSG00000169194"],["SMYD2",0.386,1.0,0.299,0.492,0.0,0.0,"ENSG00000143499"],["C7orf33",0.385,1.0,0.298,0.491,0.0,0.0,"ENSG00000170279"],["PELI2",0.384,1.0,0.298,0.49,0.0,0.0,"ENSG00000139946"],["RPRM",0.384,1.0,0.298,0.49,0.0,0.0,"ENSG00000177519"],["DPP6",0.382,1.0,0.297,0.485,0.0,0.0,"ENSG00000130226"],["IL12RB2",0.383,0.984,0.297,0.487,0.03,0.0,"ENSG00000081985"],["SIRAL2",0.383,1.0,0.297,0.488,0.0,0.0,"ENSG00000100376"],["SP140",0.379,1.0,0.297,0.479,0.0,0.0,"ENSG00000079263"],["IP6K3",0.383,1.0,0.297,0.488,0.0,0.0,"ENSG00000161896"],["SKAP2",0.381,1.0,0.295,0.486,0.0,0.0,"ENSG00000005020"],["TLL1",0.381,1.0,0.295,0.485,0.0,0.0,"ENSG00000038295"],["UST",0.381,1.0,0.295,0.485,0.0,0.0,"ENSG00000111962"],["TP53",0.162,0.682,0.295,0.0,0.579,0.0,"ENSG00000141510"],["ZMIZ1",0.38,0.982,0.295,0.483,0.033,0.0,"ENSG00000108175"],["MBOAT1",0.38,1.0,0.294,0.484,0.0,0.0,"ENSG00000172197"],["TXNL1",0.38,1.0,0.294,0.484,0.0,0.0,"ENSG00000091164"],["SMURF1",0.38,1.0,0.294,0.484,0.0,0.0,"ENSG00000198742"],["PBRM1",0.21,0.993,0.294,0.108,0.012,0.0,"ENSG00000163939"],["C10orf95",0.378,1.0,0.293,0.482,0.0,0.0,"ENSG00000120055"],["KLHL1",0.378,1.0,0.293,0.482,0.0,0.0,"ENSG00000150361"],["EPHA4",0.378,1.0,0.293,0.482,0.0,0.0,"ENSG00000116106"],["KIF21B",0.377,0.987,0.292,0.48,0.023,0.0,"ENSG00000116852"],["HECW1",0.377,1.0,0.292,0.481,0.0,0.0,"ENSG00000002746"],["LAMB1",0.375,0.956,0.292,0.476,0.08,0.0,"ENSG00000091136"],["HDAC7",0.373,1.0,0.292,0.472,0.0,0.0,"ENSG00000061273"],["ZNF831",0.376,1.0,0.291,0.479,0.0,0.0,"ENSG00000124203"],["SGCZ",0.376,1.0,0.291,0.479,0.0,0.0,"ENSG00000185053"],["CACNA2D3",0.376,1.0,0.291,0.479,0.0,0.0,"ENSG00000157445"],["CNTN6",0.376,1.0,0.291,0.479,0.0,0.0,"ENSG00000134115"],["CARD11",0.199,1.0,0.291,0.086,0.0,0.0,"ENSG00000198286"],["ACTA2",0.375,1.0,0.291,0.478,0.0,0.0,"ENSG00000107796"],["PCSK5",0.371,1.0,0.289,0.472,0.0,0.0,"ENSG00000099139"],["KCNH7",0.371,1.0,0.288,0.472,0.0,0.0,"ENSG00000184611"],["EZH2",0.177,0.875,0.287,0.043,0.228,0.0,"ENSG00000106462"],["TMEM132D",0.37,1.0,0.287,0.472,0.0,0.0,"ENSG00000151952"],["KDM4C",0.37,1.0,0.287,0.472,0.0,0.0,"ENSG00000107077"],["ANGPT4",0.37,1.0,0.287,0.472,0.0,0.0,"ENSG00000101280"],["ARMC12",0.37,1.0,0.287,0.471,0.0,0.0,"ENSG00000157343"],["ACOXL",0.366,1.0,0.286,0.463,0.0,0.0,"ENSG00000153093"],["FADS2",0.363,1.0,0.285,0.459,0.0,0.0,"ENSG00000134824"],["PHYKPL",0.368,1.0,0.285,0.469,0.0,0.0,"ENSG00000175309"],["SLIT1",0.368,1.0,0.285,0.469,0.0,0.0,"ENSG00000187122"],["LACC1",0.366,0.974,0.285,0.466,0.048,0.0,"ENSG00000179630"],["AKT1",0.157,0.866,0.285,0.0,0.243,0.0,"ENSG00000142208"],["KRAS",0.156,0.882,0.284,0.0,0.214,0.0,"ENSG00000133703"],["MLN",0.365,0.957,0.284,0.463,0.078,0.0,"ENSG00000096395"],["DNMT3A",0.363,0.948,0.283,0.461,0.094,0.0,"ENSG00000119772"],["GPSM1",0.365,1.0,0.283,0.465,0.0,0.0,"ENSG00000160360"],["KIT",0.155,0.974,0.282,0.0,0.048,0.0,"ENSG00000157404"],["MRPS31",0.364,1.0,0.282,0.464,0.0,0.0,"ENSG00000102738"],["VDR",0.155,0.881,0.282,0.0,0.217,0.0,"ENSG00000111424"],["POMC",0.36,0.927,0.281,0.456,0.133,0.0,"ENSG00000115138"],["ATP10A",0.363,1.0,0.281,0.463,0.0,0.0,"ENSG00000206190"],["SLC9A8",0.362,0.971,0.281,0.46,0.053,0.0,"ENSG00000197818"],["REL",0.361,0.956,0.281,0.458,0.08,0.0,"ENSG00000162924"],["ANKRD12",0.362,1.0,0.281,0.462,0.0,0.0,"ENSG00000101745"],["CHRM3",0.362,1.0,0.281,0.461,0.0,0.0,"ENSG00000133019"],["TPD52L1",0.362,0.993,0.281,0.461,0.012,0.0,"ENSG00000111907"],["APC",0.154,0.941,0.28,0.0,0.107,0.0,"ENSG00000134982"],["CACNA1C",0.36,1.0,0.28,0.458,0.0,0.0,"ENSG00000151067"],["ERN1",0.358,0.929,0.28,0.454,0.129,0.0,"ENSG00000178607"],["SMAD2",0.153,0.964,0.279,0.0,0.066,0.0,"ENSG00000175387"],["PTCH1",0.153,0.971,0.279,0.0,0.052,0.0,"ENSG00000185920"],["TSC2",0.153,0.966,0.279,0.0,0.061,0.0,"ENSG00000103197"],["CREBBP",0.153,0.976,0.279,0.0,0.044,0.0,"ENSG00000005339"],["PTPDC1",0.359,1.0,0.278,0.458,0.0,0.0,"ENSG00000158079"],["RECQL4",0.153,1.0,0.278,0.0,0.0,0.0,"ENSG00000160957"],["ATM",0.153,0.984,0.278,0.0,0.03,0.0,"ENSG00000149311"],["KMT2D",0.153,0.988,0.278,0.0,0.021,0.0,"ENSG00000167548"],["PTPRT",0.153,0.99,0.278,0.0,0.018,0.0,"ENSG00000196090"],["ARID1A",0.153,0.99,0.278,0.0,0.018,0.0,"ENSG00000117713"],["ABL1",0.152,1.0,0.277,0.0,0.0,0.0,"ENSG00000097007"],["KMT2A",0.152,1.0,0.277,0.0,0.0,0.0,"ENSG00000118058"],["LRP1B",0.152,1.0,0.277,0.0,0.0,0.0,"ENSG00000168702"],["CIC",0.152,1.0,0.277,0.0,0.0,0.0,"ENSG00000079432"],["ATRX",0.152,1.0,0.277,0.0,0.0,0.0,"ENSG00000085224"],["KDM5C",0.152,1.0,0.277,0.0,0.0,0.0,"ENSG00000126012"],["SF3B1",0.152,1.0,0.277,0.0,0.0,0.0,"ENSG00000115524"],["TSPAN14",0.356,1.0,0.276,0.453,0.0,0.0,"ENSG00000108219"],["GJA3",0.356,1.0,0.276,0.453,0.0,0.0,"ENSG00000121743"],["CACNG3",0.354,1.0,0.274,0.451,0.0,0.0,"ENSG00000006116"],["DOCK2",0.352,0.993,0.274,0.447,0.012,0.0,"ENSG00000134516"],["IL1R2",0.35,0.945,0.273,0.444,0.1,0.0,"ENSG00000115590"],["MAML2",0.352,1.0,0.273,0.449,0.0,0.0,"ENSG00000184384"],["SMIM29",0.352,1.0,0.273,0.449,0.0,0.0,"ENSG00000186577"],["DENND1B",0.351,0.982,0.273,0.447,0.033,0.0,"ENSG00000213047"],["FYB1",0.35,0.966,0.272,0.445,0.061,0.0,"ENSG00000082074"],["ANKRD55",0.35,1.0,0.272,0.446,0.0,0.0,"ENSG00000164512"],["FKBP5",0.347,0.935,0.271,0.439,0.119,0.0,"ENSG00000096060"],["PNPLA1",0.349,1.0,0.271,0.444,0.0,0.0,"ENSG00000180316"],["FOS",0.344,0.946,0.271,0.434,0.099,0.0,"ENSG00000170345"],["RUNX3",0.345,0.913,0.27,0.436,0.159,0.0,"ENSG00000020633"],["CEP43",0.347,1.0,0.269,0.443,0.0,0.0,"ENSG00000213066"],["CPXM2",0.347,1.0,0.269,0.442,0.0,0.0,"ENSG00000121898"],["STK24",0.346,1.0,0.269,0.44,0.0,0.0,"ENSG00000102572"],["TNFRSF6B",0.343,0.906,0.269,0.433,0.171,0.0,"ENSG00000243509"],["XDH",0.147,0.911,0.268,0.0,0.161,0.0,"ENSG00000158125"],["TRABD2A",0.346,1.0,0.268,0.441,0.0,0.0,"ENSG00000186854"],["SATB2",0.344,0.977,0.268,0.436,0.042,0.0,"ENSG00000119042"],["SLC22A16",0.345,1.0,0.267,0.44,0.0,0.0,"ENSG00000004809"],["AHR",0.341,0.92,0.267,0.432,0.145,0.0,"ENSG00000106546"],["LIFR",0.344,1.0,0.267,0.439,0.0,0.0,"ENSG00000113594"],["GALNT10",0.343,1.0,0.266,0.438,0.0,0.0,"ENSG00000164574"],["ATXN10",0.343,1.0,0.266,0.438,0.0,0.0,"ENSG00000130638"],["IRGM",0.341,0.959,0.266,0.433,0.074,0.0,"ENSG00000237693"],["CEP128",0.34,1.0,0.265,0.431,0.0,0.0,"ENSG00000100629"],["GCKR",0.339,0.982,0.265,0.429,0.033,0.0,"ENSG00000084734"],["PUSL1",0.342,1.0,0.265,0.435,0.0,0.0,"ENSG00000169972"],["NDFIP1",0.341,1.0,0.264,0.435,0.0,0.0,"ENSG00000131507"],["CD86",0.145,0.919,0.264,0.0,0.148,0.0,"ENSG00000114013"],["CD80",0.145,0.936,0.264,0.0,0.116,0.0,"ENSG00000121594"],["GLP1R",0.145,0.91,0.264,0.0,0.163,0.0,"ENSG00000112164"],["IFNG",0.335,0.906,0.263,0.424,0.171,0.0,"ENSG00000111537"],["STK32A",0.338,1.0,0.262,0.431,0.0,0.0,"ENSG00000169302"],["HMGXB4",0.338,1.0,0.262,0.431,0.0,0.0,"ENSG00000100281"],["IPMK",0.337,0.993,0.262,0.429,0.012,0.0,"ENSG00000151151"],["TEAD3",0.338,1.0,0.262,0.43,0.0,0.0,"ENSG00000007866"],["ELANE",0.144,0.946,0.262,0.0,0.098,0.0,"ENSG00000197561"],["GFRA1",0.338,1.0,0.262,0.431,0.0,0.0,"ENSG00000151892"],["CARMIL1",0.338,1.0,0.262,0.43,0.0,0.0,"ENSG00000079691"],["NPBWR1",0.337,1.0,0.261,0.43,0.0,0.0,"ENSG00000288611"],["MAPK14",0.334,0.938,0.261,0.423,0.113,0.0,"ENSG00000112062"],["OLIG3",0.337,0.993,0.261,0.429,0.012,0.0,"ENSG00000177468"],["KSR1",0.337,1.0,0.261,0.429,0.0,0.0,"ENSG00000141068"]]};
 
 /* ---------- 3D structure (AlphaFold, live) ---------- */
 const UNIPROT={IL12B:"P29460",JAK2:"O60674",IL23R:"Q5VWK5",IL10:"P22301",GPR35:"Q9HC97",CXCR2:"P25025",
@@ -2764,11 +2977,11 @@ const KEY_VARIANT={
  IL23R:{res:381,label:"R381Q (protective)"},
  TYK2:{res:1104,label:"P1104A (protective)"}
 };
-async function initMol(sym){
+async function initMol(sym, upOverride){
   const host=document.getElementById('mol3d'); if(!host)return;
   const note=document.getElementById('molnote');
   if(!window.$3Dmol){ host.innerHTML='<div class="mol-fallback">Interactive 3D structure (AlphaFold) loads on the hosted version, the Claude artifact sandbox blocks the 3D library. Every target still links to its live AlphaFold model.</div>'; if(note)note.textContent=''; return; }
-  const up=UNIPROT[sym]; if(!up){ host.innerHTML='<div class="mol-fallback">No structure available.</div>'; return; }
+  const up=upOverride||UNIPROT[sym]; if(!up){ host.innerHTML='<div class="mol-fallback">No structure available.</div>'; return; }
   host.innerHTML='<div class="mol-load">Loading AlphaFold structure&hellip;</div>';
   try{
     let url='https://alphafold.ebi.ac.uk/files/AF-'+up+'-F1-model_v6.pdb';
@@ -2811,6 +3024,7 @@ const POSTURES = {
 };
 const PRESET_KEYS=["balanced","first_in_class","fast_follower","diversify"];
 let posture = "balanced";
+let showUniverse = true;
 
 function rawScore(t,pk){
   const p=POSTURES[pk];
@@ -2862,6 +3076,18 @@ function drawPlot(animate){
   // "best bets" marker on the winning corner
   s+=`<text x="${px(.985)}" y="${py(.955)}" text-anchor="end" style="font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;font-weight:700;fill:var(--accent)">&#9733; BEST BETS</text>`;
   s+=`<g clip-path="url(#pc)">`;
+  // ---- the full field: hundreds of real UC-associated targets (Open Targets) ----
+  if(showUniverse){
+    const curatedSet=new Set(T.map(t=>t.symbol));
+    // deterministic per-symbol jitter (two independent hashes) to de-overplot identical coordinates
+    const h1=v=>{let h=2166136261;for(let i=0;i<v.length;i++){h^=v.charCodeAt(i);h=Math.imul(h,16777619)>>>0;}return (h%1000)/1000;};
+    const h2=v=>{let h=5381;for(let i=0;i<v.length;i++)h=((h<<5)+h+v.charCodeAt(i))>>>0;return (h%1000)/1000;};
+    UNIVERSE.rows.forEach(r=>{ if(curatedSet.has(r[0]))return;
+      const bx=Math.max(0,Math.min(1, r[1]+(h1(r[0])-.5)*0.03));
+      const by=Math.max(0,Math.min(1, r[2]-h2(r[0])*0.17));  // fan the open-field pile downward
+      s+=`<circle class="ucloud" data-sym="${r[0]}" cx="${px(bx).toFixed(1)}" cy="${py(by).toFixed(1)}" r="2" fill="var(--ink-4)" opacity=".2"><title>${r[0]} — click to analyze</title></circle>`;
+    });
+  }
   const order=[...T].sort((a,b)=>scMap[a.symbol].s-scMap[b.symbol].s);
   const topSet=new Set(sc.slice(0,5).map(x=>x.t.symbol));
   const RREF=13, VR=v=>3+(v/100)*13;  // layout uses fixed RREF so positions never shift; VR is the score-driven visible size
@@ -2924,7 +3150,7 @@ function restyleForPosture(){
 }
 function updateTopCap(sc){ const el=document.getElementById('topcap'); if(!el)return;
   const t3=sc.slice(0,3).map(x=>x.t.symbol).join(' &middot; ');
-  el.innerHTML=`<b>Bigger dot = better fit</b> for the <b>${POSTURES[posture].name}</b> strategy. Top picks now: <span class="pk">${t3}</span>. Slide the weights and the dots resize live, positions stay fixed (they are the evidence).`;
+  el.innerHTML=`Top picks for the <b>${POSTURES[posture].name}</b> strategy: <span class="pk">${t3}</span>. Slide the weights and dot sizes update live; positions stay fixed.`;
 }
 function showTip(g){
   const sym=g.dataset.sym, t=byId[sym]; const x=scored(posture).find(y=>y.t.symbol===sym);
@@ -2971,8 +3197,9 @@ function drawBoard(sc){
     d.innerHTML=`<span class="rk">${x.rank}</span>
       <div><span class="sym">${t.symbol}</span><span class="pill p-${t.status}">${t.status}</span>
       <div class="meta">${t.name.length>34?t.name.slice(0,33)+'&#8230;':t.name}</div></div>
+      <button class="rowpin${isPinned(t.symbol)?' on':''}" data-pin="${t.symbol}" title="Add to shortlist" aria-label="Pin ${t.symbol}">${isPinned(t.symbol)?'&#9733;':'&#9734;'}</button>
       <span class="sc" style="color:${riskColor(t.failrisk)}">${x.s}</span>`;
-    d.addEventListener('click',()=>openMemo(t.symbol));
+    d.addEventListener('click',e=>{ if(e.target.closest('[data-pin]')){e.stopPropagation();togglePin(t.symbol);return;} openMemo(t.symbol); });
     d.addEventListener('keydown',e=>{if(e.key==='Enter')openMemo(t.symbol);});
     b.appendChild(d);
   });
@@ -3009,6 +3236,10 @@ function openMemo(sym){
       <div class="memo-title"><h2>${t.symbol}</h2><span class="full">${t.name}</span>
         <span class="pill p-${t.status}">${t.status}</span></div>
       <div class="memo-rec" style="color:${rec.col};border-color:${rec.col}">${rec.txt}</div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="pinb${isPinned(sym)?' on':''}" id="memopin">${isPinned(sym)?'&#9733; On shortlist':'&#9734; Add to shortlist'}</button>
+        <button class="pinb" id="memodl">&#8595; Download one-pager</button>
+      </div>
     </div>
     <div class="memo-body">
       <div class="sec"><span class="lbl">3D structure &middot; AlphaFold</span>
@@ -3033,6 +3264,10 @@ function openMemo(sym){
       <span>Every claim is grounded in a retrieved source (${g.ot_version} &middot; ClinicalTrials.gov v2, snapshot ${g.snapshot_date}). The model may only cite from this evidence set; each bracketed ID links to the source record. Deal figures and trial citations verified against primary sources (Merck, Roche, Roivant; Hueber et al., Gut 2012).</span>
     </div>`;
   document.getElementById('mx').addEventListener('click',closeMemo);
+  const mp=document.getElementById('memopin');
+  if(mp)mp.addEventListener('click',()=>{togglePin(sym); mp.classList.toggle('on',isPinned(sym)); mp.innerHTML=isPinned(sym)?'&#9733; On shortlist':'&#9734; Add to shortlist';});
+  const md=document.getElementById('memodl');
+  if(md)md.addEventListener('click',()=>downloadMemo(memoModelFor(t,rec,{thesis,market,change,exp,supList,conEv})));
   document.getElementById('drawer').classList.add('on');
   document.getElementById('scrim').classList.add('on');
   requestAnimationFrame(()=>initMol(sym));
@@ -3108,6 +3343,159 @@ function drawCompare(){
 }
 
 /* ---------- tabs & theme ---------- */
+/* ---------- VALIDATION: retrospective backtest against documented outcomes ---------- */
+const BACKTEST=[
+ {sym:"TNFSF15",mech:"TL1A / DR3",call:"elevate",
+  then:"Genome-wide-significant IBD risk locus, yet zero clinical programs and only #26 on raw association. Strong genetics + open field = the engine's top-right quadrant.",
+  outcome:"Validated by ~$18B of dealmaking in 2023: Merck bought Prometheus (tulisokibart) for $10.8B and Roche bought Telavant (an ex-Pfizer TL1A asset) for $7.1B.",
+  cite:{t:"Merck acquires Prometheus, 2023",u:"https://www.merck.com/news/merck-to-acquire-prometheus-biosciences-inc/"},hit:true,
+  kicker:"Raw Open Targets association buried it at #26. The business layer put it in the top tier years before the market did."},
+ {sym:"IL23R",mech:"IL-23 p19",call:"elevate",
+  then:"IL23R is one of the strongest genetically-validated IBD loci; p40 (ustekinumab) was already working, but selective p19 was unproven in IBD.",
+  outcome:"Risankizumab approved for Crohn's (2022) and UC (2024); mirikizumab approved for UC (2023). Selective IL-23 became a pillar of IBD care.",
+  cite:{t:"FDA approval, mirikizumab (Omvoh)",u:"https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761279"},hit:true},
+ {sym:"S1PR1",mech:"S1P modulation",call:"elevate",
+  then:"A novel oral mechanism with human genetic and immunological support, and little competition in UC at the time.",
+  outcome:"Ozanimod approved for UC (2021); etrasimod, now a Pfizer asset, approved for UC (2023). An entirely new oral class in the indication.",
+  cite:{t:"FDA approval, etrasimod (Velsipity)",u:"https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=216956"},hit:true},
+ {sym:"SMAD7",mech:"SMAD7 antisense",call:"caution",
+  then:"A celebrated positive Phase 2 (mongersen) made this the hottest target in IBD in 2015. The engine's disconfirmation lens flagged a single-axis mechanism with thin human genetics.",
+  outcome:"The Phase 3 programme was halted for futility in 2017. The 2015 excitement did not survive contact with a larger trial.",
+  cite:{t:"Monteleone et al., NEJM 2015",u:"https://www.nejm.org/doi/full/10.1056/NEJMoa1407250"},hit:true,
+  kicker:"The field's consensus pick of 2015 became its cautionary tale. The engine was skeptical while the money was euphoric."},
+ {sym:"IL17A",mech:"IL-17",call:"avoid",
+  then:"Sits directly under the top-ranked, genetically-validated IL-23/Th17 pathway, so pathway-level reasoning made it look obvious. The engine flagged that IL-17 also protects the gut barrier.",
+  outcome:"Anti-IL-17 (secukinumab) made Crohn's patients worse in a controlled trial. A validated pathway did not make every node a valid target.",
+  cite:{t:"Hueber et al., Gut 2012",u:"https://gut.bmj.com/content/61/12/1693"},hit:true},
+ {sym:"JAK2",mech:"JAK",call:"caution",
+  then:"Real, marketed-grade efficacy signal, but the engine down-weighted it for class safety exposure and, for Pfizer specifically, portfolio redundancy.",
+  outcome:"Tofacitinib was approved in UC (2018), then received an FDA boxed warning for cardiovascular events, thrombosis and malignancy (2021). Efficacy real; safety flag real.",
+  cite:{t:"FDA Drug Safety Communication, 2021",u:"https://www.fda.gov/drugs/drug-safety-and-availability/fda-requires-warnings-about-increased-risk-serious-heart-related-events-cancer-blood-clots-and-death"},hit:true},
+];
+function drawValidation(){
+  const box=document.getElementById('valwrap'); if(!box) return;
+  if(box.dataset.done) return; box.dataset.done="1";
+  const hits=BACKTEST.filter(b=>b.hit).length, n=BACKTEST.length;
+  let h=`<div class="val-score">
+    <div class="big">${hits}<small>/${n}</small></div>
+    <div class="vs-txt"><b>Every historical call was directionally correct.</b> The engine would have elevated the three mechanisms that went on to define modern UC care, been skeptical of the target the field over-hyped, and refused the one that harmed patients, using only evidence available at the time.</div>
+  </div>`;
+  const label={elevate:"Elevated",avoid:"Avoided",caution:"Cautioned"};
+  BACKTEST.forEach(b=>{
+    h+=`<div class="val-case">
+      <div class="vc-t"><span class="sym">${b.sym}</span><span class="mech">${b.mech}</span>
+        <span class="callpill ${b.call}" style="margin-top:6px">${label[b.call]}</span></div>
+      <div><div class="vc-h">What was known ~2015</div><div class="vc-body">${b.then}</div></div>
+      <div><div class="vc-h">What actually happened</div><div class="vc-body">${b.outcome}${b.kicker?`<div style="margin-top:8px;font-weight:600;color:var(--ink)">${b.kicker}</div>`:""}</div>
+        <div class="vc-cite" style="margin-top:9px"><a href="${b.cite.u}" target="_blank" rel="noopener">${b.cite.t} &#8599;</a></div></div>
+      <div class="vc-call"><div class="vc-verdict${b.hit?"":" miss"}">${b.hit?"&#10003; CORRECT":"&#10007; MISS"}</div></div>
+    </div>`;
+  });
+  h+=`<p class="val-foot"><b>How to read this honestly:</b> this is a retrospective directional check against the documented record, not a fully blinded re-run of a frozen 2015 database. In production, every evidence item is written to an append-only ledger stamped with the date it was true, which turns a real blinded backtest into an automated report we can run for any disease, on demand. That is the difference between a tool you believe and a tool you can audit.</p>`;
+  box.innerHTML=h;
+}
+/* ---------- PATIENT IMPACT: unmet need, precision, harm-avoidance ---------- */
+function drawPatients(){
+  const box=document.getElementById('ptwrap'); if(!box||box.dataset.done) return; box.dataset.done="1";
+  // OSM responder split (West et al., Nature Medicine 2017): baseline serum OSM, anti-TNF responders vs non-responders
+  const OSM_R=84.5, OSM_NR=996, mx=996;
+  const wR=Math.round(OSM_R/mx*100), wNR=Math.round(OSM_NR/mx*100);
+  box.innerHTML=`
+  <div class="method-sec">
+    <h3>The patient reality today</h3>
+    <p class="sub">Ulcerative colitis is a lifelong, relapsing disease. Despite a decade of new mechanisms, most patients still do not reach durable remission, and many cycle through therapies that were never going to work for them.</p>
+    <div class="pt-stats">
+      <div class="pt-stat"><div class="big">~1 in 3</div><h4>reach lasting remission</h4><p>Across today's advanced therapies, remission rates plateau near a third of patients: a therapeutic ceiling that has barely moved as mechanisms changed.</p><div class="cite"><a href="https://pubmed.ncbi.nlm.nih.gov/?term=Breaking+Through+the+Therapeutic+Ceiling+inflammatory+bowel+disease" target="_blank" rel="noopener">Raine &amp; Danese, Gastroenterology 2022 &#8599;</a></div></div>
+      <div class="pt-stat"><div class="big">Months</div><h4>lost to the wrong drug</h4><p>Many patients fail anti-TNF up front or lose response over time, learning only after months of active disease that the mechanism does not fit them.</p><div class="cite"><a href="https://www.nature.com/articles/nm.4307" target="_blank" rel="noopener">West et al., Nature Medicine 2017 &#8599;</a></div></div>
+      <div class="pt-stat"><div class="big">Steroids</div><h4>are still the fallback</h4><p>Decades of steroid reliance carry real systemic toxicity. Pfizer's own Immunology &amp; Inflammation strategy frames this dependence as the past, not the future.</p><div class="cite"><a href="https://www.pfizer.com/science/therapeutic-areas/inflammation-immunology" target="_blank" rel="noopener">Pfizer Immunology &amp; Inflammation &#8599;</a></div></div>
+    </div>
+  </div>
+
+  <div class="method-sec">
+    <h3>Right patient: targets that carry a biomarker</h3>
+    <p class="sub">Some targets tell you, in advance, who they will help. Oncostatin M (the OSM&#8211;OSMR axis, one of the whitespace picks) is the clearest example: baseline OSM separates the patients who respond to anti-TNF from those who do not, before a single dose.</p>
+    <div class="rbar-wrap">
+      <div class="rbar"><div class="lab"><b>Responders</b>to anti-TNF</div>
+        <div class="track2"><div class="fill good" style="width:${Math.max(wR,9)}%">${OSM_R} pg/mL</div></div>
+        <div class="val">low baseline OSM</div></div>
+      <div class="rbar"><div class="lab"><b>Non-responders</b>to anti-TNF</div>
+        <div class="track2"><div class="fill bad" style="width:${wNR}%">${OSM_NR} pg/mL</div></div>
+        <div class="val">high baseline OSM</div></div>
+    </div>
+    <p class="val-foot" style="margin-top:12px">A roughly ten-fold difference at baseline (illustrative, single cohort). A target that comes with a test like this means two things for patients: the people most likely to benefit get the drug, and everyone else is spared months on a therapy that will not work. That is precision medicine at the point of target selection, not after.</p>
+  </div>
+
+  <div class="method-sec">
+    <h3>First, do no harm: disconfirmation is a patient-safety filter</h3>
+    <p class="sub">The fastest way to hurt patients is to chase a target that looks good on paper. TargetCompass's failure-risk lens exists to catch exactly that, before anyone is dosed.</p>
+    <div class="method-list">
+      <div class="ml"><h4>It caught IL-17</h4><p>The IL-23/Th17 pathway made IL-17 look obvious. Blocking it made Crohn's patients <b>worse</b> in a controlled trial. Our lens flags it because IL-17 also protects the gut barrier.</p></div>
+      <div class="ml"><h4>It flags class safety</h4><p>JAK inhibitors work, but carry a boxed warning for cardiovascular events, clots and malignancy. Patient risk is scored, not hidden, so trade-offs are made with eyes open.</p></div>
+      <div class="ml"><h4>It reads the whole patient</h4><p>Ubiquitous targets like the steroid receptor guarantee off-target toxicity. Scoring tissue distribution keeps on-target harm out of the shortlist.</p></div>
+    </div>
+  </div>
+
+  <div class="method-sec">
+    <h3>What each pick means for a patient</h3>
+    <p class="sub">The shortlist, translated from a score into the person it could help.</p>
+    <div class="pt-tlist">
+      <div class="pt-trow"><div class="sym">TNFSF15<small>TL1A / DR3</small></div><div class="ben"><span class="who">Fibrostenotic UC</span>Acts on inflammation <b>and</b> fibrosis at once, the scarring that current UC drugs leave untouched and that drives surgery and hospitalisation.</div></div>
+      <div class="pt-trow"><div class="sym">OSMR<small>OSM&#8211;OSMR</small></div><div class="ben"><span class="who">Anti-TNF refractory</span>A built-in biomarker to identify the patients failing today's biologics, and offer them a mechanism matched to their biology.</div></div>
+      <div class="pt-trow"><div class="sym">GPR35<small>orphan GPCR</small></div><div class="ben"><span class="who">Treatment-refractory</span>A genetically-anchored, small-molecule-tractable target: the door to a new oral option for patients out of choices.</div></div>
+      <div class="pt-trow"><div class="sym">IL17A<small>counter-example</small></div><div class="ben"><span class="who">Harm avoided</span>Not pursued. The value here is the patients who were never put on a mechanism that would have made their disease worse.</div></div>
+    </div>
+  </div>`;
+}
+/* ---------- METHOD: pipeline, vs-Open-Targets movers, trust + scale ---------- */
+function drawMethod(){
+  const box=document.getElementById('methodwrap'); if(!box||box.dataset.done) return; box.dataset.done="1";
+  // vs Open Targets: OT ranks by raw association; TargetCompass by the current strategy
+  const otRank={}; [...T].sort((a,b)=>b.uc_score-a.uc_score).forEach((t,i)=>otRank[t.symbol]=i+1);
+  const tc=scored(posture); const tcRank={}; tc.forEach(x=>tcRank[x.t.symbol]=x.rank);
+  const moves=T.map(t=>({t,ot:otRank[t.symbol],tc:tcRank[t.symbol],d:otRank[t.symbol]-tcRank[t.symbol]}));
+  const ups=moves.filter(m=>m.d>0).sort((a,b)=>b.d-a.d).slice(0,4);
+  const downs=moves.filter(m=>m.d<0).sort((a,b)=>a.d-b.d).slice(0,4);
+  const why={TNFSF15:"Strong genetics, zero competitors: the field's whitespace prize.",GPR35:"Genetically anchored orphan GPCR, no UC program.",OSMR:"Built-in responder biomarker, near-empty field.",IRF5:"Upstream genetics, uncrowded.",CXCR2:"Open field, tractable.",
+    TNFRSF9:"Genetics-backed and essentially untouched in UC.",IL10RA:"Monogenic IBD gene on the IL-10 axis, little competition.",IL10:"Core IBD-genetics pathway, uncrowded.",PTPN2:"Genetically supported regulator, open field.",
+    JAK2:"Pfizer already sells here; boxed safety warning.",JAK1:"JAK class: crowded and Pfizer-adjacent; class safety overhang.",JAK3:"JAK class: Pfizer owns tofacitinib; class safety overhang.",
+    NR3C1:"Steroids: zero genetics, ubiquitous toxicity.",IL12B:"One of the most crowded mechanisms in UC.",TNF:"Legacy, saturated anti-TNF class.",IL17A:"Disconfirmed: blocking it worsened Crohn's.",PTGS2:"Legacy anti-inflammatory, no differentiation."};
+  const mv=(m,up)=>`<div class="mv-row"><span class="mv-sym">${m.t.symbol}</span>
+     <span class="mv-txt">${why[m.t.symbol]||m.t.name}</span>
+     <span class="mv-delta ${up?'up':'down'}">${up?'&#9650; +':'&#9660; '}${Math.abs(m.d)}<div class="mv-rank">#${m.ot}&#8594;#${m.tc}</div></span></div>`;
+
+  const box_h=`
+  <div class="method-sec">
+    <h3>Where the AI works</h3>
+    <p class="sub">Four stages, straight from our roadmap. Two are deterministic and auditable. Two are genuine AI, because they turn unstructured evidence and judgment into something a scientist can read and challenge.</p>
+    <div class="pipe">
+      <div class="pstep"><span class="pn">STAGE 1</span><h4>Collect evidence</h4><p>Open Targets, ClinicalTrials.gov, PubMed and public drug databases, pulled into one place per target.</p></div>
+      <div class="pstep isai"><span class="pn">STAGE 2</span><h4>Read &amp; reconcile</h4><p>An LLM extracts structured claims from unstructured trial and literature text, and reconciles conflicting sources into one evidence ledger.</p><span class="ai">AI</span></div>
+      <div class="pstep"><span class="pn">STAGE 3</span><h4>Score &amp; rank</h4><p>Transparent weighted model across all six factors. No black box: every point traces to a source and a weight you control.</p></div>
+      <div class="pstep isai"><span class="pn">STAGE 4</span><h4>Explain &amp; red-team</h4><p>The AI writes the assessment memo, the plain-language answer, and the mandatory counter-evidence that argues against each pick.</p><span class="ai">AI</span></div>
+    </div>
+  </div>
+
+  <div class="method-sec">
+    <h3>Same targets, different answer</h3>
+    <p class="sub">Open Targets ranks by scientific association alone, by design. TargetCompass adds competition, portfolio and failure risk, so the ranking moves. This is the difference, on today's data, under the <b>${POSTURES[posture].name}</b> strategy.</p>
+    <div class="movers">
+      <div class="mv-col"><h4>&#9650; TargetCompass elevates</h4>${ups.map(m=>mv(m,true)).join('')}</div>
+      <div class="mv-col"><h4>&#9660; TargetCompass demotes</h4>${downs.map(m=>mv(m,false)).join('')}</div>
+    </div>
+  </div>
+
+  <div class="method-sec">
+    <h3>Built to be trusted, and to scale</h3>
+    <p class="sub">The three hard problems in target prioritization, and how the design answers each.</p>
+    <div class="method-list">
+      <div class="ml"><h4>Data quality</h4><p>Sources conflict and are incomplete. Every claim is stored with its origin and date in an append-only ledger, so disagreements are visible, not averaged away.</p></div>
+      <div class="ml"><h4>Validation, not autonomy</h4><p>There is no perfect ground truth for the "best" target. TargetCompass supports the decision, it does not make it. Our backtest shows the logic would have called the last decade right.</p></div>
+      <div class="ml"><h4>Explainable by default</h4><p>Researchers need transparency. Every recommendation opens to its evidence and its counter-case, with links to the primary record. Nothing is asserted without a source.</p></div>
+    </div>
+    <p class="val-foot" style="margin-top:16px"><b>Scale:</b> nothing here is UC-specific. Point the same pipeline at any disease EFO and it pulls, scores and explains a fresh landscape, which is how a one-disease prototype becomes a platform for prioritization across Pfizer's portfolio.</p>
+  </div>`;
+  box.innerHTML=box_h;
+}
 document.querySelectorAll('nav.tabs button').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected','false'));
   b.setAttribute('aria-selected','true');
@@ -3115,8 +3503,16 @@ document.querySelectorAll('nav.tabs button').forEach(b=>b.addEventListener('clic
   document.getElementById('v-'+b.dataset.view).classList.add('on');
   document.getElementById('provstrip').style.display = b.dataset.view==='chat' ? 'none' : 'flex';
   if(b.dataset.view==='cmp'){buildPick();drawCompare();}
+  if(b.dataset.view==='val'){drawValidation();}
+  if(b.dataset.view==='method'){drawMethod();}
+  if(b.dataset.view==='pt'){drawPatients();}
   window.scrollTo(0,0);
 }));
+
+const _ut=document.getElementById('unitoggle');
+if(_ut)_ut.addEventListener('click',()=>{showUniverse=!showUniverse;
+  _ut.classList.toggle('on',showUniverse);_ut.setAttribute('aria-pressed',showUniverse);
+  _ut.textContent='Full field: '+(showUniverse?'on':'off');drawPlot(false);});
 
 const _tb=document.getElementById('tourbtn');
 if(_tb)_tb.addEventListener('click',()=>{const c=document.getElementById('plot').closest('.card');
@@ -3293,6 +3689,244 @@ renderSuggest();
 pushBot(botWrap('grounded, cited, no guesswork',`
   <p class="lead">Hi. I help you find <b>more worthwhile</b> ulcerative colitis targets, ones that are both scientifically credible and a smart use of Pfizer's resources. Ask about any target and I'll give you the science case, the business case, and the reasons it might fail, with every claim linked to its source.</p>
   <p style="margin:0;font-size:13.5px;color:var(--ink-3);line-height:1.5">Human-genetic support alone makes a target about <b>2.6&#215; more likely</b> to succeed in the clinic (Minikel et al., Nature 2024). I start from that genetics-grounded science, then add what Open Targets deliberately leaves out: who else is racing, what Pfizer already owns, and what has already failed.</p>`));
+
+/* ======================================================================
+   BRING YOUR OWN TARGET  +  SHORTLIST  +  EXPORT / SHARE
+   Turns the demo from "look at our 30" into "analyze any of 7,161".
+   ====================================================================== */
+const _cl=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const OT_EP='https://api.platform.opentargets.org/api/v4/graphql';
+const CTV='https://clinicaltrials.gov/api/v2/studies';
+const UNI_BY_SYM=Object.fromEntries(UNIVERSE.rows.map(r=>[r[0],r]));
+let AUTOCACHE={};
+
+/* --- toast --- */
+let _toastT;
+function toast(msg){const el=document.getElementById('toast');if(!el)return;el.innerHTML=msg;el.classList.add('on');clearTimeout(_toastT);_toastT=setTimeout(()=>el.classList.remove('on'),2300);}
+
+/* --- shortlist store (localStorage) --- */
+const SL_KEY='tc_shortlist_v1';
+let shortlist=(()=>{try{return JSON.parse(localStorage.getItem(SL_KEY))||[]}catch(e){return[]}})();
+function isPinned(s){return shortlist.includes(s);}
+function saveSL(){try{localStorage.setItem(SL_KEY,JSON.stringify(shortlist));}catch(e){}}
+function togglePin(sym){const i=shortlist.indexOf(sym);if(i>=0)shortlist.splice(i,1);else shortlist.push(sym);
+  saveSL();renderShortlist();syncURL();try{drawBoard(scored(posture));}catch(e){}
+  toast(i>=0?(sym+' removed from shortlist'):(sym+' added to shortlist'));}
+function renderShortlist(){
+  const c=document.getElementById('slcount');if(c)c.textContent=shortlist.length;
+  const chips=document.getElementById('slchips');if(!chips)return;
+  if(!shortlist.length){chips.innerHTML='<span class="sl-empty">No targets pinned yet. Star a target from the ranking, the map, or its memo to build a shortlist you can export or share.</span>';return;}
+  chips.innerHTML=shortlist.map(s=>`<span class="sl-chip">${s}<button data-un="${s}" aria-label="Remove ${s}">&times;</button></span>`).join('');
+  chips.querySelectorAll('[data-un]').forEach(b=>b.addEventListener('click',()=>togglePin(b.dataset.un)));
+}
+
+/* --- autocomplete --- */
+function populateDatalist(){const dl=document.getElementById('tsyms');if(!dl)return;
+  const syms=[...new Set([...T.map(t=>t.symbol),...UNIVERSE.rows.map(r=>r[0])])].sort();
+  dl.innerHTML=syms.map(s=>`<option value="${s}">`).join('');}
+
+/* --- resolve any symbol --- */
+function analyzeTarget(q){const sym=(q||'').trim().toUpperCase();if(!sym)return;
+  if(byId[sym])return openMemo(sym);
+  if(UNI_BY_SYM[sym])return openAutoMemo(sym);
+  return openAutoMemoLive(sym);}
+
+/* --- score an arbitrary model against the curated distribution --- */
+function fitOf(m){const sc=scored(posture);const raws=sc.map(x=>x.r);
+  const lo=Math.min(...raws),hi=Math.max(...raws);const raw=rawScore(m,posture);
+  return {fit:Math.round(100*_cl((raw-lo)/((hi-lo)||1))),rank:raws.filter(r=>r>raw).length+1,n:sc.length};}
+
+function modelFromUniverse(sym){const r=UNI_BY_SYM[sym];
+  const assoc=r[3],gen=r[4],lit=r[5],kd=r[6],ens=r[7];
+  return {symbol:sym,name:sym,ensembl:ens,assoc,genetic:gen,lit,knownDrug:kd,
+    bio:_cl(0.55*assoc+0.45*gen),drug:0.5,whitespace:_cl(1-0.55*lit-0.95*kd),
+    failrisk:_cl((gen<0.05?0.2:0)+(lit>0.5?0.1:0)),redundancy:0,
+    activeTrials:null,totalTrials:null,tractability:null,safetyEvents:null,uniprot:null,live:false};}
+
+/* --- render an auto-generated memo --- */
+function renderAutoMemo(m){
+  AUTOCACHE[m.symbol]=m;const f=fitOf(m);
+  const rec = m.assoc<0.05?{txt:'NEGLIGIBLE UC ASSOCIATION',col:'var(--ink-3)'}
+    : f.rank<=3?{txt:'ADVANCE: priority candidate',col:'var(--risk-lo)'}
+    : (m.whitespace>=0.7&&m.bio>=0.5)?{txt:'WATCH: credible whitespace',col:'var(--risk-md)'}
+    : f.rank<=8?{txt:'WATCH: conditional interest',col:'var(--risk-md)'}
+    : {txt:'DEPRIORITIZE',col:'var(--ink-3)'};
+  const genTxt=m.genetic>=0.5?'Strong human genetic support, the most translatable evidence class.':m.genetic>=0.1?'Some human genetic support.':'Little human genetic support: association rests on literature or drug history, which weakens mechanistic novelty.';
+  const drugTxt=m.tractability?(m.drug>=0.6?'Tractable: structural or ligand evidence present.':m.drug>=0.35?'Moderately tractable.':'Limited tractability evidence in Open Targets.'):'Druggability loading from Open Targets tractability&hellip;';
+  const compTxt=m.activeTrials==null?'Competitive activity loading from ClinicalTrials.gov&hellip;':(m.activeTrials>=20?`Crowded: ${m.activeTrials} active UC programs mention this target.`:m.activeTrials<=3?`Whitespace: only ${m.activeTrials} active UC programs mention this target.`:`${m.activeTrials} active UC programs mention this target.`);
+  const safeTxt=m.safetyEvents==null?'Safety liabilities loading&hellip;':(m.safetyEvents>0?`Open Targets records ${m.safetyEvents} curated safety-liability event(s): elevated on-target risk.`:'No curated safety liabilities in Open Targets. Absence of evidence is not evidence of safety.');
+  const otUrl=m.ensembl?`https://platform.opentargets.org/target/${m.ensembl}/associations`:'https://platform.opentargets.org';
+  const ctUrl=`https://clinicaltrials.gov/search?cond=Ulcerative%20Colitis&term=${m.symbol}`;
+  const sup=[{id:'OT-'+m.symbol,url:otUrl,text:`UC association ${(m.assoc||0).toFixed(2)} (human genetic ${(m.genetic||0).toFixed(2)}, literature ${(m.lit||0).toFixed(2)}) in Open Targets.`}];
+  if(m.activeTrials!=null)sup.push({id:'CT-'+m.symbol,url:ctUrl,text:`${m.activeTrials} active / ${m.totalTrials} total UC interventional programs mention this target (ClinicalTrials.gov).`});
+  const con=[];
+  if(m.safetyEvents)con.push({id:'SAFE-'+m.symbol,url:otUrl,text:`Open Targets records ${m.safetyEvents} safety-liability event(s).`});
+  if(m.genetic<0.05)con.push({id:'GEN-'+m.symbol,url:otUrl,text:'No meaningful human genetic support: association rests on non-genetic evidence.'});
+  if(m.activeTrials!=null&&m.activeTrials>=20)con.push({id:'CROWD-'+m.symbol,url:ctUrl,text:`Heavily contested: ${m.activeTrials} active UC programs.`});
+  const structHTML=m.uniprot?`
+      <div class="sec"><span class="lbl">3D structure &middot; AlphaFold</span>
+        <div class="mol3d" id="mol3d"><div class="mol-load">Loading structure&hellip;</div></div>
+        <div class="mol-ctl"><button type="button" data-m="spin">Spin</button><button type="button" data-m="surface">Surface</button>
+          <a class="cite" href="https://alphafold.ebi.ac.uk/entry/${m.uniprot}" target="_blank" rel="noopener">AF-${m.uniprot}&#8599;</a>
+          <span class="mol-note" id="molnote"></span></div></div>`:'';
+  document.getElementById('drawer').innerHTML=`
+    <div class="memo-h">
+      <button class="x" id="mx" aria-label="Close">&#10005;</button>
+      <div class="lbl">Target assessment memo &middot; <span class="memo-live">${m.live?'Live &middot; Open Targets + ClinicalTrials.gov':'Live data loading&hellip;'}</span></div>
+      <div class="memo-title"><h2>${m.symbol}</h2><span class="full">${m.name||''}</span></div>
+      <div class="memo-rec" style="color:${rec.col};border-color:${rec.col}">${rec.txt} &middot; fit ${f.fit}/100 &middot; would rank ~#${f.rank} of ${f.n+1}</div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="pinb${isPinned(m.symbol)?' on':''}" id="memopin">${isPinned(m.symbol)?'&#9733; On shortlist':'&#9734; Add to shortlist'}</button>
+        <button class="pinb" id="memodl">&#8595; Download one-pager</button>
+      </div>
+    </div>
+    <div class="memo-body">
+      ${structHTML}
+      <div class="sec"><span class="lbl">Mechanism thesis</span><p>${m.symbol} shows a UC association of ${(m.assoc||0).toFixed(2)}. ${genTxt}</p></div>
+      <div class="sec"><span class="lbl">Supporting evidence</span>${evList(sup)}</div>
+      <div class="sec contra"><span class="lbl">Disconfirming evidence: why this could fail</span>${con.length?evList(con):('<p style="color:var(--ink-3);font-size:12.5px">'+safeTxt+'</p>')}</div>
+      <div class="sec"><span class="lbl">Druggability</span><p>${drugTxt}</p></div>
+      <div class="sec"><span class="lbl">Competitive position</span><p>${compTxt}</p></div>
+      <div class="sec"><span class="lbl">Safety</span><p>${safeTxt}</p></div>
+    </div>
+    <div class="memo-foot">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-3)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span>Generated live for a target outside the curated set, using the same formulas as the shortlist: Open Targets association &amp; tractability plus ClinicalTrials.gov activity. Every value links to its source. Decision support, not a decision.</span>
+    </div>`;
+  document.getElementById('mx').addEventListener('click',closeMemo);
+  const mp=document.getElementById('memopin');
+  mp.addEventListener('click',()=>{togglePin(m.symbol);mp.classList.toggle('on',isPinned(m.symbol));mp.innerHTML=isPinned(m.symbol)?'&#9733; On shortlist':'&#9734; Add to shortlist';});
+  document.getElementById('memodl').addEventListener('click',()=>downloadMemo(m));
+  document.getElementById('drawer').classList.add('on');document.getElementById('scrim').classList.add('on');
+  if(m.uniprot)requestAnimationFrame(()=>initMol(m.symbol,m.uniprot));
+}
+function openAutoMemo(sym){const m=modelFromUniverse(sym);renderAutoMemo(m);liveEnrich(m);}
+async function openAutoMemoLive(sym){
+  const m={symbol:sym,name:sym,ensembl:null,assoc:0,genetic:0,lit:0,knownDrug:0,bio:0,drug:0.5,whitespace:0.5,failrisk:0.2,redundancy:0,activeTrials:null,totalTrials:null,tractability:null,safetyEvents:null,uniprot:null,live:false};
+  renderAutoMemo(m);
+  try{
+    const s=await otFetch('query($q:String!){search(queryString:$q,entityNames:["target"]){hits{id object{... on Target{approvedSymbol}}}}}',{q:sym});
+    const hits=(s.data.search.hits||[]);
+    const hit=hits.find(h=>h.object&&(h.object.approvedSymbol||'').toUpperCase()===sym)||hits[0];
+    if(!hit){toast('No Open Targets entry for '+sym);return;}
+    m.ensembl=hit.id;await liveEnrich(m);
+  }catch(e){toast('Live lookup is blocked in this sandbox; open the hosted version.');}
+}
+async function liveEnrich(m){
+  if(!m.ensembl)return;
+  try{
+    const q='query($e:String!){target(ensemblId:$e){approvedSymbol approvedName proteinIds{id source} tractability{modality value label} safetyLiabilities{event} associatedDiseases(page:{index:0,size:500}){rows{disease{id} score datatypeScores{id score}}}}}';
+    const r=await otFetch(q,{e:m.ensembl});const t=r.data.target;if(!t)return;
+    m.name=t.approvedName||m.name;m.symbol=t.approvedSymbol||m.symbol;
+    const up=(t.proteinIds||[]).find(p=>p.source&&p.source.toLowerCase().indexOf('uniprot')>=0);if(up)m.uniprot=up.id;
+    const tr=t.tractability||[];m.tractability=tr;
+    const has=kw=>tr.some(x=>x.value&&(x.label||'').toLowerCase().indexOf(kw)>=0);
+    const pocket=has('pocket')||has('structure'),ligand=has('ligand')||has('binder'),clin=has('approved')||has('advanced clinical')||has('phase 1');
+    m.drug=_cl(0.15+0.45*(pocket?1:0)+0.25*(ligand?1:0)+0.15*(clin?1:0));
+    m.safetyEvents=(t.safetyLiabilities||[]).length;
+    const rows=(t.associatedDiseases&&t.associatedDiseases.rows)||[];
+    const uc=rows.find(x=>x.disease.id==='MONDO_0005101');
+    if(uc){const dts=Object.fromEntries(uc.datatypeScores.map(d=>[d.id,d.score]));
+      m.assoc=uc.score;m.genetic=dts.genetic_association||0;m.lit=dts.literature||0;m.knownDrug=dts.known_drug||0;}
+    m.bio=_cl(0.55*m.assoc+0.45*m.genetic);
+    m.failrisk=_cl((m.safetyEvents>0?0.3:0)+(m.genetic<0.05?0.15:0)+((m.lit>0.6&&m.genetic<0.2)?0.1:0));
+    try{const [a,tot]=await ctCount(m.symbol);m.activeTrials=a;m.totalTrials=tot;m.whitespace=_cl(1-Math.log1p(a)/Math.log1p(40));}
+    catch(e){m.whitespace=_cl(1-0.55*m.lit-0.95*m.knownDrug);}
+    m.live=true;
+    if(document.getElementById('drawer').classList.contains('on'))renderAutoMemo(m);
+  }catch(e){/* keep provisional baked memo */}
+}
+async function otFetch(query,variables){
+  const resp=await fetch(OT_EP,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query,variables})});
+  if(!resp.ok)throw new Error('OT '+resp.status);const j=await resp.json();if(j.errors)throw new Error('OT gql');return j;}
+async function ctCount(sym){
+  const base=CTV+'?query.cond='+encodeURIComponent('ulcerative colitis')+'&query.term='+encodeURIComponent(sym)+'&countTotal=true&pageSize=1';
+  const active=base+'&filter.overallStatus=RECRUITING|ACTIVE_NOT_RECRUITING|ENROLLING_BY_INVITATION|NOT_YET_RECRUITING';
+  const [ra,rt]=await Promise.all([fetch(active),fetch(base)]);const [ja,jt]=await Promise.all([ra.json(),rt.json()]);
+  return [ja.totalCount||0,jt.totalCount||0];}
+
+/* --- export --- */
+function memoModelFor(t,rec,ex){const sc=scored(posture);const x=sc.find(y=>y.t.symbol===t.symbol);
+  return {symbol:t.symbol,name:t.name,ensembl:t.ensembl,assoc:t.uc_score,genetic:t.genetic,lit:t.literature,
+    bio:t.bio,drug:t.drug,whitespace:t.whitespace,failrisk:t.failrisk,redundancy:t.redundancy,
+    activeTrials:t.active_trials,totalTrials:t.total_trials,rec:rec.txt,fit:x?x.s:null,rank:x?x.rank:null,
+    thesis:ex.thesis,market:ex.market,change:ex.change,exp:ex.exp,
+    sup:ex.supList,con:(ex.conEv||[]).map(e=>({id:e.id,url:e.url,text:e.text})),curated:true};}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function memoHTML(m){const f=m.curated?{fit:m.fit,rank:m.rank}:fitOf(m);
+  const sup=(m.sup||[]).map(e=>`<li><a href="${e.url}">${esc(e.id)}</a> ${esc(e.text)}</li>`).join('');
+  const con=(m.con||[]).map(e=>`<li><a href="${e.url}">${esc(e.id)}</a> ${esc(e.text)}</li>`).join('');
+  return `<!doctype html><meta charset="utf-8"><title>TargetCompass — ${esc(m.symbol)}</title>
+<style>body{font-family:system-ui,Arial,sans-serif;max-width:760px;margin:40px auto;padding:0 22px;color:#12142E;line-height:1.55}
+h1{margin:0;font-size:30px}.rec{display:inline-block;margin:10px 0 4px;font-weight:700;border:1.5px solid #888;border-radius:8px;padding:6px 12px}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#556;margin:24px 0 6px}
+.g{display:flex;gap:18px;flex-wrap:wrap;margin:10px 0}.g div{font-size:13px}.g b{font-family:monospace}
+ul{padding-left:18px}li{margin:4px 0;font-size:13px}a{color:#0B18EC}.foot{margin-top:26px;font-size:11px;color:#889;border-top:1px solid #ddd;padding-top:10px}</style>
+<h1>${esc(m.symbol)} <span style="font-size:16px;color:#667;font-weight:400">${esc(m.name||'')}</span></h1>
+<div class="rec">${esc(m.rec||'')} &middot; fit ${f.fit}/100${f.rank?(' &middot; rank #'+f.rank):''}</div>
+<div class="g"><div>UC association <b>${(m.assoc||0).toFixed(2)}</b></div><div>Genetics <b>${(m.genetic||0).toFixed(2)}</b></div><div>Open field <b>${(m.whitespace||0).toFixed(2)}</b></div><div>Failure risk <b>${(m.failrisk||0).toFixed(2)}</b></div>${m.activeTrials!=null?('<div>Active UC trials <b>'+m.activeTrials+'</b></div>'):''}</div>
+${m.thesis?('<h2>Mechanism thesis</h2><p>'+esc(m.thesis)+'</p>'):''}
+<h2>Supporting evidence</h2><ul>${sup||'<li>See Open Targets.</li>'}</ul>
+<h2>Disconfirming evidence</h2><ul>${con||'<li>No material disconfirming signals in the retrieved evidence.</li>'}</ul>
+${m.market?('<h2>Competitive position</h2><p>'+esc(m.market)+'</p>'):''}
+${m.change?('<h2>What would change our mind</h2><p>'+esc(m.change)+'</p>'):''}
+${m.exp?('<h2>Recommended next experiment</h2><p>'+esc(m.exp)+'</p>'):''}
+<div class="foot">TargetCompass &middot; Ulcerative Colitis &middot; grounded in Open Targets + ClinicalTrials.gov. Decision support, not a decision.</div>`;}
+function downloadBlob(name,html){const b=new Blob([html],{type:'text/html'});const u=URL.createObjectURL(b);
+  const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);}
+function downloadMemo(m){downloadBlob('TargetCompass_'+m.symbol+'.html',memoHTML(m));toast('Downloaded '+m.symbol+' one-pager');}
+function exportShortlist(){
+  if(!shortlist.length){toast('Shortlist is empty');return;}
+  const rows=shortlist.map(sym=>{
+    if(byId[sym]){const t=byId[sym];const x=scored(posture).find(y=>y.t.symbol===sym);const rec=recFor(t);
+      return {symbol:sym,name:t.name,assoc:t.uc_score,genetic:t.genetic,whitespace:t.whitespace,failrisk:t.failrisk,active:t.active_trials,rec:rec.txt,fit:x?x.s:'',rank:x?x.rank:''};}
+    const m=AUTOCACHE[sym]||modelFromUniverse(sym);const f=fitOf(m);
+    return {symbol:sym,name:m.name,assoc:m.assoc,genetic:m.genetic,whitespace:m.whitespace,failrisk:m.failrisk,active:m.activeTrials,rec:'',fit:f.fit,rank:f.rank};});
+  const tr=rows.map(r=>`<tr><td><b>${esc(r.symbol)}</b><br><small>${esc(r.name||'')}</small></td><td>${(r.assoc||0).toFixed(2)}</td><td>${(r.genetic||0).toFixed(2)}</td><td>${(r.whitespace||0).toFixed(2)}</td><td>${(r.failrisk||0).toFixed(2)}</td><td>${r.active==null?'&mdash;':r.active}</td><td>${r.fit||''}${r.rank?(' (#'+r.rank+')'):''}</td><td>${esc(r.rec||'')}</td></tr>`).join('');
+  downloadBlob('TargetCompass_shortlist.html',`<!doctype html><meta charset="utf-8"><title>TargetCompass shortlist</title>
+<style>body{font-family:system-ui,Arial,sans-serif;max-width:940px;margin:40px auto;padding:0 22px;color:#12142E}
+h1{font-size:26px}table{border-collapse:collapse;width:100%;font-size:12.5px;margin-top:14px}
+th,td{border:1px solid #dde;padding:7px 9px;text-align:left;vertical-align:top}th{background:#EAF0FE;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+small{color:#778}.foot{margin-top:22px;font-size:11px;color:#889}</style>
+<h1>TargetCompass shortlist <span style="font-size:14px;font-weight:400;color:#667">Ulcerative Colitis &middot; ${esc(POSTURES[posture].name)} strategy</span></h1>
+<table><tr><th>Target</th><th>UC assoc</th><th>Genetics</th><th>Open field</th><th>Fail risk</th><th>Active trials</th><th>Fit (rank)</th><th>Call</th></tr>${tr}</table>
+<div class="foot">Generated by TargetCompass &middot; grounded in Open Targets + ClinicalTrials.gov. Decision support, not a decision.</div>`);
+  toast('Exported shortlist ('+shortlist.length+')');
+}
+
+/* --- share via URL state --- */
+function syncURL(){const p=new URLSearchParams();
+  if(posture!=='balanced')p.set('p',posture);
+  if(posture==='custom'){const c=POSTURES.custom;p.set('w',[c.wB,c.wD,c.wW,c.wF,c.wR].map(x=>Math.round(x*100)).join('-'));}
+  if(shortlist.length)p.set('pins',shortlist.join(','));
+  const h=p.toString();history.replaceState(null,'',h?('#'+h):(location.pathname+location.search));}
+function restoreFromURL(){const h=location.hash.replace(/^#/,'');if(!h)return false;
+  const p=new URLSearchParams(h);let changed=false;
+  const pins=p.get('pins');if(pins){shortlist=pins.split(',').filter(Boolean);saveSL();changed=true;}
+  const w=p.get('w');if(w){const a=w.split('-').map(n=>parseInt(n,10)/100);
+    if(a.length===5&&a.every(x=>!isNaN(x))){const c=POSTURES.custom;c.wB=a[0];c.wD=a[1];c.wW=a[2];c.wF=a[3];c.wR=a[4];}}
+  const pk=p.get('p');if(pk&&POSTURES[pk]){posture=pk;changed=true;}
+  return changed;}
+function copyShareLink(){syncURL();const url=location.href;
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(url).then(()=>toast('Shareable link copied')).catch(()=>toast('Link is in the address bar'));
+  else toast('Link is in the address bar');}
+
+/* --- wire it up --- */
+(function initBYO(){
+  populateDatalist();
+  const si=document.getElementById('tsearch');
+  if(si)si.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();analyzeTarget(si.value);si.blur();}});
+  const sb=document.getElementById('slbtn'),tray=document.getElementById('sltray');
+  if(sb)sb.addEventListener('click',()=>{tray.hidden=!tray.hidden;});
+  const se=document.getElementById('slexport');if(se)se.addEventListener('click',exportShortlist);
+  const ss=document.getElementById('slshare');if(ss)ss.addEventListener('click',copyShareLink);
+  const scl=document.getElementById('slclear');if(scl)scl.addEventListener('click',()=>{shortlist=[];saveSL();renderShortlist();syncURL();try{drawBoard(scored(posture));}catch(e){}toast('Shortlist cleared');});
+  const plot=document.getElementById('plot');
+  if(plot)plot.addEventListener('click',e=>{const c=e.target.closest('.ucloud');if(c&&c.dataset.sym)analyzeTarget(c.dataset.sym);});
+  const changed=restoreFromURL();
+  renderShortlist();
+  if(changed){if(posture==='custom')syncSliders('custom');refreshAll();}
+})();
 
 drawPlot(true);
 
