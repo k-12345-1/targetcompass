@@ -161,6 +161,20 @@
     border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);border-radius:4px;padding:2px 5px;margin-top:1px;
     text-decoration:none;white-space:nowrap}
   .cite:hover{background:var(--accent);color:#fff}
+  .evladder{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+  .evtier{display:grid;grid-template-columns:118px 94px minmax(0,1fr);gap:10px;align-items:start;
+    background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 11px}
+  .evtier .tier{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);line-height:1.35}
+  .evtier .state{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    border-radius:999px;padding:3px 7px;text-align:center;line-height:1.25;border:1px solid}
+  .evtier .state.embedded{color:var(--risk-lo);border-color:color-mix(in srgb,var(--risk-lo) 55%,var(--line));background:#E6F6EF}
+  .evtier .state.proxy{color:var(--risk-md);border-color:color-mix(in srgb,var(--risk-md) 55%,var(--line));background:#FFF6DD}
+  .evtier .state.missing{color:var(--ink-3);border-color:var(--line);background:var(--panel)}
+  .evtier .state.clinical{color:var(--accent-ink);border-color:color-mix(in srgb,var(--accent) 35%,var(--line));background:var(--accent-bg)}
+  .evtier .detail{font-size:12px;color:var(--ink-2);line-height:1.45}
+  .evtier .detail b{color:var(--ink)}
+  .evtier .srcs{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+  @media(max-width:560px){.evtier{grid-template-columns:1fr}.evtier .state{text-align:left;width:max-content}}
   .memo-foot{font-size:11.5px;color:var(--ink-3);padding:14px 20px 28px;border-top:1px solid var(--line);
     display:flex;gap:8px;align-items:flex-start}
   .memo-foot svg{flex:none;margin-top:1px}
@@ -279,6 +293,30 @@
   .mol-note{font-size:11px;color:var(--ink-3);margin-left:auto;font-family:var(--mono)}
   .mol-note b{color:var(--risk-hi)}
 
+  /* ---- tissue expression explorer ---- */
+  .expr-card{margin:10px 0 12px;padding:12px;border:1px solid var(--line);border-radius:10px;
+    background:var(--panel-2);font-size:12.5px;color:var(--ink-3)}
+  .expr-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:10px}
+  .expr-title{font-weight:700;color:var(--ink);font-size:13px;margin-top:2px}
+  .expr-summary{font-size:12px;color:var(--ink-2);line-height:1.45;margin-top:3px}
+  .expr-toggle{flex:none}
+  .expr-toggle button{padding:6px 12px;font-size:11.5px}
+  .expr-bars{max-height:430px;overflow:auto;padding-right:4px}
+  .expr-row{display:grid;grid-template-columns:minmax(112px,150px) 1fr 58px;gap:9px;align-items:center;margin:6px 0}
+  .expr-row .tn{font-size:12px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .expr-row .tv{font-size:11.5px;text-align:right}
+  .expr-map{display:grid;grid-template-columns:190px minmax(0,1fr);gap:12px;align-items:start}
+  .expr-body{width:190px;height:355px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+  .expr-body text{font-family:var(--mono);font-size:8px;fill:var(--ink-3)}
+  .expr-chip-list{max-height:355px;overflow:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .expr-chip{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:6px;align-items:center;
+    background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 7px}
+  .expr-chip .dot{width:8px;height:8px;border-radius:50%}
+  .expr-chip .name{font-size:11.5px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .expr-chip .val{font-family:var(--mono);font-size:10.5px;color:var(--ink);font-variant-numeric:tabular-nums}
+  .expr-note{font-size:11.5px;color:var(--ink-3);line-height:1.45;margin-top:9px}
+  @media(max-width:560px){.expr-head{flex-direction:column}.expr-map{grid-template-columns:1fr}.expr-body{width:100%;height:auto}.expr-chip-list{grid-template-columns:1fr}.expr-row{grid-template-columns:104px 1fr 50px}}
+
   /* ---- Validation / backtest ---- */
   .val-score{display:flex;flex-wrap:wrap;align-items:center;gap:22px;background:var(--panel);
     border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow);margin-bottom:16px}
@@ -380,7 +418,53 @@
   .pt-trow .ben{font-size:12.5px;color:var(--ink-2);line-height:1.5}
   .pt-trow .ben .who{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink);
     background:var(--accent-bg);border-radius:999px;padding:2px 8px;margin-right:7px;white-space:nowrap}
-  @media(max-width:760px){.pt-stats{grid-template-columns:1fr}.rbar{grid-template-columns:1fr}.rbar .lab{text-align:left}.pt-trow{grid-template-columns:1fr}}
+  .pt-lens{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:14px;align-items:start;margin-bottom:14px}
+  .pt-control{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:15px 16px;box-shadow:var(--shadow)}
+  .pt-control .h{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+  .pt-control .h b{font-size:14px;color:var(--ink)}
+  .pt-add{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+  .pt-add input{flex:1;min-width:0;background:var(--ground);border:1px solid var(--line);border-radius:999px;
+    padding:10px 14px;font-family:inherit;font-size:13.5px;color:var(--ink);outline:none}
+  .pt-add input:focus{border-color:var(--accent)}
+  .pt-add button,.pt-chip button,.pt-card button,.pt-row button{background:var(--accent-bg);color:var(--accent-ink);
+    border:1px solid color-mix(in srgb,var(--accent) 28%,transparent);border-radius:999px;padding:8px 13px;font-size:12px;font-weight:700}
+  .pt-add button:hover,.pt-card button:hover,.pt-row button:hover{background:var(--accent);color:#fff}
+  .pt-chipbar{display:flex;flex-wrap:wrap;gap:7px}
+  .pt-chip{display:inline-flex;align-items:center;gap:8px;background:var(--ground);border:1px solid var(--line);
+    border-radius:999px;padding:6px 8px 6px 12px;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink)}
+  .pt-chip button{background:none;border:none;color:var(--ink-4);font-size:15px;line-height:1;padding:0 2px}
+  .pt-chip button:hover{color:var(--risk-hi)}
+  .pt-quick{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+  .pt-quick button{background:var(--panel-2);border:1px solid var(--line);border-radius:999px;padding:6px 11px;
+    color:var(--ink-2);font-size:11.5px;font-weight:600}
+  .pt-quick button:hover{border-color:var(--accent);color:var(--accent-ink)}
+  .pt-kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .pt-kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 13px}
+  .pt-kpi .v{font-family:var(--mono);font-size:24px;font-weight:800;color:var(--accent);line-height:1}
+  .pt-kpi .l{font-size:10.5px;color:var(--ink-3);margin-top:5px;line-height:1.25}
+  .pt-main{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:14px;align-items:start}
+  .pt-table{display:flex;flex-direction:column}
+  .pt-row{display:grid;grid-template-columns:88px minmax(0,1fr) 96px 86px;gap:10px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+  .pt-row:first-child{border-top:none}
+  .pt-row .sym{font-family:var(--mono);font-weight:800;font-size:13px;color:var(--ink)}
+  .pt-row .meta{font-size:11.5px;color:var(--ink-3);line-height:1.35}
+  .pt-row .trial{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700}
+  .pt-row .trial small{display:block;color:var(--ink-3);font-size:10px;font-weight:500}
+  .pt-load{height:7px;background:var(--panel-2);border-radius:5px;overflow:hidden;margin-top:5px}
+  .pt-load span{display:block;height:100%;border-radius:5px}
+  .pt-cards{display:grid;grid-template-columns:1fr;gap:10px}
+  .pt-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 15px;box-shadow:var(--shadow)}
+  .pt-card .top{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+  .pt-card h4{margin:0;font-size:15px;color:var(--ink)}
+  .pt-card .tag{display:inline-flex;font-family:var(--mono);font-size:9px;letter-spacing:.07em;text-transform:uppercase;
+    color:var(--accent-ink);background:var(--accent-bg);border-radius:999px;padding:3px 8px;margin-top:5px}
+  .pt-card p{margin:7px 0 0;font-size:12.5px;color:var(--ink-2);line-height:1.5}
+  .pt-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}
+  .pt-metric{background:var(--ground);border:1px solid var(--line);border-radius:9px;padding:8px 9px}
+  .pt-metric b{display:block;font-family:var(--mono);font-size:13px;color:var(--ink)}
+  .pt-metric span{font-size:10px;color:var(--ink-3)}
+  @media(max-width:900px){.pt-lens,.pt-main{grid-template-columns:1fr}.pt-kpis{grid-template-columns:repeat(4,1fr)}}
+  @media(max-width:760px){.pt-stats{grid-template-columns:1fr}.rbar{grid-template-columns:1fr}.rbar .lab{text-align:left}.pt-trow{grid-template-columns:1fr}.pt-row{grid-template-columns:1fr}.pt-kpis{grid-template-columns:1fr 1fr}.pt-metrics{grid-template-columns:1fr}}
 
   /* ---- bring-your-own-target toolbar + shortlist ---- */
   .tctools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
@@ -2956,6 +3040,7 @@
   }
  ]
 }</script>
+<script src="hpa-expression-data.js"></script>
 <script>
 const DATA = JSON.parse(document.getElementById('app-data').textContent);
 const T = DATA.targets;
@@ -3217,6 +3302,241 @@ function recFor(t){
 }
 function evList(items){return `<ul class="ev">${items.map(e=>
   `<li><a class="cite" href="${e.url}" target="_blank" rel="noopener">${e.id}&#8599;</a><span>${e.text}</span></li>`).join('')}</ul>`;}
+function sourceLinksHTML(m){
+  const ens=m.ensembl;
+  const ncbi=`https://www.ncbi.nlm.nih.gov/gene/?term=${encodeURIComponent(m.symbol+'[sym] human')}`;
+  const hpa=ens?`https://www.proteinatlas.org/${ens}-${encodeURIComponent(m.symbol)}/tissue`:`https://www.proteinatlas.org/search/${encodeURIComponent(m.symbol)}`;
+  return `<div class="cites" style="margin-top:9px">
+    <a class="cite" href="${ncbi}" target="_blank" rel="noopener">NCBI-Gene&#8599;</a>
+    <a class="cite" href="${hpa}" target="_blank" rel="noopener">Human Protein Atlas&#8599;</a>
+    ${ens?`<a class="cite" href="https://platform.opentargets.org/target/${ens}/profile" target="_blank" rel="noopener">Open Targets profile&#8599;</a>`:''}
+  </div>`;
+}
+function expressionBreadthLabel(v){
+  if(v==null||isNaN(v))return {txt:'Expression breadth not scored in the embedded snapshot.',col:'var(--ink-3)',pct:null,raw:null};
+  if(v<0)return {txt:'Open Targets flags negative tissueDistribution, consistent with widespread baseline expression and higher systemic on-target safety concern.',col:'var(--risk-hi)',pct:0,raw:v};
+  const pct=Math.round(v*100);
+  if(v>=0.8)return {txt:'Open Targets tissueDistribution supports a more restricted baseline-expression profile.',col:'var(--risk-lo)',pct,raw:v};
+  if(v>=0.45)return {txt:'Open Targets tissueDistribution is intermediate; use the tissue-level pattern above before committing.',col:'var(--risk-md)',pct,raw:v};
+  return {txt:'Open Targets tissueDistribution is low; inspect the full tissue-level pattern above for systemic exposure risk.',col:'var(--risk-hi)',pct,raw:v};
+}
+function tissueExpressionHTML(m){
+  const v=m.tissueDistribution ?? m.prio?.tissueDistribution;
+  const b=expressionBreadthLabel(v);
+  const raw=b.raw==null?'NA':b.raw.toFixed(2);
+  return `<div class="sec"><span class="lbl">Tissue expression &middot; HPA + NCBI</span>
+    <div id="hpaexpr" class="expr-card" data-ens="${m.ensembl||''}" data-symbol="${m.symbol}">Loading tissue-level RNA expression from Human Protein Atlas&hellip;</div>
+    <p>${b.txt} The safety summary uses <b>Open Targets Platform Target Prioritisation factors</b>, specifically the <span class="mono">tissueDistribution</span> factor (<span class="mono">${raw}</span>). Open Targets derives this expression-distribution annotation from baseline-expression resources including Human Protein Atlas, Expression Atlas and GTEx. The chart above uses Human Protein Atlas tissue-level RNA expression when available.</p>
+    ${sourceLinksHTML(m)}
+  </div>`;
+}
+const CODING_VARIANT_EVIDENCE={
+  GPR35:{detail:'Missense variant rs3749171 / T108M is documented as an IBD-associated GPR35 coding variant; the curated memo also marks T108M on the structure.',sources:[
+    ['GPR35 review / PMC','https://pmc.ncbi.nlm.nih.gov/articles/PMC8591220/'],
+    ['Open Targets','https://platform.opentargets.org/target/ENSG00000178623/associations']
+  ]},
+  IL23R:{detail:'R381Q / rs11209026 is a protective IL23R coding variant with functional evidence for reduced IL-23 receptor signaling.',sources:[
+    ['ClinVar R381Q','https://www.ncbi.nlm.nih.gov/clinvar/RCV000003254.3'],
+    ['Functional study / PMC','https://pmc.ncbi.nlm.nih.gov/articles/PMC3192060/']
+  ]},
+  TYK2:{detail:'P1104A / rs34536443 is a TYK2 coding variant associated with protection from autoimmunity; IBD-specific support is suggestive rather than a UC proof point.',sources:[
+    ['TYK2 P1104A / PubMed','https://pubmed.ncbi.nlm.nih.gov/30740104/'],
+    ['Fine-mapping study / PubMed','https://pubmed.ncbi.nlm.nih.gov/25849893/']
+  ]}
+};
+const HUMAN_BIOPSY_EVIDENCE={
+  OSMR:{detail:'High baseline OSM in human IBD tissue/serum is linked to anti-TNF non-response; this is the strongest embedded biopsy-adjacent patient-selection evidence.',sources:[['West et al. 2017','https://www.nature.com/articles/nm.4307']]},
+  OSM:{detail:'High baseline OSM in human IBD tissue/serum is linked to anti-TNF non-response; this supports an OSM-high refractory subgroup.',sources:[['West et al. 2017','https://www.nature.com/articles/nm.4307']]}
+};
+const CLINICAL_POM_EVIDENCE={
+  TNFSF15:{detail:'Anti-TL1A class has UC clinical proof-of-mechanism through tulisokibart/PRA023 Phase 2 and subsequent late-stage investment.',sources:[['Merck / Prometheus','https://www.merck.com/news/merck-to-acquire-prometheus-biosciences-inc/'],['ClinicalTrials.gov',ctUrlFor('TNFSF15')]]},
+  IL23R:{detail:'IL-23 pathway has approved UC therapy in the class; this is class-level clinical proof, not target-newness.',sources:[['FDA mirikizumab','https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761279'],['ClinicalTrials.gov',ctUrlFor('IL23R')]]},
+  IL23A:{detail:'Selective IL-23 class has approved UC therapy; clinical proof is class-level and crowded.',sources:[['FDA mirikizumab','https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761279'],['ClinicalTrials.gov',ctUrlFor('IL23A')]]},
+  IL12B:{detail:'p40/p19 pathway has clinical validation in IBD; the embedded question is differentiation in a mature class.',sources:[['FDA mirikizumab','https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761279'],['ClinicalTrials.gov',ctUrlFor('IL12B')]]},
+  JAK2:{detail:'JAK class has UC efficacy but carries FDA safety warnings; for Pfizer this is also portfolio-overlapping biology.',sources:[['FDA safety warning','https://www.fda.gov/drugs/drug-safety-and-availability/fda-requires-warnings-about-increased-risk-serious-heart-related-events-cancer-blood-clots-and-death'],['ClinicalTrials.gov',ctUrlFor('JAK2')]]},
+  JAK1:{detail:'JAK class has UC efficacy but carries class safety scrutiny; clinical proof does not remove benefit-risk constraints.',sources:[['FDA safety warning','https://www.fda.gov/drugs/drug-safety-and-availability/fda-requires-warnings-about-increased-risk-serious-heart-related-events-cancer-blood-clots-and-death'],['ClinicalTrials.gov',ctUrlFor('JAK1')]]},
+  JAK3:{detail:'JAK class has UC efficacy but carries class safety scrutiny; Pfizer portfolio overlap limits incremental patient value.',sources:[['FDA safety warning','https://www.fda.gov/drugs/drug-safety-and-availability/fda-requires-warnings-about-increased-risk-serious-heart-related-events-cancer-blood-clots-and-death'],['ClinicalTrials.gov',ctUrlFor('JAK3')]]},
+  S1PR1:{detail:'S1P modulation has approved UC therapy through etrasimod; this is class-level clinical proof.',sources:[['FDA etrasimod','https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=216956'],['ClinicalTrials.gov',ctUrlFor('S1PR1')]]},
+  IL17A:{detail:'Clinical proof is negative in IBD-adjacent disease: anti-IL-17 worsened Crohn disease in a controlled trial.',sources:[['Hueber et al. 2012','https://gut.bmj.com/content/61/12/1693'],['ClinicalTrials.gov',ctUrlFor('IL17A')]]},
+  IL17RA:{detail:'Clinical proof is treated as negative by class/pathway concern: IL-17 blockade worsened Crohn disease.',sources:[['Hueber et al. 2012','https://gut.bmj.com/content/61/12/1693'],['ClinicalTrials.gov',ctUrlFor('IL17RA')]]}
+};
+function citeLinks(srcs){
+  return `<div class="srcs">${srcs.map(s=>`<a class="cite" href="${s[1]}" target="_blank" rel="noopener">${s[0]}&#8599;</a>`).join('')}</div>`;
+}
+function evidenceRow(tier,state,kind,detail,srcs){
+  return `<div class="evtier"><div class="tier">${tier}</div><div class="state ${kind}">${state}</div><div class="detail">${detail}${srcs&&srcs.length?citeLinks(srcs):''}</div></div>`;
+}
+function translationalEvidenceHTML(m){
+  const sym=m.symbol, ens=m.ensembl;
+  const assoc=m.uc_score ?? m.assoc ?? 0;
+  const gen=m.genetic ?? 0;
+  const active=m.active_trials ?? m.activeTrials;
+  const total=m.total_trials ?? m.totalTrials;
+  const ot=ens?`https://platform.opentargets.org/target/${ens}/associations`:'https://platform.opentargets.org';
+  const profile=ens?`https://platform.opentargets.org/target/${ens}/profile`:'https://platform.opentargets.org';
+  const hpaSingle=ens?`https://www.proteinatlas.org/${ens}-${encodeURIComponent(sym)}/single+cell+type`:`https://www.proteinatlas.org/search/${encodeURIComponent(sym)}`;
+  const gtex=`https://gtexportal.org/home/gene/${encodeURIComponent(sym)}`;
+  const mouse=m.prio?.mouseKOScore;
+  const coding=CODING_VARIANT_EVIDENCE[sym];
+  const biopsy=HUMAN_BIOPSY_EVIDENCE[sym];
+  const clinical=CLINICAL_POM_EVIDENCE[sym];
+  const rows=[];
+  rows.push(evidenceRow('GWAS / genetics','Embedded','embedded',
+    `Open Targets UC association <b>${assoc.toFixed(2)}</b>; genetic_association datatype score <b>${gen.toFixed(2)}</b>. This is association evidence, not causal mechanism by itself.`,
+    [[DATA.meta.ot_version,ot]]));
+  rows.push(coding?evidenceRow('Coding variant','Sourced','embedded',coding.detail,coding.sources)
+    : evidenceRow('Coding variant','Not embedded','missing',
+      'No target-level coding variant evidence is embedded for this target. Do not infer coding-variant biology from the GWAS score.',
+      [['NCBI Gene',`https://www.ncbi.nlm.nih.gov/gene/?term=${encodeURIComponent(sym+'[sym] human')}`],['Open Targets',ot]]));
+  rows.push(evidenceRow('pQTL / eQTL','Not embedded','missing',
+    'No target-level QTL colocalization or variant-to-expression evidence is parsed into this build. This should be added before claiming expression-mediated causality.',
+    [['GTEx gene page',gtex],['eQTL Catalogue','https://www.ebi.ac.uk/eqtl/'],['Open Targets V2G',ot]]));
+  rows.push(evidenceRow('Single-cell expression','Not embedded','missing',
+    'This build embeds HPA bulk tissue consensus RNA, not disease single-cell expression. Use this source before making cell-state claims.',
+    [['HPA single cell',hpaSingle],['Human Cell Atlas','https://www.humancellatlas.org/']]));
+  rows.push(mouse!=null?evidenceRow('Animal model','Proxy only','proxy',
+    `Open Targets Target Prioritisation mouseKOScore is <b>${mouse.toFixed(2)}</b>. This is a mouse knockout prior, not a UC disease-model result.`,
+    [['Open Targets profile',profile]])
+    : evidenceRow('Animal model','Not embedded','missing','No animal-model evidence is embedded for this target.',[['Open Targets profile',profile]]));
+  rows.push(biopsy?evidenceRow('Human biopsy','Sourced','embedded',biopsy.detail,biopsy.sources)
+    : evidenceRow('Human biopsy','Not embedded','missing',
+      'No structured human biopsy or disease-tissue perturbation evidence is embedded for this target.',
+      [['PubMed search',`https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(sym+' ulcerative colitis biopsy expression')}`]]));
+  rows.push(clinical?evidenceRow('Clinical proof-of-mechanism','Sourced','clinical',clinical.detail,clinical.sources)
+    : evidenceRow('Clinical proof-of-mechanism',active!=null?'Trial count only':'Not embedded',active!=null?'proxy':'missing',
+      active!=null?`ClinicalTrials.gov count is <b>${active} active / ${total} total</b> UC studies. This is activity evidence, not proof that the mechanism works.`
+        :'No clinical proof-of-mechanism is embedded for this target.',
+      [['ClinicalTrials.gov',ctUrlFor(sym)]]));
+  return `<div class="sec"><span class="lbl">Translational evidence &middot; sourced ladder</span>
+    <p style="margin-bottom:8px;color:var(--ink-3);font-size:12.5px">This section separates embedded evidence from missing evidence. A row marked <b>Not embedded</b> is not used as support in the recommendation.</p>
+    <div class="evladder">${rows.join('')}</div>
+  </div>`;
+}
+function hpaRecordFor(ens){
+  if(!ens||typeof HPA_EXPR==='undefined'||!HPA_EXPR.data)return null;
+  const values=HPA_EXPR.data[ens];
+  if(!values)return null;
+  return {ens,values,symbol:HPA_EXPR.symbols&&HPA_EXPR.symbols[ens],tissues:HPA_EXPR.tissues||[],organs:HPA_EXPR.organs||[]};
+}
+function ntpm(v){return v==null?'NA':(+v).toFixed(v>=100?0:v>=10?1:2);}
+function exprColor(v,max){
+  const p=max>0?Math.max(0,Math.min(1,Math.sqrt(v/max))):0;
+  const r=Math.round(16+207*p), g=Math.round(132-72*p), b=Math.round(103-47*p);
+  return `rgb(${r},${g},${b})`;
+}
+function hpaEntries(rec){
+  return rec.tissues.map((name,i)=>({name,organ:rec.organs[i]||'',value:rec.values[i]??0}))
+    .sort((a,b)=>b.value-a.value||a.name.localeCompare(b.name));
+}
+const BODY_TISSUE_POS={
+  'adipose tissue':[62,198], 'adrenal gland':[90,148], 'amygdala':[87,38], 'appendix':[84,224],
+  'basal ganglia':[95,45], 'blood vessel':[104,174], 'bone marrow':[73,284], 'breast':[75,103],
+  'cerebellum':[108,48], 'cerebral cortex':[95,30], 'cervix':[95,230], 'choroid plexus':[108,34],
+  'colon':[102,210], 'duodenum':[88,174], 'endometrium':[96,220], 'epididymis':[110,242],
+  'esophagus':[96,92], 'fallopian tube':[82,221], 'gallbladder':[82,151], 'heart muscle':[84,111],
+  'hippocampal formation':[82,46], 'hypothalamus':[96,52], 'kidney':[112,153], 'liver':[77,145],
+  'lung':[103,107], 'lymph node':[116,122], 'midbrain':[96,57], 'ovary':[80,230],
+  'pancreas':[96,162], 'parathyroid gland':[102,78], 'pituitary gland':[96,63], 'placenta':[94,222],
+  'prostate':[96,236], 'rectum':[96,224], 'retina':[82,32], 'salivary gland':[78,79],
+  'seminal vesicle':[84,240], 'skeletal muscle':[130,179], 'skin':[141,196], 'small intestine':[91,196],
+  'smooth muscle':[64,166], 'spinal cord':[111,72], 'spleen':[116,150], 'stomach':[92,153],
+  'testis':[102,249], 'thymus':[96,95], 'thyroid gland':[96,82], 'tongue':[91,82],
+  'tonsil':[112,83], 'urinary bladder':[96,221], 'vagina':[96,240]
+};
+function barPlotHTML(entries,max){
+  return `<div class="expr-bars">${entries.map(e=>`<div class="expr-row" title="${e.name}: ${ntpm(e.value)} nTPM">
+    <span class="tn">${e.name}</span>
+    <div class="track" style="height:8px;background:var(--panel);border:1px solid var(--line)"><div class="fill" style="height:100%;width:${Math.max(e.value>0?3:0,Math.round(100*e.value/max))}%;background:${exprColor(e.value,max)}"></div></div>
+    <span class="num tv">${ntpm(e.value)}</span>
+  </div>`).join('')}</div>`;
+}
+function bodyMapHTML(entries,max){
+  const mapped=entries.filter(e=>BODY_TISSUE_POS[e.name]);
+  const circles=mapped.map(e=>{
+    const [x,y]=BODY_TISSUE_POS[e.name];
+    const p=max>0?Math.sqrt(e.value/max):0;
+    const r=e.value>0?Math.max(2.2,2.5+5.5*p):1.8;
+    return `<circle cx="${x}" cy="${y}" r="${r.toFixed(1)}" fill="${e.value>0?exprColor(e.value,max):'transparent'}" stroke="${e.value>0?'#fff':'var(--line)'}" stroke-width="1"><title>${e.name}: ${ntpm(e.value)} nTPM</title></circle>`;
+  }).join('');
+  const chips=entries.map(e=>`<div class="expr-chip" title="${e.organ}">
+    <span class="dot" style="background:${exprColor(e.value,max)}"></span><span class="name">${e.name}</span><span class="val">${ntpm(e.value)}</span>
+  </div>`).join('');
+  return `<div class="expr-map">
+    <svg class="expr-body" viewBox="0 0 190 355" role="img" aria-label="Approximate human body map of tissue RNA expression">
+      <path d="M95 18a20 20 0 1 1 0 40a20 20 0 0 1 0-40z" fill="#F8FAFF" stroke="var(--line)" stroke-width="2"/>
+      <path d="M69 82c6-14 45-14 52 0l10 58l20 50c2 7-2 13-8 13h-8l-8-36l-7 74l20 86c2 8-3 14-10 14h-11l-24-88l-24 88h-11c-7 0-12-6-10-14l20-86l-7-74l-8 36h-8c-6 0-10-6-8-13l20-50l10-58z" fill="#F8FAFF" stroke="var(--line)" stroke-width="2"/>
+      <path d="M75 116c12 13 28 13 40 0" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+      <path d="M73 190c11 11 33 11 44 0" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+      ${circles}
+      <text x="12" y="336">Color and size scale with nTPM</text>
+    </svg>
+    <div class="expr-chip-list" aria-label="All HPA consensus tissue nTPM values">${chips}</div>
+  </div>`;
+}
+function wireExpressionToggle(host){
+  host.querySelectorAll('[data-expr-mode]').forEach(btn=>btn.addEventListener('click',()=>{
+    const mode=btn.dataset.exprMode;
+    host.querySelectorAll('[data-expr-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.exprMode===mode)));
+    host.querySelectorAll('[data-expr-view]').forEach(v=>{v.hidden=v.dataset.exprView!==mode;});
+  }));
+}
+function renderEmbeddedHpaExpression(host,rec,data){
+  const entries=hpaEntries(rec);
+  const max=Math.max(...entries.map(e=>e.value),1);
+  const detected=entries.filter(e=>e.value>=1).length;
+  const top=entries.slice(0,4).map(e=>`${e.name} ${ntpm(e.value)}`).join(', ');
+  const specificity=data&&data['RNA tissue specificity'];
+  const distribution=data&&data['RNA tissue distribution'];
+  host.innerHTML=`<div class="expr-head">
+      <div>
+        <span class="lbl">HPA consensus RNA expression</span>
+        <div class="expr-title">Highest nTPM: ${top}</div>
+        <div class="expr-summary">${detected}/${entries.length} tissues are at or above 1 nTPM.${specificity?` HPA specificity: ${specificity}.`:''}${distribution?` HPA distribution: ${distribution}.`:''}</div>
+      </div>
+      <div class="seg expr-toggle" role="group" aria-label="Expression view">
+        <button type="button" data-expr-mode="bar" aria-pressed="true">Bar plot</button>
+        <button type="button" data-expr-mode="body" aria-pressed="false">Body map</button>
+      </div>
+    </div>
+    <div data-expr-view="bar">${barPlotHTML(entries,max)}</div>
+    <div data-expr-view="body" hidden>${bodyMapHTML(entries,max)}</div>
+    <div class="expr-note">Units: HPA consensus normalized expression (nTPM), ${HPA_EXPR.version}, across ${entries.length} tissues. The values are from the HPA consensus RNA table, which summarizes HPA and GTEx tissue transcriptomics; see the HPA link below for the live source table.</div>`;
+  wireExpressionToggle(host);
+}
+function renderHpaTissueBars(host,data){
+  const rec=hpaRecordFor(host.dataset.ens);
+  if(rec){renderEmbeddedHpaExpression(host,rec,data);return;}
+  const tissue=data&&data['RNA tissue specific nTPM'];
+  const specificity=data&&data['RNA tissue specificity'];
+  const distribution=data&&data['RNA tissue distribution'];
+  const entries=tissue&&typeof tissue==='object'?Object.entries(tissue).map(([k,v])=>({name:k,value:parseFloat(v)})).filter(x=>!isNaN(x.value)).sort((a,b)=>b.value-a.value):[];
+  if(!entries.length){
+    host.innerHTML=`<div style="font-size:12.5px;color:var(--ink-3)">HPA single-entry metadata loaded, but no embedded consensus matrix is available for this target. HPA classifies RNA tissue specificity as <b>${specificity||'not available'}</b>${distribution?` and distribution as <b>${distribution}</b>`:''}. Open HPA below for the live tissue table.</div>`;
+    return;
+  }
+  const max=Math.max(...entries.map(x=>x.value),1);
+  host.innerHTML=`<div class="expr-head"><div><span class="lbl">HPA RNA tissue-specific summary</span><div class="expr-title">${entries.map(e=>`${e.name} ${ntpm(e.value)}`).join(', ')}</div></div></div>
+    ${barPlotHTML(entries,max)}
+    <div class="expr-note">Units: HPA normalized expression, nTPM. This fallback shows the tissue-specific summary from the HPA single-gene JSON; open HPA below for the full tissue table.</div>`;
+}
+function hpaTextSummary(ens){
+  const rec=hpaRecordFor(ens);
+  if(!rec)return '';
+  const entries=hpaEntries(rec);
+  const detected=entries.filter(e=>e.value>=1).length;
+  const top=entries.slice(0,8).map(e=>`${e.name} ${ntpm(e.value)} nTPM`).join('; ');
+  return `HPA consensus RNA expression (${HPA_EXPR.version}) is highest in: ${top}. ${detected}/${entries.length} tissues are at or above 1 nTPM.`;
+}
+function loadHpaExpression(){
+  const host=document.getElementById('hpaexpr'); if(!host||host.dataset.loaded)return;
+  const ens=host.dataset.ens, sym=host.dataset.symbol; if(!ens){host.textContent='No Ensembl identifier available for HPA tissue lookup.';return;}
+  host.dataset.loaded='1';
+  const rec=hpaRecordFor(ens);
+  if(rec)renderEmbeddedHpaExpression(host,rec,null);
+  fetch(`https://www.proteinatlas.org/${ens}.json`).then(r=>{if(!r.ok)throw new Error('HPA '+r.status);return r.json();})
+    .then(data=>renderHpaTissueBars(host,data))
+    .catch(()=>{if(!rec)host.innerHTML=`<div style="font-size:12.5px;color:var(--ink-3)">Tissue-level expression could not be loaded from Human Protein Atlas in this browser session. Open the HPA tissue page below to inspect where <b>${sym}</b> is expressed.</div>`;});
+}
 
 function openMemo(sym){
   const t=byId[sym]; const f=t.facts; const rec=recFor(t);
@@ -3252,6 +3572,8 @@ function openMemo(sym){
         </div>
       </div>
       <div class="sec"><span class="lbl">Mechanism thesis</span><p>${thesis}</p></div>
+      ${translationalEvidenceHTML(t)}
+      ${tissueExpressionHTML(t)}
       <div class="sec"><span class="lbl">Supporting evidence</span>${evList(supList)}</div>
       <div class="sec contra"><span class="lbl">Disconfirming evidence: why this could fail</span>
         ${conEv.length?evList(conEv.map(e=>({id:e.id,url:e.url,text:e.text}))):'<p style="color:var(--ink-3);font-size:12.5px">No material disconfirming signals in the current evidence set. Absence of evidence is not evidence of safety. Flag for wet-lab confirmation.</p>'}</div>
@@ -3270,6 +3592,7 @@ function openMemo(sym){
   if(md)md.addEventListener('click',()=>downloadMemo(memoModelFor(t,rec,{thesis,market,change,exp,supList,conEv})));
   document.getElementById('drawer').classList.add('on');
   document.getElementById('scrim').classList.add('on');
+  loadHpaExpression();
   requestAnimationFrame(()=>initMol(sym));
 }
 function closeMemo(){document.getElementById('drawer').classList.remove('on');document.getElementById('scrim').classList.remove('on');}
@@ -3394,57 +3717,202 @@ function drawValidation(){
   h+=`<p class="val-foot"><b>How to read this honestly:</b> this is a retrospective directional check against the documented record, not a fully blinded re-run of a frozen 2015 database. In production, every evidence item is written to an append-only ledger stamped with the date it was true, which turns a real blinded backtest into an automated report we can run for any disease, on demand. That is the difference between a tool you believe and a tool you can audit.</p>`;
   box.innerHTML=h;
 }
-/* ---------- PATIENT IMPACT: unmet need, precision, harm-avoidance ---------- */
-function drawPatients(){
-  const box=document.getElementById('ptwrap'); if(!box||box.dataset.done) return; box.dataset.done="1";
-  // OSM responder split (West et al., Nature Medicine 2017): baseline serum OSM, anti-TNF responders vs non-responders
-  const OSM_R=84.5, OSM_NR=996, mx=996;
-  const wR=Math.round(OSM_R/mx*100), wNR=Math.round(OSM_NR/mx*100);
-  box.innerHTML=`
-  <div class="method-sec">
-    <h3>The patient reality today</h3>
-    <p class="sub">Ulcerative colitis is a lifelong, relapsing disease. Despite a decade of new mechanisms, most patients still do not reach durable remission, and many cycle through therapies that were never going to work for them.</p>
-    <div class="pt-stats">
-      <div class="pt-stat"><div class="big">~1 in 3</div><h4>reach lasting remission</h4><p>Across today's advanced therapies, remission rates plateau near a third of patients: a therapeutic ceiling that has barely moved as mechanisms changed.</p><div class="cite"><a href="https://pubmed.ncbi.nlm.nih.gov/?term=Breaking+Through+the+Therapeutic+Ceiling+inflammatory+bowel+disease" target="_blank" rel="noopener">Raine &amp; Danese, Gastroenterology 2022 &#8599;</a></div></div>
-      <div class="pt-stat"><div class="big">Months</div><h4>lost to the wrong drug</h4><p>Many patients fail anti-TNF up front or lose response over time, learning only after months of active disease that the mechanism does not fit them.</p><div class="cite"><a href="https://www.nature.com/articles/nm.4307" target="_blank" rel="noopener">West et al., Nature Medicine 2017 &#8599;</a></div></div>
-      <div class="pt-stat"><div class="big">Steroids</div><h4>are still the fallback</h4><p>Decades of steroid reliance carry real systemic toxicity. Pfizer's own Immunology &amp; Inflammation strategy frames this dependence as the past, not the future.</p><div class="cite"><a href="https://www.pfizer.com/science/therapeutic-areas/inflammation-immunology" target="_blank" rel="noopener">Pfizer Immunology &amp; Inflammation &#8599;</a></div></div>
+/* ---------- PATIENT IMPACT: interactive patient + clinical-trial lens ---------- */
+let patientTargets=['TNFSF15','OSMR','GPR35','JAK2'];
+const patientTrialCache={};
+const PATIENT_SEG={
+  TNFSF15:{seg:'Fibrostenotic / inflammatory UC',bio:'TL1A biology connects inflammation with fibroblast activation, so the patient story is not only symptom control but potentially changing tissue remodeling risk.',biomarker:'Fibrosis and inflammatory-stromal signatures; still less direct than OSM.',trial:'Differentiation should focus on fibrosis, endoscopy and tissue-remodeling endpoints, not only standard remission.'},
+  OSMR:{seg:'Anti-TNF refractory',bio:'The OSM-OSMR axis is tied to high-OSM patients who fail anti-TNF therapy, making it the clearest responder-enrichment story on this page.',biomarker:'High mucosal or serum OSM before therapy.',trial:'Best clinical path is an OSM-high, anti-TNF-inadequate-response proof of concept.'},
+  OSM:{seg:'Anti-TNF refractory',bio:'Oncostatin M marks a patient state with poor anti-TNF response and persistent inflammatory stromal activation.',biomarker:'High mucosal or serum OSM before therapy.',trial:'Use OSM-high enrichment and compare against anti-TNF-exposed patients.'},
+  GPR35:{seg:'Treatment-refractory UC',bio:'A genetically anchored orphan GPCR with low UC trial crowding, potentially useful for patients who need a differentiated oral option.',biomarker:'Genetic and intestinal-expression rationale; responder biomarker still needs discovery.',trial:'Early proof of biology should include intestinal pharmacodynamic markers and tissue exposure.'},
+  IL23R:{seg:'Inflammatory UC with Th17/IL-23 biology',bio:'Human genetics and class validation make this a strong translational axis, but the field is crowded and differentiation is hard.',biomarker:'Pathway activity, genetics and inflammatory endotypes are plausible but not yet a simple companion test.',trial:'Clinical value must come from dosing, durability, safety or positioning after prior biologics.'},
+  IL23A:{seg:'Inflammatory UC with IL-23 biology',bio:'Selective IL-23 biology is clinically validated, but patient benefit depends on differentiation in a mature mechanism class.',biomarker:'Inflammatory pathway markers; no simple universal responder marker.',trial:'Competes against approved and late-stage IL-23 programs.'},
+  IL12B:{seg:'Broad inflammatory UC',bio:'p40 biology is validated, but the mechanism is mature and crowded; the patient case is incremental unless there is strong differentiation.',biomarker:'Broad inflammatory phenotype rather than a precise subgroup.',trial:'A new program needs a clear advantage over established p40/p19 agents.'},
+  JAK2:{seg:'Rapid symptom-control population',bio:'JAK inhibition can work quickly, but patient selection is constrained by cardiovascular, thrombosis and malignancy risk.',biomarker:'Risk stratification matters more than a responder biomarker.',trial:'Trials must justify benefit-risk versus existing JAK/S1P/IL-23 options.'},
+  JAK1:{seg:'Rapid symptom-control population',bio:'JAK1 biology has efficacy precedent but lives under class safety scrutiny and high competition.',biomarker:'Risk stratification and prior-therapy history.',trial:'Differentiation must be safety, selectivity or positioning.'},
+  JAK3:{seg:'Rapid symptom-control population',bio:'JAK3 is Pfizer-adjacent and class-safety constrained; patient value is limited without a safety or selectivity advantage.',biomarker:'Risk stratification, not a clean responder biomarker.',trial:'Portfolio overlap makes this a lower-value patient bet for Pfizer.'},
+  S1PR1:{seg:'Oral maintenance population',bio:'S1P modulation offers an oral maintenance option, but Pfizer already owns the class through etrasimod.',biomarker:'Lymphocyte trafficking markers and safety monitoring.',trial:'Patient value is mainly positioning and tolerability versus existing S1P agents.'},
+  IL17A:{seg:'Harm avoided',bio:'IL-17 looked plausible from pathway biology but worsened Crohn disease in a controlled trial; patient value is avoiding this target.',biomarker:'No enrichment strategy fixes a node with gut-barrier protective biology.',trial:'Do not advance in IBD without extraordinary new safety biology.'},
+  IL17RA:{seg:'Harm avoided',bio:'Receptor blockade shares the IL-17 barrier-risk concern; pathway validation does not make this node safe in IBD.',biomarker:'No clean patient-enrichment solution.',trial:'Treat as disconfirmed for IBD unless new biology overturns the harm signal.'},
+  NR3C1:{seg:'Steroid-exposed population',bio:'The glucocorticoid receptor explains efficacy and toxicity at the same time; ubiquitous expression makes patient benefit-risk poor.',biomarker:'Steroid responsiveness is not enough; systemic toxicity dominates.',trial:'A new target program should avoid recreating steroid biology.'}
+};
+const PATIENT_BIOMARKER={OSMR:.95,OSM:.95,TNFSF15:.55,GPR35:.35,IL23R:.45,IL23A:.35,IL12B:.3,JAK2:.2,JAK1:.2,JAK3:.2,S1PR1:.25,IL17A:.05,IL17RA:.05};
+function ctUrlFor(sym){return `https://clinicaltrials.gov/search?cond=Ulcerative%20Colitis&term=${encodeURIComponent(sym)}`;}
+function patientPreset(kind){
+  if(kind==='biomarker')patientTargets=['OSMR','OSM','TNFSF15','IL23R'];
+  if(kind==='whitespace')patientTargets=['GPR35','OSMR','TNFSF15','IRF5'];
+  if(kind==='safety')patientTargets=['GPR35','TNFSF15','IL23R','IL17A'];
+  if(kind==='crowded')patientTargets=['JAK2','IL12B','IL23A','S1PR1'];
+  drawPatientExplorer();
+}
+function patientAddTarget(raw){
+  const sym=(raw||document.getElementById('pttarget')?.value||'').trim().toUpperCase();
+  if(!sym)return;
+  if(!patientTargets.includes(sym))patientTargets.push(sym);
+  const inp=document.getElementById('pttarget'); if(inp)inp.value='';
+  drawPatientExplorer();
+}
+function patientRemoveTarget(sym){patientTargets=patientTargets.filter(s=>s!==sym);drawPatientExplorer();}
+function patientOpenTarget(sym){if(byId[sym])openMemo(sym);else analyzeTarget(sym);}
+function patientBaseModel(sym){
+  if(byId[sym]){
+    const t=byId[sym], x=scored(posture).find(y=>y.t.symbol===sym);
+    return {symbol:sym,name:t.name,ensembl:t.ensembl,curated:true,assoc:t.uc_score,genetic:t.genetic,lit:t.literature,
+      active:t.active_trials,total:t.total_trials,fit:x?x.s:null,rank:x?x.rank:null,failrisk:t.failrisk,whitespace:t.whitespace,status:t.status,drug:t.drug,mech:t.mech,trialSource:'embedded'};
+  }
+  if(typeof UNI_BY_SYM!=='undefined'&&UNI_BY_SYM[sym]){
+    const m=modelFromUniverse(sym), f=fitOf(m), cached=patientTrialCache[sym];
+    const ready=cached&&!cached.pending&&!cached.error;
+    return {symbol:sym,name:sym,ensembl:m.ensembl,curated:false,assoc:m.assoc,genetic:m.genetic,lit:m.lit,
+      active:ready?cached.active:null,total:ready?cached.total:null,fit:f.fit,rank:f.rank,failrisk:m.failrisk,whitespace:m.whitespace,status:'broader field',drug:m.drug,mech:'broader UC field',trialSource:cached?.pending?'loading':(ready?'live':(cached?.error?'error':'loading'))};
+  }
+  const cached=patientTrialCache[sym];
+  const ready=cached&&!cached.pending&&!cached.error;
+  return {symbol:sym,name:sym,ensembl:null,curated:false,assoc:null,genetic:null,lit:null,
+    active:ready?cached.active:null,total:ready?cached.total:null,fit:null,rank:null,failrisk:.2,whitespace:.5,status:'live lookup',drug:.5,mech:'external target',trialSource:cached?.pending?'loading':(ready?'live':(cached?.error?'error':'loading'))};
+}
+function patientSegment(m){
+  if(PATIENT_SEG[m.symbol])return PATIENT_SEG[m.symbol];
+  if(m.assoc==null)return {seg:'External target',bio:'Clinical-trial activity can be checked live, but disease biology is not embedded in the local UC evidence field.',biomarker:'No embedded biomarker annotation.',trial:'Use the live memo to pull Open Targets evidence before interpreting trial activity.'};
+  if(m.genetic>=.65&&m.whitespace>=.65)return {seg:'Genetics-enriched whitespace',bio:'Strong human genetic support plus low crowding suggests a patient-relevant mechanism worth translational follow-up.',biomarker:'Start from genetics and tissue expression; responder marker still needs discovery.',trial:'Early studies should prove target engagement before large efficacy spend.'};
+  if((m.active||0)>=20)return {seg:'Crowded mechanism class',bio:'The patient need may be real, but many programs are already testing nearby biology.',biomarker:'Differentiation must sharpen patient selection or benefit-risk.',trial:'Inspect inclusion criteria and comparator strategy before adding another program.'};
+  if(m.failrisk>=.55)return {seg:'Safety-sensitive population',bio:'The biology carries disconfirming or class-safety evidence; patient harm-avoidance should dominate.',biomarker:'Risk stratification is mandatory and may not be enough.',trial:'Advance only with a clear safety hypothesis.'};
+  return {seg:'Exploratory UC subgroup',bio:'There is some UC evidence, but the patient population is not yet sharply defined.',biomarker:'Discovery-stage patient-selection work needed.',trial:'Use translational endpoints before committing to large efficacy trials.'};
+}
+function patientScore(m){
+  const bio=m.assoc==null?0.25:_cl(.55*(m.genetic||0)+.45*(m.assoc||0));
+  const biomarker=PATIENT_BIOMARKER[m.symbol]??(m.genetic>=.65?.45:.2);
+  const safety=1-(m.failrisk||0);
+  const open=m.active==null?m.whitespace||.5:(m.active<=3?.9:m.active>=20?.2:.55);
+  return Math.round(100*_cl(.34*bio+.26*biomarker+.22*safety+.18*open));
+}
+function trialLevel(m){
+  if(m.trialSource==='error')return {txt:'Live count unavailable',col:'var(--ink-3)',pct:8};
+  if(m.active==null)return {txt:'Loading',col:'var(--ink-3)',pct:8};
+  if(m.active>=20)return {txt:'Crowded',col:'var(--risk-hi)',pct:100};
+  if(m.active>=5)return {txt:'Active field',col:'var(--risk-md)',pct:55+Math.min(35,m.active)};
+  if(m.active>0)return {txt:'Sparse',col:'var(--risk-lo)',pct:25+m.active*7};
+  return {txt:'No active UC trials',col:'var(--risk-lo)',pct:8};
+}
+function hpaPatientLine(ens){
+  const rec=hpaRecordFor(ens); if(!rec)return '';
+  const top=hpaEntries(rec).slice(0,3).map(e=>`${e.name} ${ntpm(e.value)}`).join(', ');
+  return `Top tissue expression: ${top} nTPM.`;
+}
+function patientHydrateTrials(models){
+  models.filter(m=>m.trialSource==='loading'&&!patientTrialCache[m.symbol]?.pending).forEach(m=>{
+    patientTrialCache[m.symbol]={pending:true};
+    ctCount(m.symbol).then(c=>{patientTrialCache[m.symbol]={active:c[0],total:c[1]};drawPatientExplorer();})
+      .catch(()=>{patientTrialCache[m.symbol]={active:null,total:null,error:true};drawPatientExplorer();});
+  });
+}
+function drawPatientExplorer(){
+  const dyn=document.getElementById('ptdynamic'); if(!dyn)return;
+  const models=patientTargets.map(patientBaseModel);
+  const totalActive=models.reduce((s,m)=>s+(m.active||0),0);
+  const knownTrials=models.filter(m=>m.active!=null).length;
+  const crowded=models.filter(m=>(m.active||0)>=20).length;
+  const biomarker=models.filter(m=>(PATIENT_BIOMARKER[m.symbol]||0)>=.5).length;
+  const topPatient=[...models].sort((a,b)=>patientScore(b)-patientScore(a))[0];
+  const chips=patientTargets.map(s=>`<span class="pt-chip">${s}<button type="button" onclick="patientRemoveTarget('${s}')" aria-label="Remove ${s}">&times;</button></span>`).join('');
+  const rows=models.map(m=>{
+    const seg=patientSegment(m), lvl=trialLevel(m);
+    return `<div class="pt-row">
+      <div><div class="sym">${m.symbol}</div><div class="meta">${esc(m.mech||m.name||'')}</div></div>
+      <div><b style="font-size:12.5px;color:var(--ink)">${seg.seg}</b><div class="meta">${seg.trial}</div>
+        <div class="pt-load"><span style="width:${lvl.pct}%;background:${lvl.col}"></span></div></div>
+      <div class="trial">${m.active==null?'...':m.active}<small>${m.total==null?'active UC trials':'active / '+m.total+' total'}</small></div>
+      <div><button type="button" onclick="patientOpenTarget('${m.symbol}')">Memo</button></div>
+    </div>`;
+  }).join('');
+  const cards=models.map(m=>{
+    const seg=patientSegment(m), lvl=trialLevel(m), pscore=patientScore(m), hpa=hpaPatientLine(m.ensembl);
+    const ot=m.ensembl?`https://platform.opentargets.org/target/${m.ensembl}/associations`:'https://platform.opentargets.org';
+    const ncbi=`https://www.ncbi.nlm.nih.gov/gene/?term=${encodeURIComponent(m.symbol+'[sym] human')}`;
+    return `<div class="pt-card">
+      <div class="top"><div><h4>${m.symbol}</h4><span class="tag">${seg.seg}</span></div><span class="verdict" style="margin:0;color:${lvl.col};border-color:${lvl.col}">${lvl.txt}</span></div>
+      <p>${seg.bio}</p>
+      <p><b>Biomarker / selection:</b> ${seg.biomarker}</p>
+      ${hpa?`<p><b>Tissue expression:</b> ${hpa}</p>`:''}
+      <div class="pt-metrics">
+        <div class="pt-metric"><b>${pscore}</b><span>patient-fit</span></div>
+        <div class="pt-metric"><b>${m.genetic==null?'NA':m.genetic.toFixed(2)}</b><span>human genetics</span></div>
+        <div class="pt-metric"><b>${m.active==null?'...':m.active}</b><span>active trials</span></div>
+      </div>
+      <div class="cites" style="margin-top:10px">
+        <a class="cite" href="${ctUrlFor(m.symbol)}" target="_blank" rel="noopener">ClinicalTrials.gov&#8599;</a>
+        <a class="cite" href="${ot}" target="_blank" rel="noopener">Open Targets&#8599;</a>
+        <a class="cite" href="${ncbi}" target="_blank" rel="noopener">NCBI Gene&#8599;</a>
+      </div>
+    </div>`;
+  }).join('');
+  dyn.innerHTML=`<div class="pt-lens">
+    <div class="pt-control">
+      <div class="h"><b>Selected targets</b><span class="sp"></span></div>
+      <form class="pt-add" id="ptaddform" autocomplete="off">
+        <input id="pttarget" type="text" list="tsyms" placeholder="STAT3, TL1A, JAK2, GPR35..." aria-label="Add target to patient lens">
+        <button type="submit">Add</button>
+      </form>
+      <div class="pt-chipbar">${chips}</div>
+      <div class="pt-quick">
+        <button type="button" onclick="patientPreset('biomarker')">Biomarker picks</button>
+        <button type="button" onclick="patientPreset('whitespace')">Whitespace picks</button>
+        <button type="button" onclick="patientPreset('safety')">Safety lens</button>
+        <button type="button" onclick="patientPreset('crowded')">Crowded classes</button>
+      </div>
+    </div>
+    <div class="pt-kpis">
+      <div class="pt-kpi"><div class="v">${models.length}</div><div class="l">targets selected</div></div>
+      <div class="pt-kpi"><div class="v">${knownTrials===models.length?totalActive:'...'}</div><div class="l">active UC trials</div></div>
+      <div class="pt-kpi"><div class="v">${biomarker}</div><div class="l">biomarker-linked</div></div>
+      <div class="pt-kpi"><div class="v">${topPatient?topPatient.symbol:'NA'}</div><div class="l">highest patient-fit</div></div>
     </div>
   </div>
-
-  <div class="method-sec">
-    <h3>Right patient: targets that carry a biomarker</h3>
-    <p class="sub">Some targets tell you, in advance, who they will help. Oncostatin M (the OSM&#8211;OSMR axis, one of the whitespace picks) is the clearest example: baseline OSM separates the patients who respond to anti-TNF from those who do not, before a single dose.</p>
-    <div class="rbar-wrap">
-      <div class="rbar"><div class="lab"><b>Responders</b>to anti-TNF</div>
-        <div class="track2"><div class="fill good" style="width:${Math.max(wR,9)}%">${OSM_R} pg/mL</div></div>
-        <div class="val">low baseline OSM</div></div>
-      <div class="rbar"><div class="lab"><b>Non-responders</b>to anti-TNF</div>
-        <div class="track2"><div class="fill bad" style="width:${wNR}%">${OSM_NR} pg/mL</div></div>
-        <div class="val">high baseline OSM</div></div>
-    </div>
-    <p class="val-foot" style="margin-top:12px">A roughly ten-fold difference at baseline (illustrative, single cohort). A target that comes with a test like this means two things for patients: the people most likely to benefit get the drug, and everyone else is spared months on a therapy that will not work. That is precision medicine at the point of target selection, not after.</p>
-  </div>
-
-  <div class="method-sec">
-    <h3>First, do no harm: disconfirmation is a patient-safety filter</h3>
-    <p class="sub">The fastest way to hurt patients is to chase a target that looks good on paper. TargetCompass's failure-risk lens exists to catch exactly that, before anyone is dosed.</p>
-    <div class="method-list">
-      <div class="ml"><h4>It caught IL-17</h4><p>The IL-23/Th17 pathway made IL-17 look obvious. Blocking it made Crohn's patients <b>worse</b> in a controlled trial. Our lens flags it because IL-17 also protects the gut barrier.</p></div>
-      <div class="ml"><h4>It flags class safety</h4><p>JAK inhibitors work, but carry a boxed warning for cardiovascular events, clots and malignancy. Patient risk is scored, not hidden, so trade-offs are made with eyes open.</p></div>
-      <div class="ml"><h4>It reads the whole patient</h4><p>Ubiquitous targets like the steroid receptor guarantee off-target toxicity. Scoring tissue distribution keeps on-target harm out of the shortlist.</p></div>
-    </div>
-  </div>
-
-  <div class="method-sec">
-    <h3>What each pick means for a patient</h3>
-    <p class="sub">The shortlist, translated from a score into the person it could help.</p>
-    <div class="pt-tlist">
-      <div class="pt-trow"><div class="sym">TNFSF15<small>TL1A / DR3</small></div><div class="ben"><span class="who">Fibrostenotic UC</span>Acts on inflammation <b>and</b> fibrosis at once, the scarring that current UC drugs leave untouched and that drives surgery and hospitalisation.</div></div>
-      <div class="pt-trow"><div class="sym">OSMR<small>OSM&#8211;OSMR</small></div><div class="ben"><span class="who">Anti-TNF refractory</span>A built-in biomarker to identify the patients failing today's biologics, and offer them a mechanism matched to their biology.</div></div>
-      <div class="pt-trow"><div class="sym">GPR35<small>orphan GPCR</small></div><div class="ben"><span class="who">Treatment-refractory</span>A genetically-anchored, small-molecule-tractable target: the door to a new oral option for patients out of choices.</div></div>
-      <div class="pt-trow"><div class="sym">IL17A<small>counter-example</small></div><div class="ben"><span class="who">Harm avoided</span>Not pursued. The value here is the patients who were never put on a mechanism that would have made their disease worse.</div></div>
-    </div>
+  <div class="pt-main">
+    <div class="method-sec"><h3>Clinical-trial activity</h3><p class="sub">Current UC trial load is a patient-access and differentiation signal: zero active trials can mean whitespace; many active trials can mean a crowded mechanism where a new program must help a narrower patient group better.</p><div class="pt-table">${rows}</div></div>
+    <div><h3 style="font-size:19px;margin:0 0 10px">Patient-fit cards</h3><div class="pt-cards">${cards}</div></div>
   </div>`;
+  document.getElementById('ptaddform').addEventListener('submit',e=>{e.preventDefault();patientAddTarget();});
+  const ptinp=document.getElementById('pttarget');
+  if(ptinp)ptinp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();patientAddTarget(ptinp.value);}});
+  patientHydrateTrials(models);
+}
+function drawPatients(){
+  const box=document.getElementById('ptwrap'); if(!box) return;
+  if(!box.dataset.done){
+    box.dataset.done="1";
+    const OSM_R=84.5, OSM_NR=996, mx=996;
+    const wR=Math.round(OSM_R/mx*100), wNR=Math.round(OSM_NR/mx*100);
+    box.innerHTML=`<div id="ptdynamic"></div>
+    <div class="method-sec">
+      <h3>Patient reality that calibrates the lens</h3>
+      <p class="sub">Ulcerative colitis is a lifelong, relapsing disease. Despite a decade of new mechanisms, most patients still do not reach durable remission, and many cycle through therapies that were never going to work for them.</p>
+      <div class="pt-stats">
+        <div class="pt-stat"><div class="big">~1 in 3</div><h4>reach lasting remission</h4><p>Across today's advanced therapies, remission rates plateau near a third of patients: a therapeutic ceiling that has barely moved as mechanisms changed.</p><div class="cite"><a href="https://pubmed.ncbi.nlm.nih.gov/?term=Breaking+Through+the+Therapeutic+Ceiling+inflammatory+bowel+disease" target="_blank" rel="noopener">Raine &amp; Danese, Gastroenterology 2022 &#8599;</a></div></div>
+        <div class="pt-stat"><div class="big">Months</div><h4>lost to the wrong drug</h4><p>Many patients fail anti-TNF up front or lose response over time, learning only after months of active disease that the mechanism does not fit them.</p><div class="cite"><a href="https://www.nature.com/articles/nm.4307" target="_blank" rel="noopener">West et al., Nature Medicine 2017 &#8599;</a></div></div>
+        <div class="pt-stat"><div class="big">Steroids</div><h4>are still the fallback</h4><p>Decades of steroid reliance carry real systemic toxicity. Pfizer's own Immunology &amp; Inflammation strategy frames this dependence as the past, not the future.</p><div class="cite"><a href="https://www.pfizer.com/science/therapeutic-areas/inflammation-immunology" target="_blank" rel="noopener">Pfizer Immunology &amp; Inflammation &#8599;</a></div></div>
+      </div>
+    </div>
+    <div class="method-sec">
+      <h3>Responder enrichment example: OSM</h3>
+      <p class="sub">Oncostatin M is the clearest example of a target axis that comes with a patient-selection signal: baseline OSM separates anti-TNF responders from non-responders before dosing.</p>
+      <div class="rbar-wrap">
+        <div class="rbar"><div class="lab"><b>Responders</b>to anti-TNF</div><div class="track2"><div class="fill good" style="width:${Math.max(wR,9)}%">${OSM_R} pg/mL</div></div><div class="val">low baseline OSM</div></div>
+        <div class="rbar"><div class="lab"><b>Non-responders</b>to anti-TNF</div><div class="track2"><div class="fill bad" style="width:${wNR}%">${OSM_NR} pg/mL</div></div><div class="val">high baseline OSM</div></div>
+      </div>
+      <p class="val-foot" style="margin-top:12px">A roughly ten-fold difference at baseline (illustrative, single cohort). A target that comes with a test can spare non-matching patients months on a therapy that will not work.</p>
+    </div>
+    <div class="method-sec">
+      <h3>Harm avoidance is patient impact</h3>
+      <p class="sub">A patient lens is not only about who benefits. It is also about which plausible targets should never reach patients without new safety biology.</p>
+      <div class="method-list">
+        <div class="ml"><h4>IL-17</h4><p>The IL-23/Th17 pathway made IL-17 look obvious. Blocking it made Crohn's patients <b>worse</b> in a controlled trial.</p></div>
+        <div class="ml"><h4>JAK class</h4><p>JAK inhibitors work, but carry warnings for cardiovascular events, clots and malignancy. Benefit-risk belongs in target selection.</p></div>
+        <div class="ml"><h4>Tissue distribution</h4><p>Broadly expressed targets can create systemic on-target toxicity. Patient fit should read expression as well as genetics.</p></div>
+      </div>
+    </div>`;
+  }
+  drawPatientExplorer();
 }
 /* ---------- METHOD: pipeline, vs-Open-Targets movers, trust + scale ---------- */
 function drawMethod(){
@@ -3535,16 +4003,32 @@ function findTargets(text){
   const spaced=' '+norm.replace(/[^a-z0-9αβ]+/g,' ').trim()+' ';
   const hits=[];
   T.forEach(t=>{if(spaced.includes(' '+t.symbol.toLowerCase()+' '))hits.push(t.symbol);});
+  if(typeof UNIVERSE!=='undefined')UNIVERSE.rows.forEach(r=>{if(spaced.includes(' '+r[0].toLowerCase()+' ')&&!hits.includes(r[0]))hits.push(r[0]);});
   Object.keys(ALIAS).forEach(a=>{if(spaced.includes(' '+a+' ')&&!hits.includes(ALIAS[a]))hits.push(ALIAS[a]);});
+  if(!hits.length){
+    const stop=new Set(['UC','IBD','FDA','AI','VS','OR','AND','THE','WHAT','WHICH','HOW','WHY','IS','ARE','DOES','TELL','ME','ABOUT','TARGET','TARGETS','ALREADY']);
+    const raw=text.toUpperCase().replace(/([A-Z])[ -]?(\d)/g,'$1$2');
+    const guess=(raw.match(/\b[A-Z][A-Z0-9]{1,9}\b/g)||[]).find(x=>!stop.has(x)&&/\d/.test(x));
+    if(guess)hits.push(guess);
+  }
   return [...new Set(hits)];
 }
 function classify(text){
   const s=text.toLowerCase(); const tg=findTargets(text);
-  if(/\b(compare|versus|vs|against|better)\b/.test(s)&&tg.length>=1)return{k:'compare',tg};
-  if(/\b(fail|failed|avoid|graveyard|worst|disproven|stay away)\b/.test(s))return{k:'fail',tg};
+  const has=re=>re.test(s);
+  if(has(/\b(compare|versus|vs|against|better|choose|pick)\b/)&&tg.length>=1)return{k:'compare',tg};
+  if(has(/\b(fail|failed|failure|avoid|graveyard|worst|disproven|stay away|harm|unsafe)\b/))return tg.length?{k:'target',tg}:{k:'fail',tg};
   if(tg.length>=2&&/\bor\b/.test(s))return{k:'compare',tg};
   if(tg.length>=1)return{k:'target',tg};
-  if(/\b(best|top|next|recommend|pursue|uncrowded|whitespace|open field|worthwhile|which target|shortlist|should we)\b/.test(s))return{k:'shortlist',tg};
+  if(has(/\b(patient|remission|biomarker|precision|respond|response|anti-tnf|steroid)\b/))return{k:'patient',tg};
+  if(has(/\b(validate|validation|backtest|rewind|2015|historical|prove|trust)\b/))return{k:'validation',tg};
+  if(has(/\b(how|method|score|weight|formula|model|source|data|open targets|clinicaltrials|ai)\b/))return{k:'method',tg};
+  if(has(/\b(competitor|competition|trial|crowded|rival|uncrowded|whitespace|open field)\b/))return{k:'category',kind:'whitespace',tg};
+  if(has(/\b(safe|safest|safety|risk|toxicity|boxed warning|lowest risk)\b/))return{k:'category',kind:'safety',tg};
+  if(has(/\b(genetic|genetics|evidence|science|association|biology)\b/))return{k:'category',kind:'genetics',tg};
+  if(has(/\b(druggable|druggability|tractable|small molecule|antibody|structure)\b/))return{k:'category',kind:'druggability',tg};
+  if(has(/\b(pfizer|portfolio|owned|own|sell|asset|redundant|duplicate)\b/))return{k:'portfolio',tg};
+  if(has(/\b(best|top|next|recommend|pursue|worthwhile|which target|shortlist|should we|invest|priority|prioritize)\b/))return{k:'shortlist',tg};
   return{k:'help',tg};
 }
 function leadFor(t){
@@ -3568,8 +4052,94 @@ function botWrap(sub,body){return `<div class="msg-bot"><div class="bot-card">
   <div class="bot-body">${body}</div></div></div>`;}
 function simpleBot(html){return botWrap('grounded, cited, no guesswork',`<p class="lead">${html}</p>`);}
 
+function listAnswer(sub,lead,items,detail,value,ground){
+  const rows=items.slice(0,5).map((t,i)=>`<li onclick="chatOpenAnyTarget('${t.symbol}')"><span class="rk">${i+1}</span>
+    <div><span class="nm">${t.symbol}</span> <span class="rz">${detail(t)}</span></div>
+    <span class="sc" style="color:${riskColor(t.failrisk)}">${value(t)}</span></li>`).join('');
+  return botWrap(sub,`<p class="lead">${lead}</p><ul class="bot-list">${rows}</ul>
+    <div class="bot-actions"><button onclick="chatShowMap()">Open the full landscape</button></div>
+    <p class="bot-ground">${ground||'Ranked from the current UC evidence snapshot plus live trial crowding where available.'}</p>`);
+}
+function categoryAnswer(kind){
+  if(kind==='whitespace'){
+    const items=[...T].filter(t=>t.status!=='graveyard'&&!t.pfizer_owned).sort((a,b)=>(b.whitespace*b.genetic)-(a.whitespace*a.genetic));
+    return listAnswer('Uncrowded opportunities','The best open-field targets are not merely empty; they combine credible human biology with little active UC competition. I exclude the graveyard mechanisms, because empty after failure is not whitespace.',
+      items,t=>`${t.active_trials} active UC rivals; genetics ${t.genetic.toFixed(2)}`,t=>Math.round(t.whitespace*100), 'Whitespace is calculated from active ClinicalTrials.gov activity, then corrected for failure history and Pfizer portfolio overlap.');
+  }
+  if(kind==='safety'){
+    const items=[...T].filter(t=>t.status!=='graveyard').sort((a,b)=>a.failrisk-b.failrisk||b.genetic-a.genetic);
+    return listAnswer('Lowest-risk picks','Lowest risk does not mean risk-free. These targets have no material failure precedent in the embedded evidence set and avoid the obvious class-safety flags.',
+      items,t=>`failure risk ${Math.round(t.failrisk*100)}%; ${t.active_trials} active rivals`,t=>Math.round((1-t.failrisk)*100), 'Safety combines known safety events, failed class precedent, tissue-distribution concerns and portfolio/class warnings.');
+  }
+  if(kind==='genetics'){
+    const items=[...T].sort((a,b)=>b.genetic-a.genetic||b.bio-a.bio);
+    return listAnswer('Strongest human genetics','If you want the most translatable evidence class, start here. I still would not pick on genetics alone; competition and failure history can demote a biologically strong target.',
+      items,t=>`Open Targets association ${t.uc_score.toFixed(2)}; rank #${scored(posture).find(x=>x.t.symbol===t.symbol).rank}`,t=>t.genetic.toFixed(2), 'Human genetics is pulled from Open Targets datatype scores for ulcerative colitis.');
+  }
+  if(kind==='druggability'){
+    const items=[...T].sort((a,b)=>b.drug-a.drug||b.genetic-a.genetic);
+    return listAnswer('Most druggable targets','These are the most tractable on the embedded Open Targets tractability signal. Druggability helps only if the biology and business case survive the counter-evidence.',
+      items,t=>`genetics ${t.genetic.toFixed(2)}; ${t.active_trials} active rivals`,t=>t.drug.toFixed(2), 'Druggability uses Open Targets tractability, then the ranking balances it against biology, safety and whitespace.');
+  }
+  return shortlistAnswer();
+}
+function portfolioAnswer(){
+  const owned=T.filter(t=>t.pfizer_owned);
+  const exploring=T.filter(t=>t.symbol==='TNFSF15');
+  const rows=[...exploring,...owned].map(t=>`<li onclick="chatOpenMemo('${t.symbol}')"><span class="rk">${t.symbol==='TNFSF15'?'?':'P'}</span>
+    <div><span class="nm">${t.symbol}</span> <span class="rz">${t.symbol==='TNFSF15'?'Pfizer has explored TL1A/p40 bispecific territory; this validates interest but still needs differentiation.':(PFIZER_ASSET[t.mech]||'Pfizer-marketed or portfolio-overlapping mechanism')}</span></div>
+    <span class="sc" style="color:${riskColor(t.failrisk)}">#${scored(posture).find(x=>x.t.symbol===t.symbol).rank}</span></li>`).join('');
+  return botWrap('Pfizer portfolio lens',`<p class="lead">The Pfizer-specific layer changes the answer. A target can be scientifically real but still a poor use of the next dollar if Pfizer already owns the class or if the program only duplicates an approved asset.</p>
+    <ul class="bot-list">${rows}</ul>
+    <p class="bot-ground">Portfolio fit is one of the three business signals TargetCompass adds on top of Open Targets: competition, Pfizer overlap and failure history.</p>`);
+}
+function methodAnswer(){
+  return botWrap('How the answer is made',`<p class="lead">The chat is deterministic: it reads the same UC target table as the map, classifies your question, then answers from the relevant evidence fields. The score combines biology, druggability, whitespace, failure risk and Pfizer portfolio fit under the active weighting strategy.</p>
+    ${driversHTML(scored(posture)[0].t)}
+    <div class="bot-actions"><button onclick="chatOpenTab('method')">Open How it works</button><button onclick="chatOpenTab('land')">Tune weights</button></div>
+    <p class="bot-ground">The AI-shaped part is explanation and red-teaming; the ranking math stays auditable and every recommendation opens to source-linked evidence.</p>`);
+}
+function validationAnswer(){
+  return botWrap('Validation',`<p class="lead">The backtest asks whether the same logic would have made directionally right calls before the field already knew the answer. In the embedded validation set, it elevates the mechanisms that later became UC pillars and flags the mechanisms that failed or harmed patients.</p>
+    <div class="bot-actions"><button onclick="chatOpenTab('val')">Open Validation</button><button onclick="askQuestion('Which targets already failed?')">Show failures</button></div>
+    <p class="bot-ground">This is a retrospective directional check, not a claim that the model can replace scientific judgment.</p>`);
+}
+function patientAnswer(){
+  return botWrap('Patient impact',`<p class="lead">For patients, a better target means two things: a higher chance of matching the right mechanism to the right biology, and fewer months lost on mechanisms with known harm or failure signals. That is why biomarker-bearing targets like the OSM-OSMR axis matter.</p>
+    <div class="bot-actions"><button onclick="chatOpenTab('pt')">Open Patients</button><button onclick="askQuestion('What is the best uncrowded target?')">Show patient-relevant picks</button></div>
+    <p class="bot-ground">The patient lens favors targets with genetic anchoring, biomarker potential and low disconfirmation risk.</p>`);
+}
+function unknownTargetAnswer(sym){
+  return botWrap(`${sym} &middot; live lookup available`,`
+    <p class="lead">I do not have ${sym} in the curated 30 or the embedded 300-target field, but I can open a live memo workflow for it. That lookup pulls Open Targets association and tractability, then checks ClinicalTrials.gov activity with the same formulas as the shortlist.</p>
+    <div class="bot-actions"><button onclick="chatAnalyzeTarget('${sym}')">Analyze ${sym}</button></div>
+    <p class="bot-ground">Live lookup depends on external Open Targets and ClinicalTrials.gov access.</p>`);
+}
+function universeTargetAnswer(sym){
+  if(typeof UNI_BY_SYM==='undefined'||!UNI_BY_SYM[sym])return unknownTargetAnswer(sym);
+  const m=modelFromUniverse(sym), f=fitOf(m);
+  const rec=m.assoc<0.05?'negligible UC association':f.fit>=78?'credible whitespace':f.fit>=62?'watch':f.fit>=45?'weak / exploratory':'low priority';
+  const lead=m.assoc<0.05?`${sym} has little UC association in the embedded Open Targets field, so I would not treat it as a serious UC target without new biology.`
+    :`${sym} is outside the curated 30 but present in the wider UC-associated field. It has UC association ${m.assoc.toFixed(2)}, human genetics ${m.genetic.toFixed(2)}, and would rank around #${f.rank} if added to the current shortlist.`;
+  return botWrap(`${sym} &middot; broader UC field`,`
+    <span class="verdict" style="color:${f.fit>=62?'var(--risk-lo)':'var(--ink-3)'};border-color:${f.fit>=62?'var(--risk-lo)':'var(--ink-3)'}">${rec.toUpperCase()} &middot; fit ${f.fit}/100</span>
+    <p class="lead">${lead}</p>
+    <div class="sbgrid">
+      <div class="sbcol sci"><h4>The science</h4>
+        <div class="sbrow"><span>UC association</span><b>${m.assoc.toFixed(2)}</b></div>
+        <div class="sbrow"><span>Human genetics</span><b>${m.genetic.toFixed(2)}</b></div>
+        <div class="sbrow"><span>Literature / known drug</span><b>${m.lit.toFixed(2)} / ${m.knownDrug.toFixed(2)}</b></div></div>
+      <div class="sbcol biz"><h4>The business</h4>
+        <div class="sbrow"><span>Open-field proxy</span><b>${m.whitespace.toFixed(2)}</b></div>
+        <div class="sbrow"><span>Failure-risk proxy</span><b>${Math.round(m.failrisk*100)}%</b></div>
+        <div class="sbrow"><span>Estimated rank</span><b>#${f.rank}</b></div></div>
+    </div>
+    <div class="bot-actions"><button onclick="chatAnalyzeTarget('${sym}')">Open live memo</button><button onclick="chatShowMap()">See wider field</button></div>
+    <p class="bot-ground">This broader-field answer uses embedded Open Targets proxies. Open the live memo for current tractability, safety liabilities and active trial counts.</p>`);
+}
 function targetAnswer(sym){
-  const t=byId[sym]; const rec=recFor(t); const g=DATA.meta;
+  const t=byId[sym]; if(!t)return universeTargetAnswer(sym);
+  const rec=recFor(t); const g=DATA.meta;
   const x=scored(posture).find(y=>y.t.symbol===sym);
   const otEv=t.evidence.find(e=>e.id.startsWith('OT'));
   const ctEv=t.evidence.find(e=>e.id.startsWith('CT'));
@@ -3626,9 +4196,29 @@ function failAnswer(){
     <ul class="bot-list">${rows}</ul>
     <p class="bot-ground">IL-17 is the classic: genetics implicated the IL-23/Th17 pathway, but blocking IL-17 <b>worsened</b> Crohn's, because IL-17 protects the gut barrier (Hueber, Gut 2012). A validated pathway does not make every node a safe target.</p>`);
 }
+function modelForAny(sym){
+  if(byId[sym]){const t=byId[sym], x=scored(posture).find(y=>y.t.symbol===sym);
+    return {symbol:sym,name:t.name,curated:true,assoc:t.uc_score,genetic:t.genetic,whitespace:t.whitespace,failrisk:t.failrisk,fit:x.s,rank:x.rank,active:t.active_trials};}
+  if(typeof UNI_BY_SYM!=='undefined'&&UNI_BY_SYM[sym]){const m=modelFromUniverse(sym), f=fitOf(m);
+    return {symbol:sym,name:m.name,curated:false,assoc:m.assoc,genetic:m.genetic,whitespace:m.whitespace,failrisk:m.failrisk,fit:f.fit,rank:f.rank,active:m.activeTrials};}
+  return null;
+}
+function mixedCompareAnswer(syms){
+  const models=syms.map(modelForAny).filter(Boolean);
+  if(models.length<2)return simpleBot(`I can compare targets when I can map at least two of them to UC evidence. Try symbols like <b>TYK2 vs IL23R</b>, or open a live memo for the unfamiliar target first.`);
+  const best=[...models].sort((a,b)=>a.rank-b.rank)[0];
+  const rows=models.map(m=>`<li onclick="chatOpenAnyTarget('${m.symbol}')"><span class="rk">#${m.rank}</span>
+    <div><span class="nm">${m.symbol}</span> <span class="rz">${m.curated?'curated memo':'broader-field estimate'}; genetics ${m.genetic.toFixed(2)}, whitespace ${m.whitespace.toFixed(2)}, failure risk ${Math.round(m.failrisk*100)}%</span></div>
+    <span class="sc" style="color:${riskColor(m.failrisk)}">${m.fit}</span></li>`).join('');
+  return botWrap(syms.join(' vs '),`<p class="lead"><b>${best.symbol}</b> looks stronger on the current balanced evidence. For non-curated targets I use the broader-field Open Targets proxy, so treat the result as a triage answer and open the live memo before making a decision.</p>
+    <ul class="bot-list">${rows}</ul>
+    <div class="bot-actions"><button onclick="chatAnalyzeTarget('${models.find(m=>!m.curated)?.symbol||best.symbol}')">Open live memo</button></div>
+    <p class="bot-ground">Full side-by-side comparison cards are available for the curated 30; broader-field targets get an estimated fit and live memo path.</p>`);
+}
 function compareAnswer(syms){
   if(syms.length<2)return simpleBot(`Name two targets to compare, for example "Compare TL1A and JAK2."`);
   syms=syms.slice(0,3);
+  if(syms.some(s=>!byId[s]))return mixedCompareAnswer(syms);
   const ranks={};PRESET_KEYS.forEach(pk=>{scored(pk).forEach(x=>{(ranks[x.t.symbol]=ranks[x.t.symbol]||[]).push(x.rank);});});
   const curSc=scored(posture);
   const cols=syms.map(sym=>{const t=byId[sym];const x=curSc.find(y=>y.t.symbol===sym);
@@ -3656,8 +4246,13 @@ function answerHTML(text){
   if(c.k==='target')return targetAnswer(c.tg[0]);
   if(c.k==='compare')return compareAnswer(c.tg);
   if(c.k==='fail')return failAnswer();
+  if(c.k==='category')return categoryAnswer(c.kind);
+  if(c.k==='portfolio')return portfolioAnswer();
+  if(c.k==='method')return methodAnswer();
+  if(c.k==='validation')return validationAnswer();
+  if(c.k==='patient')return patientAnswer();
   if(c.k==='shortlist')return shortlistAnswer();
-  return simpleBot(`I answer from live UC target evidence: human genetics, competitor trials, Pfizer's portfolio, and failure history. Try a suggestion below, or name any target (TL1A, JAK2, GPR35, IL-17...).`);
+  return simpleBot(`Ask me in plain language about a target, a trade-off, or a ranking lens. For example: <b>"Is STAT3 worth pursuing?"</b>, <b>"Which targets have the strongest genetics?"</b>, <b>"What is safest?"</b>, <b>"Which field is least crowded?"</b>, or <b>"How is the score calculated?"</b>`);
 }
 function askQuestion(text){
   const chatOn=document.getElementById('v-chat').classList.contains('on');
@@ -3673,6 +4268,11 @@ function askQuestion(text){
 }
 window.askQuestion=askQuestion;
 window.chatOpenMemo=function(sym){openMemo(sym);};
+window.chatOpenAnyTarget=function(sym){if(byId[sym])openMemo(sym);else chatAnalyzeTarget(sym);};
+window.chatOpenTab=function(view){[...document.querySelectorAll('nav.tabs button')].find(b=>b.dataset.view===view).click();};
+window.chatAnalyzeTarget=function(sym){[...document.querySelectorAll('nav.tabs button')].find(b=>b.dataset.view==='land').click();
+  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  setTimeout(()=>{const c=document.getElementById('plot').closest('.card');c.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'});analyzeTarget(sym);},70);};
 window.chatShowMap=function(sym){[...document.querySelectorAll('nav.tabs button')].find(b=>b.dataset.view==='land').click();
   const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
   setTimeout(()=>{const c=document.getElementById('plot').closest('.card');c.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'});if(sym)openMemo(sym);},70);};
@@ -3741,7 +4341,7 @@ function modelFromUniverse(sym){const r=UNI_BY_SYM[sym];
   return {symbol:sym,name:sym,ensembl:ens,assoc,genetic:gen,lit,knownDrug:kd,
     bio:_cl(0.55*assoc+0.45*gen),drug:0.5,whitespace:_cl(1-0.55*lit-0.95*kd),
     failrisk:_cl((gen<0.05?0.2:0)+(lit>0.5?0.1:0)),redundancy:0,
-    activeTrials:null,totalTrials:null,tractability:null,safetyEvents:null,uniprot:null,live:false};}
+    activeTrials:null,totalTrials:null,tractability:null,safetyEvents:null,tissueDistribution:null,uniprot:null,live:false};}
 
 /* --- render an auto-generated memo --- */
 function renderAutoMemo(m){
@@ -3751,7 +4351,7 @@ function renderAutoMemo(m){
     : (m.whitespace>=0.7&&m.bio>=0.5)?{txt:'WATCH: credible whitespace',col:'var(--risk-md)'}
     : f.rank<=8?{txt:'WATCH: conditional interest',col:'var(--risk-md)'}
     : {txt:'DEPRIORITIZE',col:'var(--ink-3)'};
-  const genTxt=m.genetic>=0.5?'Strong human genetic support, the most translatable evidence class.':m.genetic>=0.1?'Some human genetic support.':'Little human genetic support: association rests on literature or drug history, which weakens mechanistic novelty.';
+  const genTxt=m.genetic>=0.1?`Open Targets genetic_association score is ${(m.genetic||0).toFixed(2)}; use the sourced evidence ladder below to see what is embedded versus missing.`:'Open Targets genetic_association score is 0.00 or near-zero; association rests on non-genetic evidence in this build.';
   const drugTxt=m.tractability?(m.drug>=0.6?'Tractable: structural or ligand evidence present.':m.drug>=0.35?'Moderately tractable.':'Limited tractability evidence in Open Targets.'):'Druggability loading from Open Targets tractability&hellip;';
   const compTxt=m.activeTrials==null?'Competitive activity loading from ClinicalTrials.gov&hellip;':(m.activeTrials>=20?`Crowded: ${m.activeTrials} active UC programs mention this target.`:m.activeTrials<=3?`Whitespace: only ${m.activeTrials} active UC programs mention this target.`:`${m.activeTrials} active UC programs mention this target.`);
   const safeTxt=m.safetyEvents==null?'Safety liabilities loading&hellip;':(m.safetyEvents>0?`Open Targets records ${m.safetyEvents} curated safety-liability event(s): elevated on-target risk.`:'No curated safety liabilities in Open Targets. Absence of evidence is not evidence of safety.');
@@ -3783,6 +4383,8 @@ function renderAutoMemo(m){
     <div class="memo-body">
       ${structHTML}
       <div class="sec"><span class="lbl">Mechanism thesis</span><p>${m.symbol} shows a UC association of ${(m.assoc||0).toFixed(2)}. ${genTxt}</p></div>
+      ${translationalEvidenceHTML(m)}
+      ${tissueExpressionHTML(m)}
       <div class="sec"><span class="lbl">Supporting evidence</span>${evList(sup)}</div>
       <div class="sec contra"><span class="lbl">Disconfirming evidence: why this could fail</span>${con.length?evList(con):('<p style="color:var(--ink-3);font-size:12.5px">'+safeTxt+'</p>')}</div>
       <div class="sec"><span class="lbl">Druggability</span><p>${drugTxt}</p></div>
@@ -3798,11 +4400,12 @@ function renderAutoMemo(m){
   mp.addEventListener('click',()=>{togglePin(m.symbol);mp.classList.toggle('on',isPinned(m.symbol));mp.innerHTML=isPinned(m.symbol)?'&#9733; On shortlist':'&#9734; Add to shortlist';});
   document.getElementById('memodl').addEventListener('click',()=>downloadMemo(m));
   document.getElementById('drawer').classList.add('on');document.getElementById('scrim').classList.add('on');
+  loadHpaExpression();
   if(m.uniprot)requestAnimationFrame(()=>initMol(m.symbol,m.uniprot));
 }
 function openAutoMemo(sym){const m=modelFromUniverse(sym);renderAutoMemo(m);liveEnrich(m);}
 async function openAutoMemoLive(sym){
-  const m={symbol:sym,name:sym,ensembl:null,assoc:0,genetic:0,lit:0,knownDrug:0,bio:0,drug:0.5,whitespace:0.5,failrisk:0.2,redundancy:0,activeTrials:null,totalTrials:null,tractability:null,safetyEvents:null,uniprot:null,live:false};
+  const m={symbol:sym,name:sym,ensembl:null,assoc:0,genetic:0,lit:0,knownDrug:0,bio:0,drug:0.5,whitespace:0.5,failrisk:0.2,redundancy:0,activeTrials:null,totalTrials:null,tractability:null,safetyEvents:null,tissueDistribution:null,uniprot:null,live:false};
   renderAutoMemo(m);
   try{
     const s=await otFetch('query($q:String!){search(queryString:$q,entityNames:["target"]){hits{id object{... on Target{approvedSymbol}}}}}',{q:sym});
@@ -3849,6 +4452,7 @@ async function ctCount(sym){
 function memoModelFor(t,rec,ex){const sc=scored(posture);const x=sc.find(y=>y.t.symbol===t.symbol);
   return {symbol:t.symbol,name:t.name,ensembl:t.ensembl,assoc:t.uc_score,genetic:t.genetic,lit:t.literature,
     bio:t.bio,drug:t.drug,whitespace:t.whitespace,failrisk:t.failrisk,redundancy:t.redundancy,
+    tissueDistribution:t.prio?.tissueDistribution,
     activeTrials:t.active_trials,totalTrials:t.total_trials,rec:rec.txt,fit:x?x.s:null,rank:x?x.rank:null,
     thesis:ex.thesis,market:ex.market,change:ex.change,exp:ex.exp,
     sup:ex.supList,con:(ex.conEv||[]).map(e=>({id:e.id,url:e.url,text:e.text})),curated:true};}
@@ -3856,6 +4460,10 @@ function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'
 function memoHTML(m){const f=m.curated?{fit:m.fit,rank:m.rank}:fitOf(m);
   const sup=(m.sup||[]).map(e=>`<li><a href="${e.url}">${esc(e.id)}</a> ${esc(e.text)}</li>`).join('');
   const con=(m.con||[]).map(e=>`<li><a href="${e.url}">${esc(e.id)}</a> ${esc(e.text)}</li>`).join('');
+  const b=expressionBreadthLabel(m.tissueDistribution);
+  const hpaSummary=hpaTextSummary(m.ensembl);
+  const ncbi=`https://www.ncbi.nlm.nih.gov/gene/?term=${encodeURIComponent(m.symbol+'[sym] human')}`;
+  const hpa=m.ensembl?`https://www.proteinatlas.org/${m.ensembl}-${encodeURIComponent(m.symbol)}`:`https://www.proteinatlas.org/search/${encodeURIComponent(m.symbol)}`;
   return `<!doctype html><meta charset="utf-8"><title>TargetCompass — ${esc(m.symbol)}</title>
 <style>body{font-family:system-ui,Arial,sans-serif;max-width:760px;margin:40px auto;padding:0 22px;color:#12142E;line-height:1.55}
 h1{margin:0;font-size:30px}.rec{display:inline-block;margin:10px 0 4px;font-weight:700;border:1.5px solid #888;border-radius:8px;padding:6px 12px}
@@ -3866,6 +4474,7 @@ ul{padding-left:18px}li{margin:4px 0;font-size:13px}a{color:#0B18EC}.foot{margin
 <div class="rec">${esc(m.rec||'')} &middot; fit ${f.fit}/100${f.rank?(' &middot; rank #'+f.rank):''}</div>
 <div class="g"><div>UC association <b>${(m.assoc||0).toFixed(2)}</b></div><div>Genetics <b>${(m.genetic||0).toFixed(2)}</b></div><div>Open field <b>${(m.whitespace||0).toFixed(2)}</b></div><div>Failure risk <b>${(m.failrisk||0).toFixed(2)}</b></div>${m.activeTrials!=null?('<div>Active UC trials <b>'+m.activeTrials+'</b></div>'):''}</div>
 ${m.thesis?('<h2>Mechanism thesis</h2><p>'+esc(m.thesis)+'</p>'):''}
+<h2>Tissue expression</h2><p>${hpaSummary?esc(hpaSummary)+' ':''}${esc(b.txt)} ${b.raw==null?'':'Open Targets tissueDistribution '+b.raw.toFixed(2)+'.'} Source: HPA consensus RNA for tissue nTPM; Open Targets Platform Target Prioritisation factors for tissueDistribution, derived from baseline-expression resources including Human Protein Atlas, Expression Atlas and GTEx. <a href="${ncbi}">NCBI Gene</a> · <a href="${hpa}">Human Protein Atlas</a></p>
 <h2>Supporting evidence</h2><ul>${sup||'<li>See Open Targets.</li>'}</ul>
 <h2>Disconfirming evidence</h2><ul>${con||'<li>No material disconfirming signals in the retrieved evidence.</li>'}</ul>
 ${m.market?('<h2>Competitive position</h2><p>'+esc(m.market)+'</p>'):''}
