@@ -4055,6 +4055,8 @@ function classify(text){
   const s=text.toLowerCase(); const tg=findTargets(text);
   const company=findCompany(text);
   const has=re=>re.test(s);
+  const wantsWhitespace=has(/\b(least crowded|uncrowded|whitespace|open field|low competition|low competitor|low rival|few rivals|little competition|little active|strong genetics and low competition)\b/);
+  const wantsCrowded=has(/\b(crowded|most crowded|high competition|many competitors|many rivals|competitor crowded|crowded by competitors|rival-heavy)\b/);
   if(company)return{k:'company',company,tg};
   if(has(/\b(compare|versus|vs|against|better|choose|pick)\b/)&&tg.length>=1)return{k:'compare',tg};
   if(has(/\b(fail|failed|failure|avoid|graveyard|worst|disproven|stay away|harm|unsafe)\b/))return tg.length?{k:'target',tg}:{k:'fail',tg};
@@ -4063,9 +4065,12 @@ function classify(text){
   if(isFollowUp(text))return{k:'followup',tg};
   if(has(/\b(patient|remission|biomarker|precision|respond|response|anti-tnf|steroid)\b/))return{k:'patient',tg};
   if(has(/\b(validate|validation|backtest|rewind|2015|historical|prove|trust)\b/))return{k:'validation',tg};
+  if(has(/\b(clinical proof|proof-of-mechanism|proof of mechanism|pom|clinical validation|validated mechanism|validated target)\b/))return{k:'category',kind:'clinical',tg};
   if(has(/\b(how|method|score|weight|formula|model|source|data|open targets|clinicaltrials|ai)\b/))return{k:'method',tg};
-  if(has(/\b(competitor|competition|rival|company|companies|sponsor|sponsors|pharma)\b/))return{k:'competitors',tg};
-  if(has(/\b(competitor|competition|trial|crowded|rival|uncrowded|whitespace|open field)\b/))return{k:'category',kind:'whitespace',tg};
+  if(wantsWhitespace)return{k:'category',kind:'whitespace',tg};
+  if(wantsCrowded)return{k:'category',kind:'crowded',tg};
+  if(has(/\b(company|companies|sponsor|sponsors|pharma|competitor landscape|market map)\b/))return{k:'competitors',tg};
+  if(has(/\b(competitor|competition|trial|rival|uncrowded|whitespace|open field)\b/))return{k:'category',kind:'whitespace',tg};
   if(has(/\b(safe|safest|safety|risk|toxicity|boxed warning|lowest risk)\b/))return{k:'category',kind:'safety',tg};
   if(has(/\b(genetic|genetics|evidence|science|association|biology)\b/))return{k:'category',kind:'genetics',tg};
   if(has(/\b(druggable|druggability|tractable|small molecule|antibody|structure)\b/))return{k:'category',kind:'druggability',tg};
@@ -4107,6 +4112,17 @@ function categoryAnswer(kind){
     const items=[...T].filter(t=>t.status!=='graveyard'&&!t.pfizer_owned).sort((a,b)=>(b.whitespace*b.genetic)-(a.whitespace*a.genetic));
     return listAnswer('Uncrowded opportunities','The best open-field targets are not merely empty; they combine credible human biology with little active UC competition. I exclude the graveyard mechanisms, because empty after failure is not whitespace.',
       items,t=>`${t.active_trials} active UC rivals; genetics ${t.genetic.toFixed(2)}`,t=>Math.round(t.whitespace*100), 'Whitespace is calculated from active ClinicalTrials.gov activity, then corrected for failure history and Pfizer portfolio overlap.');
+  }
+  if(kind==='crowded'){
+    const items=[...T].filter(t=>t.active_trials>0).sort((a,b)=>b.active_trials-a.active_trials||b.total_trials-a.total_trials);
+    return listAnswer('Most crowded mechanisms','These targets sit in the busiest UC mechanism classes. They may be clinically validated, but a new program needs a clear reason to beat or differentiate from existing competitors.',
+      items,t=>`${t.active_trials} active and ${t.total_trials} total UC trials; ${t.pfizer_owned?'Pfizer overlap':'competitor-heavy class'}`,t=>t.active_trials, 'Crowding is based on ClinicalTrials.gov UC interventional trial counts grouped by mechanism class.');
+  }
+  if(kind==='clinical'){
+    const items=Object.keys(CLINICAL_POM_EVIDENCE).map(sym=>byId[sym]).filter(Boolean)
+      .sort((a,b)=>b.active_trials-a.active_trials||b.genetic-a.genetic);
+    return listAnswer('Clinical proof-of-mechanism','These targets or mechanism classes have embedded clinical proof, including approved UC classes, Phase 2 readouts, or negative proof where the mechanism was clinically disconfirmed.',
+      items,t=>CLINICAL_POM_EVIDENCE[t.symbol].detail,t=>t.active_trials, 'Clinical proof-of-mechanism is sourced in the translational evidence ladder and should still be read with crowding, safety and portfolio context.');
   }
   if(kind==='safety'){
     const items=[...T].filter(t=>t.status!=='graveyard').sort((a,b)=>a.failrisk-b.failrisk||b.genetic-a.genetic);
