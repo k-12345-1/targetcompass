@@ -3997,6 +3997,36 @@ const ALIAS={tl1a:'TNFSF15',tnfsf15:'TNFSF15',jak:'JAK2',jak2:'JAK2',jak1:'JAK1'
  il13:'IL13',smad7:'SMAD7',mongersen:'SMAD7',ccr9:'CCR9',vercirnon:'CCR9',
  steroid:'NR3C1',steroids:'NR3C1',glucocorticoid:'NR3C1',nr3c1:'NR3C1',irf5:'IRF5',cxcr2:'CXCR2',ptpn2:'PTPN2',il10:'IL10'};
 const PFIZER_ASSET={JAK:'tofacitinib (Xeljanz), approved in UC',S1P:'etrasimod (Velsipity), approved in UC'};
+const COMPANY_PROFILES={
+  merck:{
+    name:'Merck',
+    aliases:['merck','msd','prometheus','prometheus biosciences','tulisokibart','pra023'],
+    stance:'Merck is represented in this UC evidence set mainly through TL1A.',
+    detail:'Merck bought Prometheus Biosciences in 2023, bringing in tulisokibart / PRA023, an anti-TL1A program for immune-mediated diseases including UC. In TargetCompass, that maps to TNFSF15 / TL1A: strong human genetics, clinical proof-of-mechanism, but a more crowded and expensive field than true whitespace targets.',
+    implication:'For Pfizer, Merck activity validates TL1A biology but also raises the bar. A Pfizer program would need differentiation, not just another anti-TL1A antibody.',
+    targets:['TNFSF15'],
+    sources:[['Merck acquisition','https://www.merck.com/news/merck-to-acquire-prometheus-biosciences-inc/'],['TL1A trials',ctUrlFor('TNFSF15')]]
+  },
+  roche:{
+    name:'Roche',
+    aliases:['roche','telavant','roivant','rvt3101','rvt-3101','duvakitug'],
+    stance:'Roche is also tied to TL1A in the embedded UC field.',
+    detail:'Roche acquired Telavant, including RVT-3101 / duvakitug, adding another major sponsor to the TL1A class. TargetCompass treats this as validation plus crowding: good biology, but less whitespace.',
+    implication:'The strategic question is whether a new TL1A program can win on biomarker selection, fibrosis biology, dosing, safety, or combination strategy.',
+    targets:['TNFSF15'],
+    sources:[['TL1A trials',ctUrlFor('TNFSF15')]]
+  },
+  pfizer:{
+    name:'Pfizer',
+    aliases:['pfizer','xeljanz','tofacitinib','velsipity','etrasimod'],
+    stance:'Pfizer already has UC-relevant assets in JAK and S1P biology, so the site penalizes simple portfolio duplication.',
+    detail:'The embedded portfolio layer flags JAK biology through tofacitinib / Xeljanz and S1P biology through etrasimod / Velsipity. Those mechanisms can still be clinically useful, but a new target program there must justify why it is not redundant.',
+    implication:'This is why TargetCompass often favors genetics-backed whitespace such as GPR35, CXCR2, IRF5, OSMR, or PTPN2 over another JAK or S1P bet.',
+    targets:['JAK2','JAK1','JAK3','S1PR1','TNFSF15'],
+    sources:[['Pfizer I&I','https://www.pfizer.com/science/therapeutic-areas/inflammation-immunology'],['JAK safety warning','https://www.fda.gov/drugs/drug-safety-and-availability/fda-requires-warnings-about-increased-risk-serious-heart-related-events-cancer-blood-clots-and-death']]
+  }
+};
+let CHAT_CONTEXT={lastKind:null,lastTargets:[],lastCompany:null,lastQuestion:''};
 
 function findTargets(text){
   let norm=text.toLowerCase().replace(/([a-z])[ _-]?(\d)/g,'$1$2');
@@ -4013,16 +4043,28 @@ function findTargets(text){
   }
   return [...new Set(hits)];
 }
+function findCompany(text){
+  const spaced=' '+text.toLowerCase().replace(/[^a-z0-9-]+/g,' ').trim()+' ';
+  return Object.keys(COMPANY_PROFILES).find(k=>COMPANY_PROFILES[k].aliases.some(a=>spaced.includes(' '+a+' ')))||null;
+}
+function isFollowUp(text){
+  const s=text.toLowerCase().trim();
+  return /^(explain more|more|tell me more|go deeper|details|why|why\?|can you explain|what do you mean)\b/.test(s);
+}
 function classify(text){
   const s=text.toLowerCase(); const tg=findTargets(text);
+  const company=findCompany(text);
   const has=re=>re.test(s);
+  if(company)return{k:'company',company,tg};
   if(has(/\b(compare|versus|vs|against|better|choose|pick)\b/)&&tg.length>=1)return{k:'compare',tg};
   if(has(/\b(fail|failed|failure|avoid|graveyard|worst|disproven|stay away|harm|unsafe)\b/))return tg.length?{k:'target',tg}:{k:'fail',tg};
   if(tg.length>=2&&/\bor\b/.test(s))return{k:'compare',tg};
   if(tg.length>=1)return{k:'target',tg};
+  if(isFollowUp(text))return{k:'followup',tg};
   if(has(/\b(patient|remission|biomarker|precision|respond|response|anti-tnf|steroid)\b/))return{k:'patient',tg};
   if(has(/\b(validate|validation|backtest|rewind|2015|historical|prove|trust)\b/))return{k:'validation',tg};
   if(has(/\b(how|method|score|weight|formula|model|source|data|open targets|clinicaltrials|ai)\b/))return{k:'method',tg};
+  if(has(/\b(competitor|competition|rival|company|companies|sponsor|sponsors|pharma)\b/))return{k:'competitors',tg};
   if(has(/\b(competitor|competition|trial|crowded|rival|uncrowded|whitespace|open field)\b/))return{k:'category',kind:'whitespace',tg};
   if(has(/\b(safe|safest|safety|risk|toxicity|boxed warning|lowest risk)\b/))return{k:'category',kind:'safety',tg};
   if(has(/\b(genetic|genetics|evidence|science|association|biology)\b/))return{k:'category',kind:'genetics',tg};
@@ -4083,6 +4125,45 @@ function categoryAnswer(kind){
   }
   return shortlistAnswer();
 }
+function companySourceChips(profile){
+  return `<div class="cites">${profile.sources.map(s=>`<a class="cite" href="${s[1]}" target="_blank" rel="noopener">${s[0]}&#8599;</a>`).join('')}</div>`;
+}
+function companyTargetRows(profile){
+  return profile.targets.map(sym=>{
+    const t=byId[sym], x=t?scored(posture).find(y=>y.t.symbol===sym):null;
+    if(!t)return '';
+    const note=sym==='TNFSF15'?'TL1A class; Merck/Prometheus and Roche/Telavant activity make it validated but crowded.'
+      :t.pfizer_owned?'Pfizer portfolio-overlapping mechanism.':'Target linked to this company lens.';
+    return `<li onclick="chatOpenMemo('${sym}')"><span class="rk">${x?'#'+x.rank:'-'}</span>
+      <div><span class="nm">${sym}</span> <span class="rz">${note}</span></div>
+      <span class="sc" style="color:${riskColor(t.failrisk)}">${t.active_trials}</span></li>`;
+  }).join('');
+}
+function companyAnswer(key,deep=false){
+  const p=COMPANY_PROFILES[key];
+  if(!p)return simpleBot(`I do not have a structured company profile for that sponsor yet. I can still answer by target, mechanism, trial crowding, Pfizer overlap, or source.`);
+  return botWrap(`${p.name} &middot; competitor / portfolio lens`,`
+    <p class="lead"><b>${p.stance}</b> ${deep?p.detail:''}</p>
+    ${deep?`<p class="lead">${p.implication}</p>`:`<p style="margin:0 0 12px;color:var(--ink-2);font-size:14px;line-height:1.5">${p.detail}</p>`}
+    <ul class="bot-list">${companyTargetRows(p)}</ul>
+    ${companySourceChips(p)}
+    <div class="bot-actions">
+      <button onclick="chatOpenMemo('${p.targets[0]}')">Open ${p.targets[0]} memo</button>
+      <button onclick="askQuestion('Compare TL1A vs GPR35')">Compare with whitespace</button>
+    </div>
+    <p class="bot-ground">This is a curated company lens from the embedded UC evidence set, not a full sponsor database. Trial counts come from ClinicalTrials.gov links on each mechanism.</p>`);
+}
+function competitorLandscapeAnswer(){
+  const crowded=[...T].filter(t=>t.active_trials>=10&&!t.pfizer_owned).sort((a,b)=>b.active_trials-a.active_trials).slice(0,4);
+  const rows=crowded.map(t=>`<li onclick="chatOpenMemo('${t.symbol}')"><span class="rk">${t.active_trials}</span>
+    <div><span class="nm">${t.symbol}</span> <span class="rz">${t.mech} mechanism; ${t.total_trials} total UC trials in the embedded snapshot</span></div>
+    <span class="sc">${Math.round((1-t.whitespace)*100)}</span></li>`).join('');
+  return botWrap('Competitor landscape',`
+    <p class="lead">The competitive pressure is concentrated in validated UC classes: IL-23, integrin, JAK, S1P, TNF, and TL1A. TargetCompass uses trial crowding by mechanism, plus Pfizer overlap, instead of trying to maintain a full sponsor-by-sponsor market map.</p>
+    <ul class="bot-list">${rows}</ul>
+    <div class="bot-actions"><button onclick="askQuestion('What is the best uncrowded target?')">Show whitespace</button><button onclick="chatShowMap()">Open landscape</button></div>
+    <p class="bot-ground">Crowding is based on embedded ClinicalTrials.gov UC interventional trial counts. Ask a company name, such as Merck or Pfizer, for the curated company lens.</p>`);
+}
 function portfolioAnswer(){
   const owned=T.filter(t=>t.pfizer_owned);
   const exploring=T.filter(t=>t.symbol==='TNFSF15');
@@ -4092,6 +4173,36 @@ function portfolioAnswer(){
   return botWrap('Pfizer portfolio lens',`<p class="lead">The Pfizer-specific layer changes the answer. A target can be scientifically real but still a poor use of the next dollar if Pfizer already owns the class or if the program only duplicates an approved asset.</p>
     <ul class="bot-list">${rows}</ul>
     <p class="bot-ground">Portfolio fit is one of the three business signals TargetCompass adds on top of Open Targets: competition, Pfizer overlap and failure history.</p>`);
+}
+function followUpAnswer(){
+  const c=CHAT_CONTEXT;
+  if(c.lastCompany)return companyAnswer(c.lastCompany,true);
+  if(c.lastKind==='target'&&c.lastTargets[0]){
+    const sym=c.lastTargets[0], t=byId[sym];
+    if(!t)return universeTargetAnswer(sym);
+    const f=t.facts;
+    if(f)return botWrap(`${sym} &middot; deeper read`,`
+      <p class="lead">${f.thesis}</p>
+      <div class="sbgrid">
+        <div class="sbcol sci"><h4>Why it is attractive</h4>${f.support.map(x=>`<div class="sbrow"><span>${x}</span><b></b></div>`).join('')}</div>
+        <div class="sbcol biz"><h4>What would change the answer</h4><p style="margin:0;color:var(--ink-2);font-size:13px;line-height:1.45">${f.change}</p></div>
+      </div>
+      <p style="margin:12px 0 0;color:var(--ink-2);font-size:14px;line-height:1.5"><b>Next experiment:</b> ${f.experiment}</p>
+      <div class="cites">${(t.evidence||[]).slice(0,3).map(citeChip).join('')}</div>
+      <div class="bot-actions"><button onclick="chatOpenMemo('${sym}')">Full memo</button><button onclick="chatShowMap('${sym}')">See on map</button></div>`);
+    return targetAnswer(sym);
+  }
+  if(c.lastKind==='shortlist'||c.lastKind==='category'){
+    const top=scored(posture).slice(0,3).map(x=>x.t);
+    return botWrap('Why these top picks',`
+      <p class="lead">The shortlist is not just "highest biology score." It looks for a useful intersection: human evidence, feasible modality, low UC trial crowding, low failure history, and low Pfizer portfolio duplication.</p>
+      <ul class="bot-list">${top.map((t,i)=>`<li onclick="chatOpenMemo('${t.symbol}')"><span class="rk">${i+1}</span>
+        <div><span class="nm">${t.symbol}</span> <span class="rz">genetics ${t.genetic.toFixed(2)}, ${t.active_trials} active rivals, failure risk ${Math.round(t.failrisk*100)}%</span></div>
+        <span class="sc">${scored(posture).find(x=>x.t.symbol===t.symbol).s}</span></li>`).join('')}</ul>
+      <p class="bot-ground">This is why some obvious clinical classes are demoted: they may work, but they are crowded, already owned by Pfizer, or carry known safety/failure concerns.</p>`);
+  }
+  if(c.lastKind==='compare'&&c.lastTargets.length>=2)return compareAnswer(c.lastTargets);
+  return simpleBot(`I can go deeper once there is something specific to explain. Ask about a target, company, competitor field, or ranking first.`);
 }
 function methodAnswer(){
   return botWrap('How the answer is made',`<p class="lead">The chat is deterministic: it reads the same UC target table as the map, classifies your question, then answers from the relevant evidence fields. The score combines biology, druggability, whitespace, failure risk and Pfizer portfolio fit under the active weighting strategy.</p>
@@ -4243,16 +4354,22 @@ function pushBot(html){const log=document.getElementById('chatlog');
   const w=document.createElement('div');w.innerHTML=html;const node=w.firstElementChild;log.appendChild(node);return node;}
 function answerHTML(text){
   const c=classify(text);
-  if(c.k==='target')return targetAnswer(c.tg[0]);
-  if(c.k==='compare')return compareAnswer(c.tg);
-  if(c.k==='fail')return failAnswer();
-  if(c.k==='category')return categoryAnswer(c.kind);
-  if(c.k==='portfolio')return portfolioAnswer();
-  if(c.k==='method')return methodAnswer();
-  if(c.k==='validation')return validationAnswer();
-  if(c.k==='patient')return patientAnswer();
-  if(c.k==='shortlist')return shortlistAnswer();
-  return simpleBot(`Ask me in plain language about a target, a trade-off, or a ranking lens. For example: <b>"Is STAT3 worth pursuing?"</b>, <b>"Which targets have the strongest genetics?"</b>, <b>"What is safest?"</b>, <b>"Which field is least crowded?"</b>, or <b>"How is the score calculated?"</b>`);
+  let html='';
+  if(c.k==='target')html=targetAnswer(c.tg[0]);
+  else if(c.k==='compare')html=compareAnswer(c.tg);
+  else if(c.k==='fail')html=failAnswer();
+  else if(c.k==='category')html=categoryAnswer(c.kind);
+  else if(c.k==='company')html=companyAnswer(c.company);
+  else if(c.k==='competitors')html=competitorLandscapeAnswer();
+  else if(c.k==='portfolio')html=portfolioAnswer();
+  else if(c.k==='method')html=methodAnswer();
+  else if(c.k==='validation')html=validationAnswer();
+  else if(c.k==='patient')html=patientAnswer();
+  else if(c.k==='shortlist')html=shortlistAnswer();
+  else if(c.k==='followup')return followUpAnswer();
+  else html=simpleBot(`I can answer in plain language about targets, competitors, company activity, patient fit, ranking logic, or evidence sources. Try: <b>"What is Merck doing in UC?"</b>, <b>"What target has the best potential?"</b>, <b>"Compare TL1A vs GPR35"</b>, or <b>"How is the score calculated?"</b>`);
+  CHAT_CONTEXT={lastKind:c.k,lastTargets:c.tg||[],lastCompany:c.company||null,lastQuestion:text};
+  return html;
 }
 function askQuestion(text){
   const chatOn=document.getElementById('v-chat').classList.contains('on');
@@ -4279,7 +4396,7 @@ window.chatShowMap=function(sym){[...document.querySelectorAll('nav.tabs button'
 window.chatCompareOpen=function(list){cmpSel.clear();list.split(',').forEach(s=>cmpSel.add(s));
   [...document.querySelectorAll('nav.tabs button')].find(b=>b.dataset.view==='cmp').click();};
 
-const SUGGEST=["Should Pfizer pursue TL1A?","What's the best uncrowded target?","Why not JAK2?","Compare TYK2 vs IL23R","Which targets already failed?"];
+const SUGGEST=["What is Merck doing in UC?","What's the best uncrowded target?","Why not JAK2?","Compare TL1A vs GPR35","Which targets already failed?"];
 function renderSuggest(){const box=document.getElementById('chatsuggest');box.innerHTML='';
   SUGGEST.forEach(q=>{const b=document.createElement('button');b.type='button';b.textContent=q;
     b.addEventListener('click',()=>askQuestion(q));box.appendChild(b);});}
