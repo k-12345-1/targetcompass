@@ -528,6 +528,75 @@
   .ptf-mini li:before{content:"\2192";position:absolute;left:0;color:var(--accent-ink)}
   .ptf-illus{font-size:11px;color:var(--ink-3);margin:12px 0 0;font-style:italic}
 
+  /* ---- progressive disclosure (calm defaults, quirks-safe) ---- */
+  details.disclose{border:1px solid var(--line);border-radius:14px;background:var(--panel);margin:16px 0;box-shadow:var(--shadow)}
+  details.disclose>summary{list-style:none;cursor:pointer;padding:15px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-weight:700;font-size:14.5px;color:var(--ink);user-select:none}
+  details.disclose>summary::-webkit-details-marker{display:none}
+  details.disclose>summary::marker{content:""}
+  details.disclose>summary .dsub{font-weight:400;color:var(--ink-3);font-size:12.5px}
+  details.disclose>summary .chev{margin-left:auto;color:var(--ink-3);font-family:var(--mono);font-size:11px;transition:transform .18s;flex:none}
+  details.disclose[open]>summary .chev{transform:rotate(90deg)}
+  details.disclose>summary:hover{color:var(--accent-ink)}
+  details.disclose[open]>summary{border-bottom:1px solid var(--line)}
+  details.disclose:not([open])>.disclose-body{display:none}
+  .disclose-body{padding:16px 20px 20px}
+  .disclose-body>.method-sec{margin-top:0;box-shadow:none;border:none;padding:0 0 8px}
+  .disclose-body>.method-sec+.method-sec{margin-top:22px;border-top:1px solid var(--line);padding-top:18px}
+  .valcase>summary{gap:12px}
+  .valcase .vc-sym{font-family:var(--mono);font-weight:700;font-size:15px;color:var(--ink)}
+  .valcase .vc-mech{font-size:12px;color:var(--ink-3)}
+  .valcase .vc-badge{margin-left:auto;font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--risk-lo);white-space:nowrap}
+  .valcase .vc-badge.miss{color:var(--risk-hi)}
+  .valcase>summary .chev{margin-left:14px}
+  .valcase .vc-h{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-4);margin-bottom:6px}
+  .valcase .vc-body{font-size:13px;color:var(--ink-2);line-height:1.5}
+  .valcase .vc-cite{margin-top:11px}
+  .valcase .vc-cite a{font-family:var(--mono);font-size:10.5px;color:var(--accent-ink)}
+  .val-lead{font-size:13px;color:var(--ink-3);margin:18px 0 4px}
+
+  /* ---- Patients in-page sub-nav (one focused view at a time) ---- */
+  .ptnav{display:flex;gap:6px;flex-wrap:wrap;background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:5px;margin:0 0 18px}
+  .ptnav button{flex:1;min-width:150px;background:transparent;border:none;border-radius:10px;padding:11px 14px;font-family:inherit;
+    font-size:13.5px;font-weight:700;color:var(--ink-3);cursor:pointer;display:flex;flex-direction:column;gap:2px;align-items:flex-start}
+  .ptnav button .s{font-size:10.5px;font-weight:500;color:var(--ink-4)}
+  .ptnav button:hover{color:var(--accent-ink)}
+  .ptnav button.on{background:var(--panel);color:var(--ink);box-shadow:var(--shadow)}
+  .ptnav button.on .s{color:var(--accent-ink)}
+  .ptview[hidden]{display:none}
+
+  /* ---- patient-type x target simulator ---- */
+  .pf-intro{font-size:13.5px;color:var(--ink-2);line-height:1.55;margin:0 0 14px}
+  .pf-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+  .pf-bar .pf-create{background:var(--accent);color:#fff;border:1px solid var(--accent);border-radius:999px;padding:9px 16px;font-family:var(--mono);font-size:12px;font-weight:700;cursor:pointer}
+  .pf-bar .pf-create:hover{filter:brightness(1.08)}
+  .pf-bar .pf-hint{font-size:12px;color:var(--ink-3)}
+  .pf-matrix-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--panel);box-shadow:var(--shadow);padding:4px}
+  table.pf-matrix{border-collapse:collapse;width:100%;min-width:560px}
+  table.pf-matrix th,table.pf-matrix td{padding:0;text-align:center}
+  table.pf-matrix thead th{position:sticky;top:0;background:var(--panel);padding:10px 8px;font-size:11.5px;font-weight:700;color:var(--ink);border-bottom:1px solid var(--line)}
+  table.pf-matrix thead th .cust{display:block;font-family:var(--mono);font-size:8.5px;color:#5B3FBF;text-transform:uppercase;letter-spacing:.05em}
+  table.pf-matrix thead th:first-child{text-align:left;color:var(--ink-3);font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em}
+  table.pf-matrix tbody th{text-align:left;padding:11px 12px;font-size:12.5px;font-weight:700;color:var(--ink);border-bottom:1px solid var(--line);max-width:230px}
+  table.pf-matrix tbody th .s{display:block;font-weight:400;font-size:10.5px;color:var(--ink-3);margin-top:2px;line-height:1.35}
+  table.pf-matrix td{border-bottom:1px solid var(--line);border-left:1px solid var(--line)}
+  .pf-cell{width:100%;height:100%;min-height:52px;border:none;cursor:pointer;font-family:var(--mono);font-weight:800;font-size:15px;color:#fff;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:2px}
+  .pf-cell .vl{font-size:8.5px;font-weight:700;letter-spacing:.04em;opacity:.9;text-transform:uppercase}
+  .pf-cell:hover{filter:brightness(1.06)}
+  .pf-cell.sel{outline:3px solid var(--ink);outline-offset:-3px}
+  .pf-legend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:11px;color:var(--ink-3);margin:10px 2px 0}
+  .pf-legend .sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+  .pf-detail{margin-top:18px}
+  .pf-dhead{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:20px 22px;margin-bottom:16px}
+  .pf-dhead .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink)}
+  .pf-dhead h3{font-size:20px;font-weight:800;margin:4px 0 2px}
+  .pf-dhead h3 .x{color:var(--ink-3);font-weight:600}
+  .pf-verdict{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-weight:700;font-size:12.5px;border:1px solid;border-radius:999px;padding:5px 13px;margin:8px 0 12px}
+  .pf-dhead .why{font-size:13.5px;color:var(--ink-2);line-height:1.55}
+  .pf-dhead .why b{color:var(--ink)}
+  .pf-scores{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+  .pf-score{font-size:11px;color:var(--ink-3)}
+  .pf-score b{display:block;font-family:var(--mono);font-size:17px;color:var(--ink)}
+
   .modal-scrim{position:fixed;inset:0;background:rgba(14,19,48,.5);z-index:60}
   .modal-scrim[hidden]{display:none}
   .pmodal{position:fixed;z-index:61;top:50%;left:50%;transform:translate(-50%,-50%);width:min(640px,94vw);max-height:92vh;
@@ -655,17 +724,21 @@
       <button class="hero-cta" id="tourbtn">See the landscape <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg></button>
     </div>
 
-    <div class="factbar" id="factbar">
-      <div class="fb-h">Target selection means balancing many factors. TargetCompass scores all of them, then adds the three Open Targets leaves out.</div>
-      <div class="fb-grid">
-        <div class="fb sci"><span class="fb-tag">Science</span><b>Disease relevance</b><span>Open Targets association</span></div>
-        <div class="fb sci"><span class="fb-tag">Science</span><b>Existing evidence</b><span>Human genetics + literature</span></div>
-        <div class="fb sci"><span class="fb-tag">Science</span><b>Druggability</b><span>Open Targets tractability</span></div>
-        <div class="fb biz"><span class="fb-tag">Business</span><b>Novelty / open field</b><span>Live competitor trials</span></div>
-        <div class="fb biz"><span class="fb-tag">Business</span><b>Portfolio fit</b><span>What Pfizer already owns</span></div>
-        <div class="fb biz"><span class="fb-tag">Business</span><b>Failure risk</b><span>Disconfirmation + class history</span></div>
+    <details class="disclose factbar-d">
+      <summary>What goes into the score <span class="dsub">six factors: three from Open Targets, three TargetCompass adds</span><span class="chev">&#9656;</span></summary>
+      <div class="disclose-body">
+      <div class="factbar" id="factbar" style="margin:0">
+        <div class="fb-grid">
+          <div class="fb sci"><span class="fb-tag">Science</span><b>Disease relevance</b><span>Open Targets association</span></div>
+          <div class="fb sci"><span class="fb-tag">Science</span><b>Existing evidence</b><span>Human genetics + literature</span></div>
+          <div class="fb sci"><span class="fb-tag">Science</span><b>Druggability</b><span>Open Targets tractability</span></div>
+          <div class="fb biz"><span class="fb-tag">Business</span><b>Novelty / open field</b><span>Live competitor trials</span></div>
+          <div class="fb biz"><span class="fb-tag">Business</span><b>Portfolio fit</b><span>What Pfizer already owns</span></div>
+          <div class="fb biz"><span class="fb-tag">Business</span><b>Failure risk</b><span>Disconfirmation + class history</span></div>
+        </div>
       </div>
-    </div>
+      </div>
+    </details>
 
     <div class="postbar">
       <div class="seg" role="group" aria-label="Scoring strategy" id="postures"></div>
@@ -3900,15 +3973,22 @@ function drawValidation(){
     <div class="vs-txt"><b>Every historical call was directionally correct.</b> The engine would have elevated the three mechanisms that went on to define modern UC care, been skeptical of the target the field over-hyped, and refused the one that harmed patients, using only evidence available at the time.</div>
   </div>`;
   const label={elevate:"Elevated",avoid:"Avoided",caution:"Cautioned"};
+  h+=`<p class="val-lead">${n} calls the engine would have made in 2015. Scan the verdicts; open any one for the full evidence and what happened.</p>`;
   BACKTEST.forEach(b=>{
-    h+=`<div class="val-case">
-      <div class="vc-t"><span class="sym">${b.sym}</span><span class="mech">${b.mech}</span>
-        <span class="callpill ${b.call}" style="margin-top:6px">${label[b.call]}</span></div>
-      <div><div class="vc-h">What was known ~2015</div><div class="vc-body">${b.then}</div></div>
-      <div><div class="vc-h">What actually happened</div><div class="vc-body">${b.outcome}${b.kicker?`<div style="margin-top:8px;font-weight:600;color:var(--ink)">${b.kicker}</div>`:""}</div>
-        <div class="vc-cite" style="margin-top:9px"><a href="${b.cite.u}" target="_blank" rel="noopener">${b.cite.t} &#8599;</a></div></div>
-      <div class="vc-call"><div class="vc-verdict${b.hit?"":" miss"}">${b.hit?"&#10003; CORRECT":"&#10007; MISS"}</div></div>
-    </div>`;
+    h+=`<details class="disclose valcase">
+      <summary>
+        <span class="vc-sym">${b.sym}</span>
+        <span class="vc-mech">${b.mech}</span>
+        <span class="callpill ${b.call}">${label[b.call]}</span>
+        <span class="vc-badge${b.hit?"":" miss"}">${b.hit?"&#10003; correct":"&#10007; miss"}</span>
+        <span class="chev">&#9656;</span>
+      </summary>
+      <div class="disclose-body">
+        <div class="vc-h">What was known ~2015</div><div class="vc-body">${b.then}</div>
+        <div class="vc-h" style="margin-top:14px">What actually happened</div><div class="vc-body">${b.outcome}${b.kicker?`<div style="margin-top:8px;font-weight:600;color:var(--ink)">${b.kicker}</div>`:""}</div>
+        <div class="vc-cite"><a href="${b.cite.u}" target="_blank" rel="noopener">${b.cite.t} &#8599;</a></div>
+      </div>
+    </details>`;
   });
   h+=`<p class="val-foot"><b>How to read this honestly:</b> this is a retrospective directional check against the documented record, not a fully blinded re-run of a frozen 2015 database. In production, every evidence item is written to an append-only ledger stamped with the date it was true, which turns a real blinded backtest into an automated report we can run for any disease, on demand. That is the difference between a tool you believe and a tool you can audit.</p>`;
   box.innerHTML=h;
@@ -4040,7 +4120,7 @@ function drawPatientExplorer(){
         <a class="cite" href="${ot}" target="_blank" rel="noopener">Open Targets&#8599;</a>
         <a class="cite" href="${ncbi}" target="_blank" rel="noopener">NCBI Gene&#8599;</a>
       </div>
-      <div style="margin-top:11px"><button type="button" onclick="patientFocusTarget('${m.symbol}')">Clinical path &amp; recruitment &#8594;</button></div>
+      <div style="margin-top:11px"><button type="button" onclick="pfGoToFit('${m.symbol}')">Test on patient types &#8594;</button></div>
     </div>`;
   }).join('');
   dyn.innerHTML=`<div class="pt-lens">
@@ -4068,13 +4148,12 @@ function drawPatientExplorer(){
   <div class="pt-main">
     <div class="method-sec"><h3>Clinical-trial activity</h3><p class="sub">Current UC trial load is a patient-access and differentiation signal: zero active trials can mean whitespace; many active trials can mean a crowded mechanism where a new program must help a narrower patient group better.</p><div class="pt-table">${rows}</div></div>
     <div><h3 style="font-size:19px;margin:0 0 10px">Patient-fit cards</h3><div class="pt-cards">${cards}</div></div>
-  </div>
-  <div id="ptfocus"></div>`;
+  </div>`;
   document.getElementById('ptaddform').addEventListener('submit',e=>{e.preventDefault();patientAddTarget();});
   const ptinp=document.getElementById('pttarget');
   if(ptinp)ptinp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();patientAddTarget(ptinp.value);}});
   patientHydrateTrials(models);
-  renderPatientFocus();
+  if(document.getElementById('pv-fit')&&!document.getElementById('pv-fit').hidden)renderPatientFit();
 }
 /* --- clinical-path + recruitment drill-down (adds trial depth to the patient explorer) --- */
 let patientFocus=null;
@@ -4177,13 +4256,157 @@ function renderPatientFocus(){
       </div>
     </div>`;
 }
+/* ================= PATIENT-TYPE x TARGET FIT (create a target, test it on patient populations) ================= */
+const PATIENT_TYPES=[
+  {id:'naive',name:'Biologic-naive, moderate-to-severe',short:'Biologic-naive',pop:280000,
+    desc:'First advanced therapy after 5-ASA and steroids. Large, broad population.',
+    w:{eff:1,bm:.2,safe:.7,novel:.2,fibro:0},
+    note:'Wants dependable, broad efficacy and a clean safety story; a responder biomarker matters less here.'},
+  {id:'antitnf',name:'Anti-TNF refractory',short:'Anti-TNF refractory',pop:120000,
+    desc:'Failed or lost response to anti-TNF. The classic precision population.',
+    w:{eff:.9,bm:1,safe:.6,novel:.8,fibro:.2},
+    note:'Rewards a responder biomarker and a mechanism genuinely distinct from anti-TNF.'},
+  {id:'multifail',name:'Multi-failure / treatment-refractory',short:'Multi-failure',pop:55000,
+    desc:'Failed two or more advanced therapies. Out of good options.',
+    w:{eff:1,bm:.7,safe:.45,novel:1,fibro:.3},
+    note:'Rewards a truly novel mechanism and any enrichment handle; tolerates more risk for benefit.'},
+  {id:'fibro',name:'Fibrostenotic',short:'Fibrostenotic',pop:70000,
+    desc:'Stricturing, scarring disease that drives surgery. Untouched by current drugs.',
+    w:{eff:.9,bm:.5,safe:.5,novel:1,fibro:1},
+    note:'Rewards mechanisms acting on fibrosis and tissue remodeling, not inflammation alone.'},
+  {id:'steroid',name:'Steroid-dependent',short:'Steroid-dependent',pop:110000,
+    desc:'Cannot taper off corticosteroids without flaring.',
+    w:{eff:.9,bm:.3,safe:.85,novel:.3,fibro:0},
+    note:'Wants a durable steroid-sparing mechanism with a clean chronic-safety profile.'},
+  {id:'elderly',name:'Elderly / comorbid (safety-sensitive)',short:'Elderly/comorbid',pop:90000,
+    desc:'Older or comorbid patients where cardiovascular, clot and malignancy risk dominate.',
+    w:{eff:.7,bm:.3,safe:1,novel:.2,fibro:0},
+    note:'Safety dominates: class warnings (JAK) and broadly-expressed targets are heavily penalised.'},
+];
+const FIBRO_TARGETS={TNFSF15:1,OSMR:.9,OSM:.9,SMAD7:.7,PTPN2:.4,IL13:.6,IL10:.3};
+function fibroScore(sym){return FIBRO_TARGETS[sym]!=null?FIBRO_TARGETS[sym]:.3;}
+function targetTypeFit(sym,m,pt){
+  const eff=_cl(m.assoc==null?.25:(.55*(m.genetic||0)+.45*(m.assoc||0)));
+  const bm=pfBiomarker(sym,m).strength;
+  let failrisk=(m.failrisk!=null?m.failrisk:.3), safe=_cl(1-failrisk);
+  const jak=/^JAK/.test(sym);
+  if(pt.id==='elderly'){if(jak)safe=Math.min(safe,.15);if(sym==='NR3C1')safe=Math.min(safe,.2);}
+  if(pt.id==='steroid'&&sym==='NR3C1')safe=Math.min(safe,.15);
+  const novel=_cl(m.whitespace!=null?m.whitespace:.5), fib=fibroScore(sym), w=pt.w;
+  const denom=w.eff+w.bm+w.safe+w.novel+(w.fibro||0);
+  let fit=100*(w.eff*eff+w.bm*bm+w.safe*safe+w.novel*novel+(w.fibro||0)*fib)/denom;
+  if(sym==='IL17A'||sym==='IL17RA')fit=Math.min(fit,18);
+  fit=Math.round(_cl(fit,0,100));
+  const verdict=fit>=68?{t:'Strong fit',c:'var(--risk-lo)'}:fit>=45?{t:'Conditional fit',c:'var(--risk-md)'}:{t:'Poor fit',c:'var(--risk-hi)'};
+  let why;
+  if(w.safe>=.8&&safe<.4)why='safety is the gate for this population and this target carries real risk';
+  else if(w.bm>=.8&&bm>=.5)why='a responder biomarker lets you enrich this exact population';
+  else if((w.fibro||0)>=1)why=(fib>=.7?'it acts on the fibrosis biology this population needs':'it targets inflammation but not the fibrosis that defines this group');
+  else if(w.novel>=.8&&novel>=.7)why='its open, novel mechanism suits patients who are out of options';
+  else if(eff>=.6)why='strong biology gives the dependable efficacy this population needs';
+  else why='the evidence is thinner than this population needs';
+  return {fit,verdict,why:`For ${pt.short.toLowerCase()} patients, ${why}.`,eff,bm,safe,novel,fib};
+}
+function fitColor(f){const t=f/100,lo=[214,69,69],md=[224,161,0],hi=[31,157,107];let c;
+  if(t<.5){const k=t/.5;c=lo.map((v,i)=>Math.round(v+(md[i]-v)*k));}else{const k=(t-.5)/.5;c=md.map((v,i)=>Math.round(v+(hi[i]-v)*k));}
+  return `rgb(${c[0]},${c[1]},${c[2]})`;}
+let pfSel={sym:null,type:null};
+function renderPatientFit(){
+  const host=document.getElementById('ptfit'); if(!host)return;
+  const targets=patientTargets.slice();
+  const models=Object.fromEntries(targets.map(s=>[s,patientBaseModel(s)]));
+  const head=`<tr><th>Patient type \\ target</th>${targets.map(s=>`<th>${s}${byId[s]&&byId[s].custom?'<span class="cust">yours</span>':''}</th>`).join('')}</tr>`;
+  const rows=PATIENT_TYPES.map(pt=>{
+    const cells=targets.map(s=>{const r=targetTypeFit(s,models[s],pt);const sel=(pfSel.sym===s&&pfSel.type===pt.id)?' sel':'';
+      return `<td><button class="pf-cell${sel}" style="background:${fitColor(r.fit)}" onclick="pfPick('${s}','${pt.id}')" title="${s} in ${pt.short}: ${r.verdict.t} (${r.fit}/100)"><span>${r.fit}</span><span class="vl">${r.verdict.t.split(' ')[0]}</span></button></td>`;}).join('');
+    return `<tr><th>${pt.short}<span class="s">${pt.desc}</span></th>${cells}</tr>`;}).join('');
+  const detail=(pfSel.sym&&pfSel.type&&patientTargets.includes(pfSel.sym))?pfFitDetail():'<p class="pf-intro" style="text-align:center;color:var(--ink-3)">Click any cell above to see the fit rationale, the clinical-development stage, and the trial you would run for that target and patient population.</p>';
+  host.innerHTML=`
+    <p class="pf-intro">See how each target reacts with the UC patient populations you would actually run a trial in. Green is a strong fit for that population, red is poor. <b>Create your own target</b> to drop it into the grid and test it the same way.</p>
+    <div class="pf-bar">
+      <button class="pf-create" type="button" onclick="document.getElementById('proposebtn').click()">&#43; Create your own target</button>
+      <span class="pf-hint">The columns are the targets selected in <b>Explore targets</b>. Click a cell for the full trial read-out.</span>
+    </div>
+    <div class="pf-matrix-wrap"><table class="pf-matrix"><thead>${head}</thead><tbody>${rows}</tbody></table></div>
+    <div class="pf-legend"><span><span class="sw" style="background:${fitColor(85)}"></span>Strong fit</span><span><span class="sw" style="background:${fitColor(55)}"></span>Conditional</span><span><span class="sw" style="background:${fitColor(22)}"></span>Poor fit</span><span>Fit blends efficacy, biomarker, safety and novelty (plus fibrosis biology for the fibrostenotic row), weighted by what each population needs.</span></div>
+    <div class="pf-detail" id="pf-detail">${detail}</div>`;
+}
+function pfPick(sym,typeId){pfSel={sym,type:typeId};renderPatientFit();
+  const d=document.getElementById('pf-detail');if(d)d.scrollIntoView({behavior:'smooth',block:'center'});}
+function pfFitDetail(){
+  const sym=pfSel.sym, pt=PATIENT_TYPES.find(p=>p.id===pfSel.type); if(!pt)return '';
+  const m=patientBaseModel(sym), r=targetTypeFit(sym,m,pt), ph=pfPhase(sym,m), rec=pfRecruitType(sym,m,pt), bmk=pfBiomarker(sym,m);
+  const fmax=rec.steps[0][1];
+  const funnel=rec.steps.map((s,i)=>`<div class="fn-row ${i===rec.steps.length-1?'final':''}"><span class="fl">${s[0]}</span><div class="fbar"><div class="ff" style="width:${Math.max(4,Math.round(100*s[1]/fmax))}%"></div></div><span class="fn-n">${s[1].toLocaleString()}</span></div>`).join('');
+  return `
+    <div class="pf-dhead">
+      <span class="k">Target &times; patient population</span>
+      <h3>${sym} <span class="x">&times; ${pt.name}</span></h3>
+      <span class="pf-verdict" style="color:${r.verdict.c};border-color:${r.verdict.c}">${r.verdict.t} &middot; ${r.fit}/100</span>
+      <p class="why"><b>${r.why}</b> ${pt.note}</p>
+      <div class="pf-scores">
+        <div class="pf-score"><b>${Math.round(r.eff*100)}</b>efficacy</div>
+        <div class="pf-score"><b>${Math.round(r.bm*100)}</b>biomarker</div>
+        <div class="pf-score"><b>${Math.round(r.safe*100)}</b>safety</div>
+        <div class="pf-score"><b>${Math.round(r.novel*100)}</b>novelty</div>
+        ${pt.w.fibro?`<div class="pf-score"><b>${Math.round(r.fib*100)}</b>fibrosis fit</div>`:''}
+      </div>
+    </div>
+    <div class="method-sec">
+      <h3>The road to the clinic &middot; ${sym}</h3>
+      <p class="sub">Where ${sym}'s mechanism sits today, by its furthest clinical stage.</p>
+      <div class="phase-track">${ph.stages.map((s,i)=>`<div class="phstep ${i<ph.idx?'done':''} ${i===ph.idx?'now':''}">${i===ph.idx?'<span class="youhere">FIELD IS HERE</span>':''}<span class="pn">Stage ${i+1}</span><h5>${s.n}</h5><p class="pg">${s.g}</p><span class="ppt">${s.pt}</span></div>`).join('')}</div>
+      <p class="ptf-note">${ph.note}</p>
+    </div>
+    <div class="method-sec">
+      <h3>Recruit ${pt.short.toLowerCase()} patients &middot; ${sym}</h3>
+      <p class="sub">The trial the analysis implies for <b>${sym}</b> in this population.</p>
+      <div class="ptf-recruit">
+        <div>
+          <span class="ptf-strat ${rec.enriched?'enr':'all'}">${rec.enriched?'&#9670; Biomarker-enriched design':'&#9633; All-comers within this population'}</span>
+          <div class="ptf-comp">${rec.compText}</div>
+          <span style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);display:block;margin-bottom:9px">Enrollable from this population</span>
+          <div class="ptf-funnel">${funnel}</div>
+          <p class="ptf-illus">Illustrative US planning figures for the <b>${pt.short.toLowerCase()}</b> population.</p>
+        </div>
+        <div class="ptf-mini">
+          <h5>Right-patient test</h5><ul><li><b>${bmk.kind}.</b> ${bmk.note}</li></ul>
+          <h5>Primary endpoints</h5><ul>${rec.endpoints.map(e=>`<li>${e}</li>`).join('')}</ul>
+          <h5>Key inclusion / exclusion</h5><ul>${rec.ie.map(e=>`<li>${e}</li>`).join('')}</ul>
+        </div>
+      </div>
+    </div>`;
+}
+function pfRecruitType(sym,m,pt){
+  const bm=pfBiomarker(sym,m), enriched=bm.strength>=.45&&pt.w.bm>=.5, active=m.active;
+  const compText=active==null?'Pulling the current competitive field from ClinicalTrials.gov&hellip;'
+    :active>=15?`<b>${active}</b> active UC programs are recruiting; a ${pt.short.toLowerCase()} focus${enriched?' with biomarker enrichment':''} is how you avoid competing head-on for the same patients.`
+    :active>=3?`<b>${active}</b> active UC programs touch this mechanism: enrollment in this sub-population is competitive but workable.`
+    :`Only <b>${active||0}</b> active UC programs here, so little competition for ${pt.short.toLowerCase()} patients.`;
+  const steps=[['Adults with UC (US)',1250000],[pt.short+' population',pt.pop]];
+  if(enriched)steps.push([bm.kind+'-positive',Math.round(pt.pop*(bm.strength>=.8?.5:.35))]);
+  const base=steps[steps.length-1][1];
+  steps.push(['Meet full I/E, reachable &amp; consent',Math.round(base*0.10)]);
+  const incl=pt.id==='antitnf'?'inadequate response to anti-TNF':pt.id==='multifail'?'failed &ge;2 advanced therapies':pt.id==='naive'?'no prior advanced therapy':pt.id==='steroid'?'documented corticosteroid dependence':pt.id==='fibro'?'endoscopic or imaging evidence of stricturing':'age or comorbidity criteria per protocol';
+  return {enriched,compText,steps,
+    endpoints:['Clinical remission by modified Mayo score at week 12 (induction)','Endoscopic improvement, Mayo endoscopic subscore &le;1','Corticosteroid-free remission at week 52 (maintenance)'],
+    ie:[enriched?('Enrich: '+bm.kind+'-positive'):('Population: '+pt.short.toLowerCase()),'Include: '+incl,'Exclude: active infection, prior exposure to the same mechanism, recent colectomy']};
+}
 function drawPatients(){
   const box=document.getElementById('ptwrap'); if(!box) return;
   if(!box.dataset.done){
     box.dataset.done="1";
     const OSM_R=84.5, OSM_NR=996, mx=996;
     const wR=Math.round(OSM_R/mx*100), wNR=Math.round(OSM_NR/mx*100);
-    box.innerHTML=`<div id="ptdynamic"></div>
+    box.innerHTML=`
+    <div class="ptnav" role="tablist">
+      <button data-pv="explore" class="on" type="button">Explore &amp; compare targets<span class="s">Multi-target patient lens, live trial activity</span></button>
+      <button data-pv="fit" type="button">Patient-type fit &amp; trial<span class="s">Test any or your own target on patient populations</span></button>
+      <button data-pv="evidence" type="button">Why it matters<span class="s">The unmet need and the evidence</span></button>
+    </div>
+    <div class="ptview" id="pv-explore"><div id="ptdynamic"></div></div>
+    <div class="ptview" id="pv-fit" hidden><div id="ptfit"></div></div>
+    <div class="ptview" id="pv-evidence" hidden>
     <div class="method-sec">
       <h3>Patient reality that calibrates the lens</h3>
       <p class="sub">Ulcerative colitis is a lifelong, relapsing disease. Despite a decade of new mechanisms, most patients still do not reach durable remission, and many cycle through therapies that were never going to work for them.</p>
@@ -4210,9 +4433,29 @@ function drawPatients(){
         <div class="ml"><h4>JAK class</h4><p>JAK inhibitors work, but carry warnings for cardiovascular events, clots and malignancy. Benefit-risk belongs in target selection.</p></div>
         <div class="ml"><h4>Tissue distribution</h4><p>Broadly expressed targets can create systemic on-target toxicity. Patient fit should read expression as well as genetics.</p></div>
       </div>
+    </div>
     </div>`;
+    box.querySelectorAll('.ptnav button').forEach(b=>b.addEventListener('click',()=>{
+      box.querySelectorAll('.ptnav button').forEach(x=>x.classList.toggle('on',x===b));
+      box.querySelectorAll('.ptview').forEach(v=>v.hidden=v.id!=='pv-'+b.dataset.pv);
+      if(b.dataset.pv==='fit')renderPatientFit();
+      const top=document.getElementById('v-pt'); if(top)window.scrollTo({top:top.offsetTop-70,behavior:'smooth'});
+    }));
   }
   drawPatientExplorer();
+  if(document.getElementById('pv-fit')&&!document.getElementById('pv-fit').hidden)renderPatientFit();
+}
+function pfGoToFit(sym){
+  const ptBtn=[...document.querySelectorAll('nav.tabs button')].find(b=>b.dataset.view==='pt');
+  if(ptBtn&&!document.getElementById('v-pt').classList.contains('on'))ptBtn.click();
+  const nav=document.querySelector('#v-pt .ptnav');
+  if(nav)nav.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.pv==='fit'));
+  document.querySelectorAll('#v-pt .ptview').forEach(v=>v.hidden=v.id!=='pv-fit');
+  const m=patientBaseModel(sym); let best=PATIENT_TYPES[0],bf=-1;
+  PATIENT_TYPES.forEach(pt=>{const f=targetTypeFit(sym,m,pt).fit;if(f>bf){bf=f;best=pt;}});
+  pfSel={sym,type:best.id};
+  renderPatientFit();
+  const d=document.getElementById('pf-detail');if(d)setTimeout(()=>d.scrollIntoView({behavior:'smooth',block:'center'}),120);
 }
 /* ---------- METHOD: pipeline, vs-Open-Targets movers, trust + scale ---------- */
 function drawMethod(){
@@ -5049,8 +5292,11 @@ loadCustom().forEach(registerCustom);  // restore saved custom targets before fi
     if(!inp.symbol){toast('Give your target a name first');el('pf_sym').focus();return;}
     if(byId[inp.symbol]&&!byId[inp.symbol].custom){inp.symbol=inp.symbol+'-NEW';inp.name=inp.name+' (custom)';}
     saveCustom(loadCustom().filter(c=>c.symbol!==inp.symbol).concat([inp]));
-    registerCustom(inp);refreshAll();drawPlot(false);close();openMemo(inp.symbol);
-    const rk=scored(posture).find(x=>x.t.symbol===inp.symbol);toast(inp.symbol+' added, ranks #'+(rk?rk.rank:'?')+' of '+T.length);});
+    registerCustom(inp);refreshAll();drawPlot(false);close();
+    if(typeof patientTargets!=='undefined'&&!patientTargets.includes(inp.symbol)){if(patientTargets.length>=6)patientTargets.shift();patientTargets.push(inp.symbol);}
+    const onPt=document.getElementById('v-pt')&&document.getElementById('v-pt').classList.contains('on');
+    if(onPt&&typeof pfGoToFit==='function'){pfGoToFit(inp.symbol);toast(inp.symbol+' created, now testing it on patient types');}
+    else{openMemo(inp.symbol);const rk=scored(posture).find(x=>x.t.symbol===inp.symbol);toast(inp.symbol+' added, ranks #'+(rk?rk.rank:'?')+' of '+T.length);}});
 })();
 
 drawPlot(true);
