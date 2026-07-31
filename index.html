@@ -184,6 +184,28 @@
   .cmp-pick button{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:6px 13px;
     font-size:12.5px;font-weight:600;color:var(--ink-2)}
   .cmp-pick button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+  .cmp-add{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:2px 0 12px}
+  .cmp-tsearch{position:relative;flex:1;min-width:260px;max-width:520px}
+  .cmp-tsearch input{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:999px;
+    padding:11px 16px 11px 40px;font-family:inherit;font-size:14px;color:var(--ink);outline:none;box-shadow:var(--shadow)}
+  .cmp-tsearch input:focus{border-color:var(--accent)}
+  .cmp-tsearch .mag{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--ink-4);font-size:15px;pointer-events:none}
+  .cmp-add-hint{font-size:12px;color:var(--ink-3)}
+  .cmp-pick button.live{background:var(--accent-bg);border-color:#C7CFFb;color:var(--accent-ink)}
+  .cmp-pick button.live span{opacity:.6;margin-left:4px}
+  .cmp-pick button.cmp-more{border-style:dashed;color:var(--ink-3);background:transparent}
+  .cmp-pick button.cmp-more:hover{color:var(--accent-ink);border-color:var(--accent)}
+  .ac-drop{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:30;background:var(--panel);
+    border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:6px;max-height:326px;overflow-y:auto}
+  .ac-drop[hidden]{display:none}
+  .ac-item{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:10px;cursor:pointer}
+  .ac-item:hover,.ac-item.active{background:var(--panel-2)}
+  .ac-item .s{font-family:var(--mono);font-weight:700;font-size:13px;color:var(--ink)}
+  .ac-item .n{flex:1;min-width:0;font-size:12px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ac-item .tag{font-family:var(--mono);font-size:8.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-4);
+    background:var(--ground);border:1px solid var(--line);border-radius:999px;padding:2px 8px;white-space:nowrap}
+  .ac-item .tag.cur{color:var(--accent-ink);background:var(--accent-bg);border-color:#D3D9Fb}
+  .ac-empty{padding:11px 12px;font-size:12.5px;color:var(--ink-3);line-height:1.5}
   .cmp-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
   .cmp-col{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--shadow)}
   .cmp-col h3{font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px}
@@ -506,6 +528,45 @@
   .ptf-mini li:before{content:"\2192";position:absolute;left:0;color:var(--accent-ink)}
   .ptf-illus{font-size:11px;color:var(--ink-3);margin:12px 0 0;font-style:italic}
 
+  .modal-scrim{position:fixed;inset:0;background:rgba(14,19,48,.5);z-index:60}
+  .modal-scrim[hidden]{display:none}
+  .pmodal{position:fixed;z-index:61;top:50%;left:50%;transform:translate(-50%,-50%);width:min(640px,94vw);max-height:92vh;
+    display:flex;flex-direction:column;background:var(--panel);border-radius:22px;box-shadow:0 24px 70px rgba(20,27,43,.4);overflow:hidden}
+  .pmodal[hidden]{display:none}
+  .pm-x{position:absolute;top:16px;right:16px;background:var(--panel-2);border:1px solid var(--line);border-radius:999px;
+    width:32px;height:32px;font-size:14px;color:var(--ink-2);z-index:2}
+  .pm-h{background:var(--brand-royal);color:#fff;padding:26px 28px 22px}
+  .pm-h .lbl{color:rgba(255,255,255,.65)}
+  .pm-h h2{font-size:26px;font-weight:700;letter-spacing:-.02em;margin-top:4px}
+  .pm-h p{margin:9px 0 0;font-size:13.5px;color:rgba(255,255,255,.9);line-height:1.5}
+  .pm-body{padding:20px 28px;overflow-y:auto}
+  .pm-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 20px}
+  .pm-wide{grid-column:1 / -1}
+  .pm-sec{grid-column:1 / -1;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);
+    border-bottom:1px solid var(--line);padding-bottom:5px;margin-top:4px}
+  .pm-f{display:flex;flex-direction:column;gap:5px}
+  .pm-f>span{font-size:12.5px;color:var(--ink-2);display:flex;justify-content:space-between;align-items:baseline}
+  .pm-f>span b{font-family:var(--mono);font-size:12.5px;color:var(--accent-ink)}
+  .pm-f>span em{font-style:normal;font-size:10.5px;color:var(--ink-4)}
+  .pm-f input[type=text]{border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-family:inherit;font-size:14px;color:var(--ink);background:var(--ground);outline:none}
+  .pm-f input[type=text]:focus{border-color:var(--accent)}
+  .pm-f input[type=range]{width:100%;accent-color:var(--accent)}
+  .pm-check{flex-direction:row;align-items:center;gap:9px}
+  .pm-check span{font-size:13px;color:var(--ink-2)}
+  .pm-seed{display:flex;gap:8px}.pm-seed input{flex:1}
+  .pm-seed button,.pm-cancel,.pm-create{font-family:var(--mono);font-size:12px;font-weight:600;border-radius:999px;padding:8px 15px;border:1px solid var(--line);background:var(--panel);color:var(--ink-2)}
+  .pm-seed button:hover{border-color:var(--accent);color:var(--accent-ink)}
+  .pm-foot{border-top:1px solid var(--line);padding:16px 28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:var(--ground)}
+  .pm-preview{flex:1;min-width:220px;font-size:13px;color:var(--ink-2);line-height:1.5}
+  .pm-preview b{font-family:var(--mono);color:var(--ink)}
+  .pm-actions{display:flex;gap:10px}
+  .pm-create{background:var(--accent);color:#fff;border-color:var(--accent);padding:10px 20px;font-size:13px}
+  .pm-create:hover{filter:brightness(1.07)}
+  .pill.p-custom{background:#EDE7FB;color:#5B3FBF}
+  .yourtag{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    color:#5B3FBF;background:#EDE7FB;border-radius:999px;padding:3px 9px;display:inline-block}
+  @media(max-width:560px){.pm-grid{grid-template-columns:1fr}}
+
   /* ---- bring-your-own-target toolbar + shortlist ---- */
   .tctools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
   .tsearch{position:relative;flex:1;min-width:240px}
@@ -618,6 +679,7 @@
         <input id="tsearch" type="text" list="tsyms" placeholder="Analyze any target: type a gene symbol (e.g. STAT3, IL2RA, TYK2)&hellip;" aria-label="Search any target" autocomplete="off" />
         <datalist id="tsyms"></datalist>
       </div>
+      <button class="sl-btn" id="proposebtn" type="button">&#43; Propose a target</button>
       <button class="sl-btn" id="slbtn" type="button">&#9733; My shortlist <b id="slcount">0</b></button>
     </div>
     <div class="sl-tray" id="sltray" hidden>
@@ -654,7 +716,15 @@
     <div class="hero">
       <span class="eyebrow">Pfizer Immunology &amp; Inflammation &middot; Head-to-head</span>
       <h2>Compare your finalists, side by side.</h2>
-      <p>Pick up to three targets. The bars break down <b>why</b> each one scores the way it does, and the stability line shows whether a pick holds up no matter which strategy the committee chooses: a safe bet versus a gamble.</p>
+      <p>Pick up to three of <b>any</b> targets. The bars break down <b>why</b> each one scores the way it does, and the stability line shows whether a pick holds up no matter which strategy the committee chooses: a safe bet versus a gamble.</p>
+    </div>
+    <div class="cmp-add">
+      <div class="tsearch cmp-tsearch">
+        <span class="mag">&#9906;</span>
+        <input id="cmp-search" type="text" placeholder="Add any of the 7,161 targets (type a gene symbol)&hellip;" aria-label="Add a target to compare" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="cmp-acdrop" />
+        <div class="ac-drop" id="cmp-acdrop" role="listbox" hidden></div>
+      </div>
+      <span class="cmp-add-hint">or pick a curated target below</span>
     </div>
     <div class="cmp-pick" id="cmp-pick"></div>
     <div class="cmp-grid" id="cmp-grid"></div>
@@ -694,6 +764,43 @@
 
 <div class="scrim" id="scrim"></div>
 <aside class="drawer" id="drawer" aria-label="Target assessment memo"></aside>
+<div class="modal-scrim" id="pmscrim" hidden></div>
+<div class="pmodal" id="pmodal" role="dialog" aria-label="Propose a target" hidden>
+  <button class="pm-x" id="pmx" aria-label="Close">&#10005;</button>
+  <div class="pm-h">
+    <div class="lbl">Design &amp; test your own target</div>
+    <h2>Propose a target</h2>
+    <p>Encode a hypothesis, real, novel, or a what-if, and TargetCompass scores it with the same engine and drops it onto the map to test against the whole field.</p>
+  </div>
+  <div class="pm-body">
+    <div class="pm-grid">
+      <label class="pm-f pm-wide"><span>Target name / symbol</span>
+        <input id="pf_sym" type="text" placeholder="e.g. IL7R, or MYTARGET-1" maxlength="18" autocomplete="off"></label>
+      <label class="pm-f pm-wide"><span>Seed from a real gene <em>(optional, pulls its live evidence as a starting point)</em></span>
+        <span class="pm-seed"><input id="pf_seed" type="text" list="tsyms2" placeholder="type a gene symbol to prefill&hellip;" autocomplete="off"><button type="button" id="pf_seedbtn">Prefill</button></span>
+        <datalist id="tsyms2"></datalist></label>
+
+      <div class="pm-sec pm-wide">Science</div>
+      <label class="pm-f"><span>Human genetic support <b id="pv_gen">0.50</b></span><input id="pf_gen" type="range" min="0" max="100" value="50"></label>
+      <label class="pm-f"><span>Disease association <b id="pv_assoc">0.50</b></span><input id="pf_assoc" type="range" min="0" max="100" value="50"></label>
+      <label class="pm-f"><span>Druggability <b id="pv_drug">0.50</b></span><input id="pf_drug" type="range" min="0" max="100" value="50"></label>
+      <label class="pm-f"><span>Colon expression (nTPM) <b id="pv_colon">10</b></span><input id="pf_colon" type="range" min="0" max="120" value="10"></label>
+
+      <div class="pm-sec pm-wide">Business</div>
+      <label class="pm-f"><span>Active UC rival trials <b id="pv_active">4</b></span><input id="pf_active" type="range" min="0" max="40" value="4"></label>
+      <label class="pm-f"><span>Failure risk <b id="pv_fail">20%</b></span><input id="pf_fail" type="range" min="0" max="100" value="20"></label>
+      <label class="pm-f pm-check"><input id="pf_owned" type="checkbox"><span>Pfizer already sells a drug in this class</span></label>
+      <label class="pm-f pm-check"><input id="pf_immune" type="checkbox"><span>Enriched in immune cells</span></label>
+      <label class="pm-f pm-wide"><span>Pathways it participates in <em>(optional, comma-separated)</em></span>
+        <input id="pf_pw" type="text" placeholder="e.g. Interleukin-23 signaling, JAK-STAT" autocomplete="off"></label>
+    </div>
+  </div>
+  <div class="pm-foot">
+    <div class="pm-preview" id="pmpreview">Set the sliders to see how your target would score.</div>
+    <div class="pm-actions"><button type="button" class="pm-cancel" id="pmcancel">Cancel</button>
+      <button type="button" class="pm-create" id="pmcreate">Add to the map &amp; test it</button></div>
+  </div>
+</div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script id="app-data" type="application/json">{
@@ -3226,7 +3333,7 @@ function drawPlot(animate){
     pts.forEach(p=>{p.x=Math.max(X0+RREF,Math.min(X1-RREF,p.x));p.y=Math.max(Y0+RREF,Math.min(Y1-RREF,p.y));});
     if(!moved)break; }
   pts.forEach((p,di)=>{ const t=p.t, col=riskColor(t.failrisk);
-    const ring=t.pfizer_owned?`stroke="var(--owned)" stroke-width="2.5"`:`stroke="var(--panel)" stroke-width="1.75"`;
+    const ring=t.custom?`stroke="#5B3FBF" stroke-width="2.6" stroke-dasharray="3 2"`:t.pfizer_owned?`stroke="var(--owned)" stroke-width="2.5"`:`stroke="var(--panel)" stroke-width="1.75"`;
     const dly=animate?` style="animation-delay:${di*11}ms"`:``;
     s+=`<g class="dot${animate?' anim':''}" data-sym="${t.symbol}"${dly}>`;
     s+=`<circle class="hiring" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${(p.vr+3.5).toFixed(1)}" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="${p.hi?'.55':'0'}"/>`;
@@ -3596,6 +3703,7 @@ function openMemo(sym){
       <div class="memo-title"><h2>${t.symbol}</h2><span class="full">${t.name}</span>
         <span class="pill p-${t.status}">${t.status}</span></div>
       <div class="memo-rec" style="color:${rec.col};border-color:${rec.col}">${rec.txt}</div>
+      ${t.custom?`<div style="margin-top:12px;font-size:12px;color:#5B3FBF;background:#EDE7FB;border-radius:10px;padding:9px 12px;line-height:1.45"><b>Your proposed target.</b> Scored by the same engine as real targets, from the inputs you set, not retrieved evidence. <a href="#" onclick="removeCustom('${sym}');return false;" style="color:#5B3FBF;font-weight:700;text-decoration:underline">Remove it</a>.</div>`:''}
       <div style="display:flex;gap:8px;margin-top:14px">
         <button class="pinb${isPinned(sym)?' on':''}" id="memopin">${isPinned(sym)?'&#9733; On shortlist':'&#9734; Add to shortlist'}</button>
         <button class="pinb" id="memodl">&#8595; Download one-pager</button>
@@ -3665,44 +3773,92 @@ document.getElementById('custtoggle').addEventListener('click',()=>{const w=docu
 
 /* ---------- compare ---------- */
 const cmpSel=new Set(['TYK2','IL23R','TNFSF15']);
+const cmpModels={};  // symbol -> live/auto model for non-curated compare targets
+let _cmpShowAll=false;
+function toggleCmp(sym){ if(cmpSel.has(sym))cmpSel.delete(sym);
+  else{if(cmpSel.size>=3)cmpSel.delete([...cmpSel][0]);cmpSel.add(sym);} buildPick();drawCompare(); }
+async function addCmpTarget(sym){ sym=(sym||'').trim().toUpperCase(); if(!sym)return;
+  if(byId[sym]||cmpModels[sym]){toggleCmp(sym);return;}
+  let m=UNI_BY_SYM[sym]?modelFromUniverse(sym):null;
+  if(!m){try{const s=await otFetch('query($x:String!){search(queryString:$x,entityNames:["target"]){hits{id object{... on Target{approvedSymbol}}}}}',{x:sym});const hit=(s.data.search.hits||[])[0];if(hit)m={symbol:sym,ensembl:hit.id,assoc:0,genetic:0,lit:0,knownDrug:0,bio:0,drug:.5,whitespace:.5,failrisk:.2,redundancy:0};}catch(e){}}
+  if(!m){toast('Could not find '+sym+' to compare');return;}
+  try{await liveEnrich(m);}catch(e){}
+  cmpModels[m.symbol]=m;if(cmpSel.size>=3)cmpSel.delete([...cmpSel][0]);cmpSel.add(m.symbol);
+  buildPick();drawCompare();toast(m.symbol+' added to the comparison');
+}
+/* rank/score of a non-curated target against the curated field, under each posture */
+function cmpRank(sym,obj){const others=T.filter(x=>x.symbol!==sym);
+  const ranks=PRESET_KEYS.map(pk=>{const self=rawScore(obj,pk);return others.filter(o=>rawScore(o,pk)>self).length+1;});
+  const self=rawScore(obj,posture);const now=others.filter(o=>rawScore(o,posture)>self).length+1;
+  const all=others.map(o=>rawScore(o,posture)).concat(self);const lo=Math.min(...all),hi=Math.max(...all);
+  return {ranks,now,N:others.length+1,s:Math.round(100*((self-lo)/((hi-lo)||1)))};}
 function buildPick(){
   const box=document.getElementById('cmp-pick'); box.innerHTML='';
-  [...T].sort((a,b)=>b.bio-a.bio).forEach(t=>{
-    const b=document.createElement('button');b.textContent=t.symbol;b.setAttribute('aria-pressed',cmpSel.has(t.symbol));
-    b.addEventListener('click',()=>{if(cmpSel.has(t.symbol))cmpSel.delete(t.symbol);
-      else{if(cmpSel.size>=3)cmpSel.delete([...cmpSel][0]);cmpSel.add(t.symbol);}
-      buildPick();drawCompare();});
-    box.appendChild(b);
-  });
+  [...cmpSel].filter(s=>!byId[s]).forEach(s=>{const b=document.createElement('button');b.className='live';b.setAttribute('aria-pressed','true');
+    b.innerHTML=s+' <span>&times;</span>';b.title='Remove '+s;b.addEventListener('click',()=>{cmpSel.delete(s);buildPick();drawCompare();});box.appendChild(b);});
+  const all=[...T].sort((a,b)=>b.bio-a.bio);
+  let list;
+  if(_cmpShowAll)list=all;
+  else{const top=all.slice(0,8);list=top.concat(all.filter(t=>cmpSel.has(t.symbol)&&!top.includes(t)));}
+  list.forEach(t=>{const b=document.createElement('button');b.textContent=t.symbol;b.setAttribute('aria-pressed',cmpSel.has(t.symbol));
+    b.addEventListener('click',()=>toggleCmp(t.symbol));box.appendChild(b);});
+  if(!_cmpShowAll && all.length>list.length){const more=document.createElement('button');more.className='cmp-more';
+    more.textContent='+ '+(all.length-list.length)+' more';more.addEventListener('click',()=>{_cmpShowAll=true;buildPick();});box.appendChild(more);}
+  wireCmpSearch();
+}
+let _cmpSearchWired=false;
+function wireCmpSearch(){ if(_cmpSearchWired)return; const si=document.getElementById('cmp-search'),drop=document.getElementById('cmp-acdrop'); if(!si||!drop)return; _cmpSearchWired=true;
+  const idx=[],seen=new Set();
+  T.forEach(t=>{if(!seen.has(t.symbol)){seen.add(t.symbol);idx.push({sym:t.symbol,name:t.name,cur:true});}});
+  UNIVERSE.rows.forEach(r=>{if(!seen.has(r[0])){seen.add(r[0]);idx.push({sym:r[0],name:'',cur:false});}});
+  let items=[],active=-1; const close=()=>{drop.hidden=true;si.setAttribute('aria-expanded','false');active=-1;};
+  function render(){const q=si.value.trim().toUpperCase();if(!q){close();return;}
+    const st=[],inc=[];idx.forEach(o=>{if(o.sym.startsWith(q))st.push(o);else if(o.sym.includes(q)||(o.name&&o.name.toUpperCase().includes(q)))inc.push(o);});
+    items=st.concat(inc).slice(0,8);
+    if(!items.length){drop.innerHTML='<div class="ac-empty">No listed target matches. Press <b>Enter</b> to pull &ldquo;'+esc(q)+'&rdquo; live from Open Targets.</div>';drop.hidden=false;return;}
+    if(active>=items.length)active=items.length-1;
+    drop.innerHTML=items.map((o,i)=>`<div class="ac-item${i===active?' active':''}" role="option" data-sym="${o.sym}"><span class="s">${o.sym}</span><span class="n">${o.name?esc(o.name):'UC-associated target'}</span><span class="tag ${o.cur?'cur':''}">${o.cur?'curated':'live'}</span></div>`).join('');
+    drop.hidden=false;si.setAttribute('aria-expanded','true');}
+  const choose=sym=>{si.value='';close();addCmpTarget(sym);};
+  si.addEventListener('input',()=>{active=-1;render();});
+  si.addEventListener('keydown',e=>{if(drop.hidden){if(e.key==='Enter'&&si.value.trim()){e.preventDefault();choose(si.value.trim().toUpperCase());}return;}
+    if(e.key==='ArrowDown'){e.preventDefault();active=Math.min(items.length-1,active+1);render();}
+    else if(e.key==='ArrowUp'){e.preventDefault();active=Math.max(0,active-1);render();}
+    else if(e.key==='Enter'){e.preventDefault();const sym=(active>=0&&items[active])?items[active].sym:si.value.trim().toUpperCase();if(sym)choose(sym);}
+    else if(e.key==='Escape')close();});
+  drop.addEventListener('mousedown',e=>{const it=e.target.closest('.ac-item');if(it){e.preventDefault();choose(it.dataset.sym);}});
+  document.addEventListener('click',e=>{if(!si.parentNode.contains(e.target))close();});
 }
 function drawCompare(){
   const grid=document.getElementById('cmp-grid');grid.innerHTML='';
-  if(!cmpSel.size){grid.innerHTML='<p class="empty">Select targets above to compare.</p>';return;}
-  // rank across all postures for stability
-  const ranks={};PRESET_KEYS.forEach(pk=>{const sc=scored(pk);sc.forEach(x=>{(ranks[x.t.symbol]=ranks[x.t.symbol]||[]).push(x.rank);});});
+  const note=document.getElementById('cmp-note');
+  if(!cmpSel.size){grid.innerHTML='<p class="empty">Add targets above to compare.</p>';note.innerHTML='';return;}
+  const ranksMap={};PRESET_KEYS.forEach(pk=>{scored(pk).forEach(x=>{(ranksMap[x.t.symbol]=ranksMap[x.t.symbol]||[]).push(x.rank);});});
   const curSc=scored(posture);
   [...cmpSel].forEach(sym=>{
-    const t=byId[sym];const x=curSc.find(y=>y.t.symbol===sym);
-    const comps=[['Biology',t.bio,'var(--accent)'],['Whitespace',t.whitespace,'var(--accent)'],
-      ['Safety (1&#8722;risk)',1-t.failrisk,riskColor(t.failrisk)],['Differentiation',1-t.redundancy,t.redundancy?'var(--owned)':'var(--risk-lo)']];
-    const rk=ranks[sym];const mn=Math.min(...rk),mx=Math.max(...rk),N=T.length;
-    const pos=r=>100*(r-1)/(N-1);
+    const live=!byId[sym]; let name,status,bio,ws,fr,rd,ranks,now,N,s;
+    if(!live){const t=byId[sym];const x=curSc.find(y=>y.t.symbol===sym);if(!x)return;
+      name=t.name;status=t.status;bio=t.bio;ws=t.whitespace;fr=t.failrisk;rd=t.redundancy;ranks=ranksMap[sym];now=x.rank;N=T.length;s=x.s;}
+    else{const m=cmpModels[sym];if(!m)return;const ri=cmpRank(sym,m);
+      name=m.name||sym;status='live';bio=m.bio||0;ws=m.whitespace||0;fr=m.failrisk||0;rd=m.redundancy||0;ranks=ri.ranks;now=ri.now;N=ri.N;s=ri.s;}
+    const comps=[['Biology',bio,'var(--accent)'],['Whitespace',ws,'var(--accent)'],
+      ['Safety (1&#8722;risk)',1-fr,riskColor(fr)],['Differentiation',1-rd,rd?'var(--owned)':'var(--risk-lo)']];
+    const mn=Math.min(...ranks),mx=Math.max(...ranks),pos=r=>100*(r-1)/Math.max(1,N-1);
     const col=document.createElement('div');col.className='cmp-col';
-    col.innerHTML=`<h3>${sym}<span class="pill p-${t.status}">${t.status}</span></h3>
-      <div class="sub">${t.name} &middot; score <b class="num" style="color:${riskColor(t.failrisk)}">${x.s}</b> &middot; rank <b class="num">#${x.rank}</b> now</div>
+    col.innerHTML=`<h3>${sym}<span class="pill p-${live?'custom':status}">${live?'live':status}</span></h3>
+      <div class="sub">${name} &middot; score <b class="num" style="color:${riskColor(fr)}">${s}</b> &middot; rank <b class="num">#${now}</b> of ${N}</div>
       ${comps.map(c=>`<div class="bar"><div class="top"><span>${c[0]}</span><span class="v">${c[1].toFixed(2)}</span></div>
         <div class="track"><div class="fill" style="width:${c[1]*100}%;background:${c[2]}"></div></div></div>`).join('')}
       <div class="stab"><div class="lbl">Rank stability across all postures</div>
         <div class="rng"><div class="rail"></div>
           <div class="band" style="left:${pos(mn)}%;width:${Math.max(2,pos(mx)-pos(mn))}%"></div>
-          <div class="now" style="left:${pos(x.rank)}%"></div>
-        </div>
+          <div class="now" style="left:${pos(now)}%"></div></div>
         <div class="mono" style="font-size:10.5px;color:var(--ink-3);display:flex;justify-content:space-between">
-          <span>best #${mn}</span><span>${mx-mn<=4?'robust':'posture-sensitive'}</span><span>worst #${mx}</span></div>
-      </div>`;
+          <span>best #${mn}</span><span>${mx-mn<=4?'robust':'posture-sensitive'}</span><span>worst #${mx}</span></div></div>`;
     grid.appendChild(col);
   });
-  document.getElementById('cmp-note').innerHTML=`A pick whose band is narrow holds up whatever strategy the committee brings. <span class="mono">GPR35</span> never leaves the top two; TL1A (<span class="mono">TNFSF15</span>) holds a top-5-to-9 band on de-risked, validated biology. <span class="mono">JAK2</span> swings from #9 to #28, attractive only if you ignore that Pfizer already owns the class. The band is the honesty: it shows which recommendations survive a change of mind.`;
+  const anyLive=[...cmpSel].some(s=>!byId[s]);
+  note.innerHTML=`A pick whose band is <b>narrow</b> holds up whatever strategy the committee brings; a wide band means it depends on the goal.${anyLive?' Live targets are scored on the same axes from Open Targets + ClinicalTrials.gov and ranked against the curated field.':''}`;
 }
 
 /* ---------- tabs & theme ---------- */
@@ -4812,6 +4968,89 @@ function copyShareLink(){syncURL();const url=location.href;
   const changed=restoreFromURL();
   renderShortlist();
   if(changed){if(posture==='custom')syncSliders('custom');refreshAll();}
+})();
+
+/* ================= PROPOSE A TARGET (design & test your own) ================= */
+var EXPR=(typeof EXPR!=='undefined'&&EXPR)?EXPR:{};  /* custom-target expression store; Zhi's build uses HPA_EXPR for curated targets */
+const CUSTOM_KEY='tc_custom', MAXA=38;
+function round3(x){return Math.round(x*1000)/1000;}
+function loadCustom(){try{return JSON.parse(localStorage.getItem(CUSTOM_KEY))||[]}catch(e){return[]}}
+function saveCustom(a){try{localStorage.setItem(CUSTOM_KEY,JSON.stringify(a))}catch(e){}}
+function buildCustom(inp){
+  const genetic=_cl(inp.genetic),assoc=_cl(inp.assoc),drug=_cl(inp.drug),failrisk=_cl(inp.failrisk);
+  const active=Math.max(0,Math.round(inp.active||0)),owned=!!inp.owned;
+  const bio=_cl(0.55*assoc+0.45*genetic),whitespace=_cl(1-Math.log1p(active)/Math.log1p(MAXA));
+  const gStr=genetic>=.6?'strong':genetic>=.35?'moderate':'limited';
+  return {symbol:inp.symbol,name:inp.name||inp.symbol,ensembl:null,mech:'CUSTOM',
+    uc_score:assoc,genetic,literature:0,active_trials:active,total_trials:active,
+    bio:round3(bio),whitespace:round3(whitespace),failrisk:round3(failrisk),redundancy:owned?1:0,
+    pfizer_owned:owned,status:'custom',drug:round3(drug),tractability:[],prio:{},custom:true,
+    facts:{thesis:`${inp.symbol} is a target you proposed. On the inputs you set it pairs ${gStr} human genetics (${genetic.toFixed(2)}) with ${drug>=.6?'good':drug>=.35?'moderate':'limited'} druggability and ${active<=3?'an open field':active>=20?'a crowded field':'a contested field'}. This card scores your hypothesis with the same engine used for real targets, so you can see where it lands before committing evidence.`,
+      support:[`Human genetic support set to ${genetic.toFixed(2)}`,`${active} active UC rival program${active!==1?'s':''}`,owned?'In a class Pfizer already markets':'No stated Pfizer overlap'],
+      market:`${active} active UC program${active!==1?'s':''} in this space${owned?'; Pfizer already sells a drug here':''}.`,
+      change:`Real Open Targets or ClinicalTrials.gov evidence that raises or lowers any input you set.`,
+      experiment:`A genetics or expression readout to convert this hypothesis into retrieved evidence.`},
+    evidence:[{id:'YOU-'+inp.symbol,source:'Your hypothesis',url:'#',text:'Target and scores entered by you, not retrieved from a database. Treat as a hypothesis to test, not evidence.'}]};
+}
+function applyCustomExpr(inp){const colon=inp.colon==null?null:Math.round(inp.colon*10)/10;
+  const pw=(inp.pathways||[]).filter(Boolean).map(p=>[p,'User-defined']);
+  EXPR[inp.symbol]={cls:'User-defined',blood:inp.immune?'Immune cell enriched':undefined,subcell:null,colon,rectum:null,ileum:null,pw};}
+function registerCustom(inp){const t=buildCustom(inp);byId[t.symbol]=t;
+  const i=T.findIndex(x=>x.symbol===t.symbol);if(i>=0)T[i]=t;else T.push(t);applyCustomExpr(inp);}
+function previewCustom(inp){const t=buildCustom(inp),p=POSTURES[posture];
+  const raw=q=>p.wB*q.bio+(p.wD||0)*q.drug+p.wW*q.whitespace-p.wF*q.failrisk-p.wR*q.redundancy;
+  const rr=raw(t),others=T.filter(x=>x.symbol!==t.symbol),all=others.map(raw).concat(rr);
+  const lo=Math.min(...all),hi=Math.max(...all);
+  return {fit:Math.round(100*_cl((rr-lo)/((hi-lo)||1))),rank:others.filter(x=>raw(x)>rr).length+1,n:others.length+1};}
+window.removeCustom=function(sym){saveCustom(loadCustom().filter(c=>c.symbol!==sym));
+  const i=T.findIndex(x=>x.symbol===sym);if(i>=0)T.splice(i,1);delete byId[sym];delete EXPR[sym];
+  if(typeof shortlist!=='undefined'){shortlist=shortlist.filter(s=>s!==sym);saveSL();renderShortlist();}
+  closeMemo();refreshAll();drawPlot(false);toast(sym+' removed');};
+loadCustom().forEach(registerCustom);  // restore saved custom targets before first render
+(function initPropose(){
+  const M=document.getElementById('pmodal'),SC=document.getElementById('pmscrim');if(!M)return;
+  const el=id=>document.getElementById(id);
+  const dl=el('tsyms2'),src=el('tsyms');if(dl&&src)dl.innerHTML=src.innerHTML;
+  function readInp(){const raw=(el('pf_sym').value||'').trim();return{
+    symbol:raw.toUpperCase().replace(/[^A-Z0-9\-]/g,'').slice(0,18),name:raw,
+    genetic:+el('pf_gen').value/100,assoc:+el('pf_assoc').value/100,drug:+el('pf_drug').value/100,
+    failrisk:+el('pf_fail').value/100,active:+el('pf_active').value,colon:+el('pf_colon').value,
+    owned:el('pf_owned').checked,immune:el('pf_immune').checked,
+    pathways:(el('pf_pw').value||'').split(',').map(s=>s.trim()).filter(Boolean)};}
+  function labels(){el('pv_gen').textContent=(+el('pf_gen').value/100).toFixed(2);el('pv_assoc').textContent=(+el('pf_assoc').value/100).toFixed(2);
+    el('pv_drug').textContent=(+el('pf_drug').value/100).toFixed(2);el('pv_colon').textContent=el('pf_colon').value;
+    el('pv_active').textContent=el('pf_active').value;el('pv_fail').textContent=el('pf_fail').value+'%';}
+  function preview(){labels();const inp=readInp();const pr=el('pmpreview');
+    if(!inp.symbol){pr.innerHTML='Give your target a name, then it scores against the whole field.';return;}
+    const r=previewCustom(inp);pr.innerHTML=`<b>${inp.symbol}</b> would score <b>${r.fit}/100</b> and rank <b>#${r.rank} of ${r.n}</b> under the ${POSTURES[posture].name} strategy.`;}
+  M.querySelectorAll('input').forEach(i=>i.addEventListener('input',preview));
+  function open(){SC.hidden=false;M.hidden=false;preview();el('pf_sym').focus();}
+  function close(){SC.hidden=true;M.hidden=true;}
+  el('proposebtn').addEventListener('click',open);el('pmx').addEventListener('click',close);
+  el('pmcancel').addEventListener('click',close);SC.addEventListener('click',close);
+  el('pf_seedbtn').addEventListener('click',async()=>{const q=(el('pf_seed').value||'').trim().toUpperCase();if(!q)return;
+    const pr=el('pmpreview');
+    if(byId[q]){const t=byId[q];if(!el('pf_sym').value)el('pf_sym').value=q;
+      el('pf_gen').value=Math.round(t.genetic*100);el('pf_assoc').value=Math.round(t.uc_score*100);el('pf_drug').value=Math.round((t.drug||.5)*100);
+      el('pf_active').value=Math.min(40,t.active_trials);el('pf_fail').value=Math.round(t.failrisk*100);el('pf_owned').checked=!!t.pfizer_owned;
+      if(EXPR[q]){if(EXPR[q].colon!=null)el('pf_colon').value=Math.min(120,Math.round(EXPR[q].colon));if(/immune/i.test(EXPR[q].blood||''))el('pf_immune').checked=true;if(EXPR[q].pw&&EXPR[q].pw.length)el('pf_pw').value=EXPR[q].pw.map(p=>p[0]).join(', ');}
+      preview();return;}
+    pr.textContent='Pulling '+q+' live from Open Targets + Human Protein Atlas...';
+    let m=UNI_BY_SYM[q]?modelFromUniverse(q):null;
+    if(!m){try{const s=await otFetch('query($x:String!){search(queryString:$x,entityNames:["target"]){hits{id object{... on Target{approvedSymbol}}}}}',{x:q});const hit=(s.data.search.hits||[])[0];if(hit)m={symbol:q,ensembl:hit.id,assoc:0,genetic:0,lit:0,knownDrug:0,bio:0,drug:.5,whitespace:.5,failrisk:.2};}catch(e){}}
+    if(m){try{await liveEnrich(m);}catch(e){}
+      if(!el('pf_sym').value)el('pf_sym').value=m.symbol||q;
+      el('pf_gen').value=Math.round((m.genetic||0)*100);el('pf_assoc').value=Math.round((m.assoc||0)*100);el('pf_drug').value=Math.round((m.drug||.5)*100);
+      if(m.activeTrials!=null)el('pf_active').value=Math.min(40,m.activeTrials);el('pf_fail').value=Math.round((m.failrisk||.2)*100);
+      if(m.expr){if(m.expr.colon!=null)el('pf_colon').value=Math.min(120,Math.round(m.expr.colon));if(/immune/i.test(m.expr.blood||''))el('pf_immune').checked=true;if(m.expr.pw&&m.expr.pw.length)el('pf_pw').value=m.expr.pw.map(p=>p[0]).join(', ');}
+      preview();}
+    else pr.textContent='Could not find '+q+' to prefill. Set the sliders manually.';});
+  el('pmcreate').addEventListener('click',()=>{const inp=readInp();
+    if(!inp.symbol){toast('Give your target a name first');el('pf_sym').focus();return;}
+    if(byId[inp.symbol]&&!byId[inp.symbol].custom){inp.symbol=inp.symbol+'-NEW';inp.name=inp.name+' (custom)';}
+    saveCustom(loadCustom().filter(c=>c.symbol!==inp.symbol).concat([inp]));
+    registerCustom(inp);refreshAll();drawPlot(false);close();openMemo(inp.symbol);
+    const rk=scored(posture).find(x=>x.t.symbol===inp.symbol);toast(inp.symbol+' added, ranks #'+(rk?rk.rank:'?')+' of '+T.length);});
 })();
 
 drawPlot(true);
