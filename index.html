@@ -466,6 +466,46 @@
   @media(max-width:900px){.pt-lens,.pt-main{grid-template-columns:1fr}.pt-kpis{grid-template-columns:repeat(4,1fr)}}
   @media(max-width:760px){.pt-stats{grid-template-columns:1fr}.rbar{grid-template-columns:1fr}.rbar .lab{text-align:left}.pt-trow{grid-template-columns:1fr}.pt-row{grid-template-columns:1fr}.pt-kpis{grid-template-columns:1fr 1fr}.pt-metrics{grid-template-columns:1fr}}
 
+  /* ---- clinical-path + recruitment drill-down (focus target) ---- */
+  .ptf-head{margin:2px 0 12px}
+  .ptf-head h3{font-size:19px;color:var(--ink);margin-bottom:4px}
+  .ptf-head .sub{font-size:13px;color:var(--ink-3);line-height:1.5;margin-bottom:11px}
+  .ptf-tabs{display:flex;flex-wrap:wrap;gap:7px}
+  .ptf-tab{font-family:var(--mono);font-size:11.5px;font-weight:700;background:var(--panel-2);border:1px solid var(--line);
+    border-radius:999px;padding:6px 13px;color:var(--ink-2);cursor:pointer}
+  .ptf-tab:hover{border-color:var(--accent);color:var(--accent-ink)}
+  .ptf-tab.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .phase-track{display:flex;gap:6px;overflow-x:auto;padding:4px 0 10px}
+  .phstep{flex:1;min-width:120px;background:var(--ground);border:1px solid var(--line);border-radius:12px;padding:12px 13px;position:relative}
+  .phstep.done{opacity:.6}
+  .phstep.now{background:var(--accent-bg);border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+  .phstep .pn{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--ink-3);text-transform:uppercase}
+  .phstep.now .pn{color:var(--accent-ink)}
+  .phstep h5{font-size:13px;font-weight:800;margin:3px 0 5px;color:var(--ink)}
+  .phstep .pg{font-size:11px;color:var(--ink-2);line-height:1.4;margin:0 0 6px}
+  .phstep .ppt{font-family:var(--mono);font-size:10px;color:var(--ink-3)}
+  .phstep .youhere{position:absolute;top:-9px;right:9px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.06em;color:#fff;background:var(--accent);border-radius:6px;padding:2px 6px}
+  .ptf-note{font-size:12.5px;color:var(--ink-2);line-height:1.55;margin:6px 0 0}
+  .ptf-recruit{display:grid;gap:16px;grid-template-columns:1.1fr .9fr}
+  @media(max-width:720px){.ptf-recruit{grid-template-columns:1fr}}
+  .ptf-strat{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;font-weight:700;border-radius:8px;padding:6px 11px;margin-bottom:9px}
+  .ptf-strat.enr{background:var(--accent);color:#fff}
+  .ptf-strat.all{background:var(--panel-2);color:var(--ink-2);border:1px solid var(--line)}
+  .ptf-comp{font-size:12.5px;color:var(--ink-2);line-height:1.55;background:var(--ground);border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin-bottom:14px}
+  .ptf-funnel{display:flex;flex-direction:column;gap:7px}
+  .fn-row{display:flex;align-items:center;gap:10px}
+  .fn-row .fl{font-size:11.5px;color:var(--ink-2);width:150px;flex:none;line-height:1.3}
+  .fn-row .fbar{flex:1;height:22px;background:var(--panel-2);border-radius:6px;overflow:hidden}
+  .fn-row .fbar .ff{height:100%;background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 55%,#fff));border-radius:6px}
+  .fn-row .fn-n{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--ink);width:74px;flex:none;text-align:right;font-variant-numeric:tabular-nums}
+  .fn-row.final .fbar .ff{background:linear-gradient(90deg,var(--risk-lo),color-mix(in srgb,var(--risk-lo) 55%,#fff))}
+  .fn-row.final .fl{font-weight:700;color:var(--ink)}
+  .ptf-mini h5{font-size:12px;font-weight:800;margin:0 0 7px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-2)}
+  .ptf-mini ul{list-style:none;margin:0 0 15px;padding:0}
+  .ptf-mini li{font-size:12px;color:var(--ink-2);line-height:1.5;padding-left:15px;position:relative;margin-bottom:5px}
+  .ptf-mini li:before{content:"\2192";position:absolute;left:0;color:var(--accent-ink)}
+  .ptf-illus{font-size:11px;color:var(--ink-3);margin:12px 0 0;font-style:italic}
+
   /* ---- bring-your-own-target toolbar + shortlist ---- */
   .tctools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
   .tsearch{position:relative;flex:1;min-width:240px}
@@ -3844,6 +3884,7 @@ function drawPatientExplorer(){
         <a class="cite" href="${ot}" target="_blank" rel="noopener">Open Targets&#8599;</a>
         <a class="cite" href="${ncbi}" target="_blank" rel="noopener">NCBI Gene&#8599;</a>
       </div>
+      <div style="margin-top:11px"><button type="button" onclick="patientFocusTarget('${m.symbol}')">Clinical path &amp; recruitment &#8594;</button></div>
     </div>`;
   }).join('');
   dyn.innerHTML=`<div class="pt-lens">
@@ -3871,11 +3912,114 @@ function drawPatientExplorer(){
   <div class="pt-main">
     <div class="method-sec"><h3>Clinical-trial activity</h3><p class="sub">Current UC trial load is a patient-access and differentiation signal: zero active trials can mean whitespace; many active trials can mean a crowded mechanism where a new program must help a narrower patient group better.</p><div class="pt-table">${rows}</div></div>
     <div><h3 style="font-size:19px;margin:0 0 10px">Patient-fit cards</h3><div class="pt-cards">${cards}</div></div>
-  </div>`;
+  </div>
+  <div id="ptfocus"></div>`;
   document.getElementById('ptaddform').addEventListener('submit',e=>{e.preventDefault();patientAddTarget();});
   const ptinp=document.getElementById('pttarget');
   if(ptinp)ptinp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();patientAddTarget(ptinp.value);}});
   patientHydrateTrials(models);
+  renderPatientFocus();
+}
+/* --- clinical-path + recruitment drill-down (adds trial depth to the patient explorer) --- */
+let patientFocus=null;
+function pfClinStage(sym,m){
+  if(byId[sym]&&byId[sym].prio&&byId[sym].prio.maxClinicalStage!=null)return byId[sym].prio.maxClinicalStage;
+  if(typeof UNI_BY_SYM!=='undefined'&&UNI_BY_SYM[sym])return UNI_BY_SYM[sym][6];
+  return null;
+}
+function pfBiomarker(sym,m){
+  const strength=(PATIENT_BIOMARKER[sym]!=null)?PATIENT_BIOMARKER[sym]:(((m.genetic||0)>=.65)?.45:.2);
+  const seg=PATIENT_SEG[sym];
+  let kind,note;
+  if(sym==='OSM'||sym==='OSMR'){kind='Serum / mucosal Oncostatin M';note='Baseline OSM runs about ten-fold higher in anti-TNF non-responders, so the trial can be enriched for the exact patients this mechanism is built for (West et al., Nature Medicine 2017).';}
+  else if(strength>=.5){kind='Genotype / pathway signature';note=(seg&&seg.biomarker)||'A stratifying signal exists, so patients likely to respond can be identified before dosing.';}
+  else if(strength>=.35){kind='Emerging selection signal';note=(seg&&seg.biomarker)||'A partial selection handle exists; a validated responder marker still needs discovery.';}
+  else{kind='None established yet';note=(seg&&seg.biomarker)||'No validated stratifying biomarker: an all-comers design, which needs a larger trial and can dilute the effect size.';}
+  return {strength,kind,note};
+}
+function pfPhase(sym,m){
+  const stages=[
+    {n:'Discovery',g:'Show the target matters',pt:'No patients yet'},
+    {n:'Preclinical',g:'Safety &amp; dose in animals',pt:'No patients: tox models'},
+    {n:'Phase 1',g:'Is it safe in people?',pt:'~20-80 participants'},
+    {n:'Phase 2',g:'Does it work? (proof-of-concept)',pt:'~100-300 patients'},
+    {n:'Phase 3',g:'Confirm it at scale',pt:'~500-1,000+ patients'},
+    {n:'Filed / Approved',g:'To the patient',pt:'Real-world use'}
+  ];
+  const st=pfClinStage(sym,m), ws=(m.whitespace!=null?m.whitespace:.5);
+  let idx;
+  if(st==null)idx=(ws>=.7?0:1);
+  else if(st>=.85)idx=5;else if(st>=.6)idx=4;else if(st>=.4)idx=3;else if(st>=.2)idx=2;else idx=(ws>=.7?0:1);
+  const bmStrong=pfBiomarker(sym,m).strength>=.45;
+  const note=idx>=5?'This mechanism class already reaches patients, so the prioritization question is differentiation, not feasibility.'
+    :idx<=1?'Nothing in the clinic yet: a genuine first-in-class window. The next patient-facing milestone is a Phase 1 safety read, so early biomarker work now pays off later.'
+    :`The field currently reaches <b>${stages[idx].n}</b>. The next milestone is ${stages[Math.min(5,idx+1)].n}, where a ${bmStrong?'biomarker-enriched':'well-powered all-comers'} design decides whether the effect is real.`;
+  return {idx,stages,note};
+}
+function pfRecruit(sym,m){
+  const bm=pfBiomarker(sym,m), enriched=bm.strength>=.45, active=m.active;
+  const compText=active==null?'Pulling the current competitive field from ClinicalTrials.gov&hellip;'
+    :active>=15?`You would be competing with <b>${active}</b> active UC programs for the same moderate-to-severe patients. A biomarker-enriched arm is how you stand out and shorten enrollment.`
+    :active>=3?`<b>${active}</b> active UC programs are recruiting a similar population: competitive, but workable.`
+    :`Only <b>${active||0}</b> active UC programs touch this mechanism, so there is little competition for patients: a real recruiting advantage.`;
+  const steps=[['Adults with UC (US)',1250000],['Moderate-to-severe',500000],['Failed &ge;1 advanced therapy',225000]];
+  if(enriched)steps.push([bm.kind+'-positive',Math.round(225000*(bm.strength>=.8?.5:.35))]);
+  const base=steps[steps.length-1][1];
+  steps.push(['Meet full I/E, reachable &amp; consent',Math.round(base*0.10)]);
+  return {bm,enriched,compText,steps,
+    endpoints:['Clinical remission by modified Mayo score at week 12 (induction)','Endoscopic improvement, Mayo endoscopic subscore &le;1','Corticosteroid-free remission at week 52 (maintenance)'],
+    ie:[enriched?('Enrich: '+bm.kind+'-positive at screening'):'All-comers moderate-to-severe (broad eligibility)','Include: inadequate response or intolerance to an advanced therapy','Exclude: active infection, prior exposure to the same mechanism, recent colectomy']};
+}
+function patientFocusTarget(sym){patientFocus=sym;renderPatientFocus();
+  const h=document.getElementById('ptfocus');if(h)h.scrollIntoView({behavior:'smooth',block:'start'});}
+function renderPatientFocus(){
+  const host=document.getElementById('ptfocus'); if(!host)return;
+  if(!patientTargets.length){host.innerHTML='';return;}
+  let sym=patientFocus;
+  if(!sym||!patientTargets.includes(sym)){
+    const models=patientTargets.map(patientBaseModel);
+    const top=[...models].sort((a,b)=>patientScore(b)-patientScore(a))[0];
+    sym=top?top.symbol:patientTargets[0]; patientFocus=sym;
+  }
+  const m=patientBaseModel(sym);
+  const seg=patientSegment(m), ph=pfPhase(sym,m), rec=pfRecruit(sym,m);
+  const tabs=patientTargets.map(s=>`<button class="ptf-tab${s===sym?' on':''}" type="button" onclick="patientFocusTarget('${s}')">${s}</button>`).join('');
+  const fmax=rec.steps[0][1];
+  const funnel=rec.steps.map((s,i)=>`<div class="fn-row ${i===rec.steps.length-1?'final':''}">
+    <span class="fl">${s[0]}</span><div class="fbar"><div class="ff" style="width:${Math.max(4,Math.round(100*s[1]/fmax))}%"></div></div>
+    <span class="fn-n">${s[1].toLocaleString()}</span></div>`).join('');
+  host.innerHTML=`
+    <div class="ptf-head">
+      <h3>Take one target into the clinic</h3>
+      <p class="sub">Pick a selected target to see where its mechanism sits on the road to patients, and how you would run a trial that enrolls the right ones.</p>
+      <div class="ptf-tabs">${tabs}</div>
+    </div>
+    <div class="method-sec">
+      <h3>The road to the clinic &middot; ${sym}</h3>
+      <p class="sub">Every target travels the same road before it reaches anyone. Here is where <b>${sym}</b>'s mechanism sits today, by its furthest clinical stage, and what each step asks of patients.</p>
+      <div class="phase-track">${ph.stages.map((s,i)=>`<div class="phstep ${i<ph.idx?'done':''} ${i===ph.idx?'now':''}">
+        ${i===ph.idx?'<span class="youhere">FIELD IS HERE</span>':''}
+        <span class="pn">Stage ${i+1}</span><h5>${s.n}</h5><p class="pg">${s.g}</p><span class="ppt">${s.pt}</span></div>`).join('')}</div>
+      <p class="ptf-note">${ph.note}</p>
+    </div>
+    <div class="method-sec">
+      <h3>Recruit the right patients &middot; ${sym}</h3>
+      <p class="sub">A great target with the wrong trial still fails. This is the recruiting playbook the analysis implies for <b>${sym}</b> (${seg.seg}).</p>
+      <div class="ptf-recruit">
+        <div>
+          <span class="ptf-strat ${rec.enriched?'enr':'all'}">${rec.enriched?'&#9670; Biomarker-enriched design':'&#9633; All-comers design'}</span>
+          <div class="ptf-comp">${rec.compText}</div>
+          <span style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);display:block;margin-bottom:9px">Who is actually enrollable</span>
+          <div class="ptf-funnel">${funnel}</div>
+          <p class="ptf-illus">Illustrative US planning figures, narrowing a broad population to an enrollable pool. ${rec.enriched?'The biomarker step trades a smaller pool for a cleaner signal.':'With no enrichment step the pool stays large but the effect is diluted.'}</p>
+        </div>
+        <div class="ptf-mini">
+          <h5>Right-patient test</h5><ul><li><b>${rec.bm.kind}.</b> ${rec.bm.note}</li></ul>
+          <h5>Primary endpoints</h5><ul>${rec.endpoints.map(e=>`<li>${e}</li>`).join('')}</ul>
+          <h5>Key inclusion / exclusion</h5><ul>${rec.ie.map(e=>`<li>${e}</li>`).join('')}</ul>
+        </div>
+      </div>
+    </div>`;
 }
 function drawPatients(){
   const box=document.getElementById('ptwrap'); if(!box) return;
