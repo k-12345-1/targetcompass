@@ -3953,7 +3953,7 @@ document.getElementById('custtoggle').addEventListener('click',()=>{const w=docu
 /* ---------- compare ---------- */
 const cmpSel=new Set(['TYK2','IL23R','TNFSF15']);
 const cmpModels={};  // symbol -> live/auto model for non-curated compare targets
-let _cmpShowAll=false;
+let _cmpShowAll=true;
 function toggleCmp(sym){ if(cmpSel.has(sym))cmpSel.delete(sym);
   else{if(cmpSel.size>=3)cmpSel.delete([...cmpSel][0]);cmpSel.add(sym);} buildPick();drawCompare(); }
 async function addCmpTarget(sym){ sym=(sym||'').trim().toUpperCase(); if(!sym)return;
