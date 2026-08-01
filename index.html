@@ -61,6 +61,9 @@
 
   /* ---- scoring strategy: presets + customizable weights ---- */
   .postbar{margin-bottom:18px;display:flex;flex-direction:column;align-items:flex-start;gap:11px}
+  .ctrlbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+  .ctrlbar .tsearch{flex:1;min-width:220px}
+  .ctrlbar .cust-toggle{white-space:nowrap}
   .cust-toggle{background:none;border:none;color:var(--accent-ink);font-weight:600;font-size:13px;padding:0}
   .cust-toggle:hover{text-decoration:underline}
   .weights{width:100%;max-width:580px;background:var(--panel);border:1px solid var(--line);border-radius:16px;
@@ -818,21 +821,18 @@
       </div>
     </details>
 
-    <div class="postbar">
+    <div class="ctrlbar">
       <div class="seg" role="group" aria-label="Scoring strategy" id="postures"></div>
-      <button class="cust-toggle" id="custtoggle" type="button">&#9881; Customize weights</button>
-      <div class="weights" id="weights" hidden></div>
-    </div>
-
-    <div class="tctools">
+      <button class="cust-toggle" id="custtoggle" type="button">&#9881; Weights</button>
       <div class="tsearch">
         <span class="mag">&#9906;</span>
-        <input id="tsearch" type="text" list="tsyms" placeholder="Analyze any target: type a gene symbol (e.g. STAT3, IL2RA, TYK2)&hellip;" aria-label="Search any target" autocomplete="off" />
+        <input id="tsearch" type="text" list="tsyms" placeholder="Analyze any target (e.g. STAT3, TYK2)&hellip;" aria-label="Search any target" autocomplete="off" />
         <datalist id="tsyms"></datalist>
       </div>
-      <button class="sl-btn" id="proposebtn" type="button">&#43; Propose a target</button>
-      <button class="sl-btn" id="slbtn" type="button">&#9733; My shortlist <b id="slcount">0</b></button>
+      <button class="sl-btn" id="proposebtn" type="button">&#43; Propose target</button>
+      <button class="sl-btn" id="slbtn" type="button">&#9733; Shortlist <b id="slcount">0</b></button>
     </div>
+    <div class="weights" id="weights" hidden></div>
     <div class="sl-tray" id="sltray" hidden>
       <div class="h"><b>My shortlist</b><span class="sp"></span>
         <button class="sl-act" id="slshare" type="button">Copy shareable link</button>
@@ -846,10 +846,9 @@
       <div class="card">
         <div class="plot-wrap"><svg class="plot" id="plot" viewBox="0 0 620 500" role="img" aria-label="Target landscape scatter plot"></svg></div>
         <div class="legend">
-          <span class="k">Colour = chance of failing <span class="grad"></span> <span class="mono" style="font-size:10px;color:var(--ink-3)">safe&#8594;risky</span></span>
-          <span class="k"><span class="swatch" style="background:var(--ink-3);border:2px solid var(--owned)"></span> Purple ring = Pfizer already sells a drug here</span>
-          <span class="k"><span class="swatch" style="background:var(--ink-4);opacity:.4;width:8px;height:8px"></span> Faint dot = one of 300 associated targets (of 7,161)</span>
-          <button class="uni-toggle on" id="unitoggle" type="button" aria-pressed="true">Full field: on</button>
+          <span class="k">Failure risk <span class="grad"></span><span class="mono" style="font-size:10px;color:var(--ink-3)">safe&#8594;risky</span></span>
+          <span class="k"><span class="swatch" style="background:var(--ink-3);border:2px solid var(--owned)"></span> Purple ring = Pfizer already here</span>
+          <button class="uni-toggle on" id="unitoggle" type="button" aria-pressed="true">Faint dots = full 7,161 field: on</button>
         </div>
         <div class="topcap" id="topcap"></div>
         <div class="insight" id="insight"></div>
@@ -3949,7 +3948,7 @@ function onSlide(){WDEF.forEach(d=>{const inp=document.querySelector('input[data
     <div class="wsplit">Business &middot; TargetCompass layer</div>${WDEF.filter(d=>d[2]==='biz').map(row).join('')}`;
   box.querySelectorAll('input[type=range]').forEach(inp=>inp.addEventListener('input',onSlide));})();
 document.getElementById('custtoggle').addEventListener('click',()=>{const w=document.getElementById('weights');
-  w.hidden=!w.hidden;document.getElementById('custtoggle').innerHTML=(w.hidden?'&#9881; Customize weights':'&#9881; Hide weights');});
+  w.hidden=!w.hidden;document.getElementById('custtoggle').innerHTML=(w.hidden?'&#9881; Weights':'&#9881; Hide weights');});
 
 /* ---------- compare ---------- */
 const cmpSel=new Set(['TYK2','IL23R','TNFSF15']);
@@ -4638,7 +4637,7 @@ if(_mark)_mark.addEventListener('click',()=>activateView('start'));
 const _ut=document.getElementById('unitoggle');
 if(_ut)_ut.addEventListener('click',()=>{showUniverse=!showUniverse;
   _ut.classList.toggle('on',showUniverse);_ut.setAttribute('aria-pressed',showUniverse);
-  _ut.textContent='Full field: '+(showUniverse?'on':'off');drawPlot(false);});
+  _ut.textContent='Faint dots = full 7,161 field: '+(showUniverse?'on':'off');drawPlot(false);});
 
 const _tb=document.getElementById('tourbtn');
 if(_tb)_tb.addEventListener('click',()=>{const c=document.getElementById('plot').closest('.card');
