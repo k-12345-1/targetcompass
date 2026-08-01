@@ -4411,6 +4411,9 @@ function renderPatientFit(){
     <div class="pf-matrix-wrap"><table class="pf-matrix"><thead>${head}</thead><tbody>${rows}</tbody></table></div>
     <div class="pf-legend"><span><span class="sw" style="background:${fitColor(85)}"></span>Strong fit</span><span><span class="sw" style="background:${fitColor(55)}"></span>Conditional</span><span><span class="sw" style="background:${fitColor(22)}"></span>Poor fit</span><span>Blends efficacy, biomarker, safety and novelty, weighted by what each population needs.</span></div>
     <div class="pf-detail" id="pf-detail">${detail}</div>`;
+  requestAnimationFrame(()=>{ const track=host.querySelector('.phase-track'), now=host.querySelector('.phstep.now');
+    if(track&&now){ const tr=track.getBoundingClientRect(), nr=now.getBoundingClientRect();
+      track.scrollLeft += (nr.left-tr.left) - (track.clientWidth-now.offsetWidth)/2; } });
 }
 function pfPick(sym,typeId){pfSel={sym,type:typeId};renderPatientFit();
   const d=document.getElementById('pf-detail');if(d)d.scrollIntoView({behavior:'smooth',block:'center'});}
