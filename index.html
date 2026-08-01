@@ -617,6 +617,12 @@
   .start-trust button:hover{border-color:var(--accent);color:var(--accent-ink)}
   .topnav .mark{cursor:pointer}
 
+  /* ---- in-view sub-nav (Prioritize: Map/Compare; How it works: method/backtest) ---- */
+  .subnav{display:inline-flex;gap:4px;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:4px;margin:0 0 14px}
+  .subnav button{background:transparent;border:none;border-radius:9px;padding:8px 16px;font-family:inherit;font-size:13px;font-weight:700;color:var(--ink-3);cursor:pointer;white-space:nowrap}
+  .subnav button:hover{color:var(--accent-ink)}
+  .subnav button.on{background:var(--panel);color:var(--ink);box-shadow:var(--shadow)}
+
   .modal-scrim{position:fixed;inset:0;background:rgba(14,19,48,.5);z-index:60}
   .modal-scrim[hidden]{display:none}
   .pmodal{position:fixed;z-index:61;top:50%;left:50%;transform:translate(-50%,-50%);width:min(640px,94vw);max-height:92vh;
@@ -705,9 +711,7 @@
     <button role="tab" aria-selected="false" data-view="chat">Ask</button>
     <button role="tab" aria-selected="false" data-view="land">Prioritize</button>
     <button role="tab" aria-selected="false" data-view="pt">Patients</button>
-    <button role="tab" aria-selected="false" data-view="cmp">Compare</button>
     <button role="tab" aria-selected="false" data-view="method">How it works</button>
-    <button role="tab" aria-selected="false" data-view="val">Validation</button>
   </nav>
 </div>
 
@@ -773,6 +777,10 @@
 
   <!-- LANDSCAPE -->
   <section class="view" id="v-land">
+    <div class="subnav" role="tablist">
+      <button class="on" data-sub="land" type="button">The map</button>
+      <button data-sub="cmp" type="button">Compare finalists</button>
+    </div>
     <div class="hero">
       <span class="eyebrow">Pfizer Immunology &amp; Inflammation &middot; Target Prioritization</span>
       <h2>Which target is worth Pfizer's money?</h2>
@@ -842,6 +850,10 @@
 
   <!-- COMPARE -->
   <section class="view" id="v-cmp">
+    <div class="subnav" role="tablist">
+      <button data-sub="land" type="button">The map</button>
+      <button class="on" data-sub="cmp" type="button">Compare finalists</button>
+    </div>
     <div class="hero">
       <span class="eyebrow">Pfizer Immunology &amp; Inflammation &middot; Head-to-head</span>
       <h2>Compare your finalists, side by side.</h2>
@@ -862,6 +874,10 @@
 
   <!-- VALIDATION -->
   <section class="view" id="v-val">
+    <div class="subnav" role="tablist">
+      <button data-sub="method" type="button">How it works</button>
+      <button class="on" data-sub="val" type="button">Does it work? (backtest)</button>
+    </div>
     <div class="hero">
       <span class="eyebrow">Pfizer Immunology &amp; Inflammation &middot; Does the engine actually work?</span>
       <h2>Rewind to 2015. Would it have called it right?</h2>
@@ -872,6 +888,10 @@
 
   <!-- METHOD / HOW IT WORKS -->
   <section class="view" id="v-method">
+    <div class="subnav" role="tablist">
+      <button class="on" data-sub="method" type="button">How it works</button>
+      <button data-sub="val" type="button">Does it work? (backtest)</button>
+    </div>
     <div class="hero">
       <span class="eyebrow">Pfizer Immunology &amp; Inflammation &middot; How it works</span>
       <h2>Transparent math. AI where it earns its place.</h2>
@@ -4563,23 +4583,27 @@ function drawMethod(){
   </div>`;
   box.innerHTML=box_h;
 }
-document.querySelectorAll('nav.tabs button').forEach(b=>b.addEventListener('click',()=>{
-  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected','false'));
-  b.setAttribute('aria-selected','true');
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
-  document.getElementById('v-'+b.dataset.view).classList.add('on');
-  document.getElementById('provstrip').style.display = (b.dataset.view==='chat'||b.dataset.view==='start') ? 'none' : 'flex';
-  if(b.dataset.view==='cmp'){buildPick();drawCompare();}
-  if(b.dataset.view==='val'){drawValidation();}
-  if(b.dataset.view==='method'){drawMethod();}
-  if(b.dataset.view==='pt'){drawPatients();}
+// Compare lives under Prioritize; Validation lives under How it works.
+const VIEW_PARENT={cmp:'land',val:'method'};
+function activateView(v){
+  const parent=VIEW_PARENT[v]||v;
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected', x.dataset.view===parent ? 'true':'false'));
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
+  const sec=document.getElementById('v-'+v); if(sec)sec.classList.add('on');
+  document.getElementById('provstrip').style.display = (v==='chat'||v==='start') ? 'none' : 'flex';
+  if(v==='cmp'){buildPick();drawCompare();}
+  if(v==='val'){drawValidation();}
+  if(v==='method'){drawMethod();}
+  if(v==='pt'){drawPatients();}
   window.scrollTo(0,0);
-}));
-// Start-home cards jump to the right tab; brand mark returns home
-document.querySelectorAll('#v-start [data-goto]').forEach(b=>b.addEventListener('click',()=>{
-  const tab=[...document.querySelectorAll('nav.tabs button')].find(x=>x.dataset.view===b.dataset.goto); if(tab)tab.click();}));
+}
+document.querySelectorAll('nav.tabs button').forEach(b=>b.addEventListener('click',()=>activateView(b.dataset.view)));
+// in-view sub-nav (Map/Compare, How it works/Track record)
+document.querySelectorAll('.subnav button[data-sub]').forEach(b=>b.addEventListener('click',()=>activateView(b.dataset.sub)));
+// Start-home cards + brand mark
+document.querySelectorAll('#v-start [data-goto]').forEach(b=>b.addEventListener('click',()=>activateView(b.dataset.goto)));
 const _mark=document.querySelector('.topnav .mark');
-if(_mark)_mark.addEventListener('click',()=>{const t=[...document.querySelectorAll('nav.tabs button')].find(x=>x.dataset.view==='start');if(t)t.click();});
+if(_mark)_mark.addEventListener('click',()=>activateView('start'));
 
 const _ut=document.getElementById('unitoggle');
 if(_ut)_ut.addEventListener('click',()=>{showUniverse=!showUniverse;
@@ -5006,7 +5030,7 @@ function askQuestion(text){
 window.askQuestion=askQuestion;
 window.chatOpenMemo=function(sym){openMemo(sym);};
 window.chatOpenAnyTarget=function(sym){if(byId[sym])openMemo(sym);else chatAnalyzeTarget(sym);};
-window.chatOpenTab=function(view){[...document.querySelectorAll('nav.tabs button')].find(b=>b.dataset.view===view).click();};
+window.chatOpenTab=function(view){activateView(view);};
 window.chatAnalyzeTarget=function(sym){[...document.querySelectorAll('nav.tabs button')].find(b=>b.dataset.view==='land').click();
   const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
   setTimeout(()=>{const c=document.getElementById('plot').closest('.card');c.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'});analyzeTarget(sym);},70);};
@@ -5014,7 +5038,7 @@ window.chatShowMap=function(sym){[...document.querySelectorAll('nav.tabs button'
   const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
   setTimeout(()=>{const c=document.getElementById('plot').closest('.card');c.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'});if(sym)openMemo(sym);},70);};
 window.chatCompareOpen=function(list){cmpSel.clear();list.split(',').forEach(s=>cmpSel.add(s));
-  [...document.querySelectorAll('nav.tabs button')].find(b=>b.dataset.view==='cmp').click();};
+  activateView('cmp');};
 
 const SUGGEST=["What is Merck doing in UC?","What's the best uncrowded target?","Why not JAK2?","Compare TL1A vs GPR35","Which targets already failed?"];
 function renderSuggest(){const box=document.getElementById('chatsuggest');box.innerHTML='';
