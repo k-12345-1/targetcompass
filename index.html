@@ -25,6 +25,8 @@
   .topnav{position:sticky;top:14px;z-index:40;margin:16px auto 0;max-width:1220px;
     display:flex;align-items:center;gap:26px;padding:15px 20px 15px 30px;
     background:var(--panel);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow)}
+  /* cover so page content never shows above the top of the nav bar when scrolling */
+  body::before{content:"";position:fixed;top:0;left:0;right:0;height:74px;background:var(--ground);z-index:39;pointer-events:none}
   .topnav .mark{font-weight:800;font-size:23px;letter-spacing:-.02em;font-style:italic;white-space:nowrap}
   .topnav .mark b{color:var(--accent)}
   nav.tabs{display:flex;gap:8px;margin-left:4px}
@@ -48,7 +50,7 @@
   .hero .eyebrow{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;
     text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:8px}
   .hero h2{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.14;color:#fff}
-  .hero p{margin:8px 0 0;color:rgba(255,255,255,.9);font-size:13.5px;line-height:1.5;max-width:860px}
+  .hero p{margin:8px 0 0;color:rgba(255,255,255,.9);font-size:13.5px;line-height:1.5;max-width:none}
   .hero p b{color:#fff;font-weight:700}
   .hero-cta{display:inline-flex;align-items:center;gap:9px;margin-top:14px;background:#fff;color:#12142E;
     font-weight:700;font-size:13px;padding:9px 17px;border:none;border-radius:999px;
@@ -227,6 +229,19 @@
   /* ---- chat (front door) ---- */
   /* chat hero matches the standard hero (no size overrides) */
   .chat-wrap{margin-top:2px}
+  .chat-tools{display:flex;gap:8px;margin-bottom:12px}
+  .chat-tools button{font-family:var(--mono);font-size:11.5px;font-weight:700;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:7px 14px;color:var(--ink-2);cursor:pointer}
+  .chat-tools button:hover{border-color:var(--accent);color:var(--accent-ink)}
+  .chat-tools button b{color:var(--accent-ink)}
+  .hist-tray{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:8px;margin-bottom:14px}
+  .hist-tray[hidden]{display:none}
+  .hist-empty{font-size:12.5px;color:var(--ink-3);padding:12px}
+  .hist-item{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:10px;cursor:pointer}
+  .hist-item:hover{background:var(--panel-2)}
+  .hist-item .ht{flex:1;min-width:0;font-size:12.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hist-item .hd{font-family:var(--mono);font-size:10px;color:var(--ink-3);white-space:nowrap}
+  .hist-item .hx{background:none;border:none;color:var(--ink-4);font-size:15px;cursor:pointer;padding:0 4px;line-height:1}
+  .hist-item .hx:hover{color:var(--risk-hi)}
   .chat-log{display:flex;flex-direction:column;gap:18px;margin-bottom:14px}
   .chat-log>*{scroll-margin-top:100px}
   .msg-user{align-self:flex-end;max-width:80%;background:var(--accent);color:#fff;font-weight:500;
@@ -604,9 +619,10 @@
   .pf-score b{display:block;font-family:var(--mono);font-size:17px;color:var(--ink)}
 
   /* ---- Start / orientation home ---- */
-  .start-hero{text-align:center;max-width:740px;margin:24px auto 30px}
+  .start-hero{text-align:center;max-width:940px;margin:24px auto 30px}
   .start-hero .eyebrow{display:inline-block;margin-bottom:12px}
-  .start-hero h2{font-size:33px;font-weight:800;letter-spacing:-.02em;line-height:1.14;margin:0 0 12px;color:var(--ink)}
+  .start-hero h2{font-size:clamp(19px,3.4vw,29px);font-weight:800;letter-spacing:-.02em;line-height:1.14;margin:0 0 12px;color:var(--ink)}
+  @media(min-width:700px){.start-hero h2{white-space:nowrap}}
   .start-hero p{font-size:16px;color:var(--ink-2);line-height:1.55;margin:0}
   .start-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:980px;margin:0 auto}
   @media(max-width:820px){.start-grid{grid-template-columns:1fr}}
@@ -722,13 +738,6 @@
 </div>
 
 <main>
-  <div class="prov-strip" id="provstrip" style="display:none">
-    <span class="chip">Disease <b>Ulcerative Colitis</b></span>
-    <span class="chip">Candidate targets screened <b>7,161</b></span>
-    <span class="chip">Evidence <b>Open Targets</b> &middot; <b>ClinicalTrials.gov</b></span>
-    <span class="chip" id="datastatus">Snapshot &middot; <b>2026-07-23</b></span>
-  </div>
-
   <!-- START (orientation home) -->
   <section class="view on" id="v-start">
     <div class="start-hero">
@@ -747,13 +756,13 @@
         <span class="sc-n">2</span>
         <h3>Prioritize targets</h3>
         <p>Rank the whole field by your strategy: science, competition, portfolio fit and failure risk. See why the answer differs from Open Targets.</p>
-        <span class="sc-go">Open the landscape &#8594;</span>
+        <span class="sc-go">Prioritize &#8594;</span>
       </button>
       <button class="start-card" data-goto="pt" type="button">
         <span class="sc-n">3</span>
         <h3>Test on patients &amp; design a trial</h3>
         <p>See how any target, or one you create yourself, fits real UC patient populations, then get the trial and recruitment plan.</p>
-        <span class="sc-go">Open patient-type fit &#8594;</span>
+        <span class="sc-go">See patient fit &#8594;</span>
       </button>
     </div>
   </section>
@@ -766,6 +775,11 @@
       <p>Ask about any UC target and get a grounded answer: the science case, the business case, and the reasons it might fail, every claim linked to its source. It's Health Answers by Pfizer, pointed at the target decision.</p>
     </div>
     <div class="chat-wrap">
+      <div class="chat-tools">
+        <button type="button" id="chatnew">&#43; New chat</button>
+        <button type="button" id="chathist">&#9776; Saved chats <b id="histcount">0</b></button>
+      </div>
+      <div class="hist-tray" id="histtray" hidden></div>
       <div class="chat-log" id="chatlog"></div>
       <form class="chat-input" id="chatform" autocomplete="off">
         <input id="chatbox" type="text" placeholder="Ask about a UC target, a competitor, or a trade-off..." aria-label="Ask a question" />
@@ -4607,7 +4621,6 @@ function activateView(v){
   document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected', x.dataset.view===parent ? 'true':'false'));
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
   const sec=document.getElementById('v-'+v); if(sec)sec.classList.add('on');
-  document.getElementById('provstrip').style.display = (v==='chat'||v==='start') ? 'none' : 'flex';
   if(v==='cmp'){buildPick();drawCompare();}
   if(v==='val'){drawValidation();}
   if(v==='method'){drawMethod();}
@@ -5036,9 +5049,11 @@ function askQuestion(text){
   const chatOn=document.getElementById('v-chat').classList.contains('on');
   if(!chatOn){[...document.querySelectorAll('nav.tabs button')].find(b=>b.dataset.view==='chat').click();}
   const uNode=pushUser(text);
+  if(typeof chatTurns!=='undefined')chatTurns.push({role:'user',content:text});
   const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
   const scroll=()=>requestAnimationFrame(()=>uNode.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'}));
   const html=answerHTML(text);
+  if(typeof chatTurns!=='undefined'){chatTurns.push({role:'bot',content:html});persistCurrent();}
   if(reduce){ pushBot(html); scroll(); return; }
   const typing=pushBot(`<div class="msg-bot typing"><div class="bot-card" style="display:inline-block"><div class="bot-body"><span class="typedot"></span><span class="typedot"></span><span class="typedot"></span></div></div></div>`);
   scroll();
@@ -5064,9 +5079,44 @@ function renderSuggest(){const box=document.getElementById('chatsuggest');box.in
 document.getElementById('chatform').addEventListener('submit',e=>{e.preventDefault();
   const box=document.getElementById('chatbox');const v=box.value.trim();if(!v)return;box.value='';askQuestion(v);});
 renderSuggest();
-pushBot(botWrap('grounded, cited, no guesswork',`
+/* ---- chat history + new chat (saved in localStorage) ---- */
+const CHIST_KEY='tc_chat_history';
+let chatTurns=[];
+let curConvId='c'+Date.now();
+function loadHist(){try{return JSON.parse(localStorage.getItem(CHIST_KEY))||[]}catch(e){return[]}}
+function saveHist(h){try{localStorage.setItem(CHIST_KEY,JSON.stringify(h.slice(0,40)));}catch(e){}}
+function updateHistCount(){const el=document.getElementById('histcount');if(el)el.textContent=loadHist().length;}
+function persistCurrent(){
+  if(!chatTurns.some(t=>t.role==='user'))return;
+  const firstQ=chatTurns.find(t=>t.role==='user');
+  const hist=loadHist().filter(c=>c.id!==curConvId);
+  hist.unshift({id:curConvId,title:(firstQ.content||'Chat').slice(0,72),ts:Date.now(),turns:chatTurns.slice()});
+  saveHist(hist);updateHistCount();
+}
+function replayTurns(turns){const log=document.getElementById('chatlog');log.innerHTML='';
+  turns.forEach(t=>{if(t.role==='user'){const d=document.createElement('div');d.className='msg-user';d.textContent=t.content;log.appendChild(d);}else pushBot(t.content);});}
+function greet(){const html=botWrap('grounded, cited, no guesswork',`
   <p class="lead">Hi. I help you find <b>more worthwhile</b> ulcerative colitis targets, ones that are both scientifically credible and a smart use of Pfizer's resources. Ask about any target and I'll give you the science case, the business case, and the reasons it might fail, with every claim linked to its source.</p>
-  <p style="margin:0;font-size:13.5px;color:var(--ink-3);line-height:1.5">Human-genetic support alone makes a target about <b>2.6&#215; more likely</b> to succeed in the clinic (Minikel et al., Nature 2024). I start from that genetics-grounded science, then add what Open Targets deliberately leaves out: who else is racing, what Pfizer already owns, and what has already failed.</p>`));
+  <p style="margin:0;font-size:13.5px;color:var(--ink-3);line-height:1.5">Human-genetic support alone makes a target about <b>2.6&#215; more likely</b> to succeed in the clinic (Minikel et al., Nature 2024). I start from that genetics-grounded science, then add what Open Targets deliberately leaves out: who else is racing, what Pfizer already owns, and what has already failed.</p>`);
+  pushBot(html);chatTurns.push({role:'bot',content:html});}
+function newChat(){persistCurrent();curConvId='c'+Date.now();chatTurns=[];
+  document.getElementById('chatlog').innerHTML='';greet();renderSuggest();
+  const tray=document.getElementById('histtray');if(tray)tray.hidden=true;
+  const box=document.getElementById('chatbox');if(box)box.focus();}
+function openConv(id){persistCurrent();const c=loadHist().find(x=>x.id===id);if(!c)return;
+  curConvId=c.id;chatTurns=c.turns.slice();replayTurns(chatTurns);
+  const tray=document.getElementById('histtray');if(tray)tray.hidden=true;}
+function delConv(id,ev){if(ev)ev.stopPropagation();saveHist(loadHist().filter(c=>c.id!==id));renderHist();updateHistCount();}
+function renderHist(){const tray=document.getElementById('histtray');if(!tray)return;
+  const hist=loadHist();
+  if(!hist.length){tray.innerHTML='<div class="hist-empty">No saved chats yet. Conversations you have are saved here automatically.</div>';return;}
+  tray.innerHTML=hist.map(c=>{const d=new Date(c.ts);const ds=(d.getMonth()+1)+'/'+d.getDate();
+    return `<div class="hist-item" onclick="openConv('${c.id}')"><span class="ht">${esc(c.title)}</span><span class="hd">${ds}</span><button class="hx" title="Delete" onclick="delConv('${c.id}',event)">&times;</button></div>`;}).join('');}
+window.openConv=openConv;window.delConv=delConv;
+document.getElementById('chatnew').addEventListener('click',newChat);
+document.getElementById('chathist').addEventListener('click',()=>{const tray=document.getElementById('histtray');if(!tray)return;const willShow=tray.hidden;if(willShow)renderHist();tray.hidden=!willShow;});
+updateHistCount();
+greet();
 
 /* ======================================================================
    BRING YOUR OWN TARGET  +  SHORTLIST  +  EXPORT / SHARE
