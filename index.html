@@ -3883,8 +3883,10 @@ function openMemo(sym){
         <span class="pill p-${t.status}">${t.status}</span></div>
       <div class="memo-rec" style="color:${rec.col};border-color:${rec.col}">${rec.txt}</div>
       ${t.custom?`<div style="margin-top:12px;font-size:12px;color:#5B3FBF;background:#EDE7FB;border-radius:10px;padding:9px 12px;line-height:1.45"><b>Your proposed target.</b> Scored by the same engine as real targets, from the inputs you set, not retrieved evidence. <a href="#" onclick="removeCustom('${sym}');return false;" style="color:#5B3FBF;font-weight:700;text-decoration:underline">Remove it</a>.</div>`:''}
-      <div style="display:flex;gap:8px;margin-top:14px">
+      ${t.edited&&!t.custom?`<div style="margin-top:12px;font-size:12px;color:var(--accent-ink);background:var(--accent-bg);border-radius:10px;padding:9px 12px;line-height:1.45"><b>You edited this target's inputs.</b> The scores and its place on the map reflect your changes, not the retrieved snapshot. <a href="#" onclick="resetEdit('${sym}');return false;" style="color:var(--accent-ink);font-weight:700;text-decoration:underline">Reset to original</a>.</div>`:''}
+      <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
         <button class="pinb${isPinned(sym)?' on':''}" id="memopin">${isPinned(sym)?'&#9733; On shortlist':'&#9734; Add to shortlist'}</button>
+        <button class="pinb" id="memoedit">&#9998; Edit inputs</button>
         <button class="pinb" id="memodl">&#8595; Download one-pager</button>
       </div>
     </div>
@@ -3915,6 +3917,8 @@ function openMemo(sym){
   document.getElementById('mx').addEventListener('click',closeMemo);
   const mp=document.getElementById('memopin');
   if(mp)mp.addEventListener('click',()=>{togglePin(sym); mp.classList.toggle('on',isPinned(sym)); mp.innerHTML=isPinned(sym)?'&#9733; On shortlist':'&#9734; Add to shortlist';});
+  const me=document.getElementById('memoedit');
+  if(me)me.addEventListener('click',()=>{closeMemo();if(typeof openProposeEdit==='function')openProposeEdit(sym);});
   const md=document.getElementById('memodl');
   if(md)md.addEventListener('click',()=>downloadMemo(memoModelFor(t,rec,{thesis,market,change,exp,supList,conEv})));
   document.getElementById('drawer').classList.add('on');
@@ -4570,8 +4574,8 @@ function drawMethod(){
   const otRank={}; [...T].sort((a,b)=>b.uc_score-a.uc_score).forEach((t,i)=>otRank[t.symbol]=i+1);
   const tc=scored(posture); const tcRank={}; tc.forEach(x=>tcRank[x.t.symbol]=x.rank);
   const moves=T.map(t=>({t,ot:otRank[t.symbol],tc:tcRank[t.symbol],d:otRank[t.symbol]-tcRank[t.symbol]}));
-  const ups=moves.filter(m=>m.d>0).sort((a,b)=>b.d-a.d).slice(0,4);
-  const downs=moves.filter(m=>m.d<0).sort((a,b)=>a.d-b.d).slice(0,4);
+  const ups=moves.filter(m=>m.d>0).sort((a,b)=>b.d-a.d).slice(0,3);
+  const downs=moves.filter(m=>m.d<0).sort((a,b)=>a.d-b.d).slice(0,3);
   const why={TNFSF15:"Strong genetics, zero competitors: the field's whitespace prize.",GPR35:"Genetically anchored orphan GPCR, no UC program.",OSMR:"Built-in responder biomarker, near-empty field.",IRF5:"Upstream genetics, uncrowded.",CXCR2:"Open field, tractable.",
     TNFRSF9:"Genetics-backed and essentially untouched in UC.",IL10RA:"Monogenic IBD gene on the IL-10 axis, little competition.",IL10:"Core IBD-genetics pathway, uncrowded.",PTPN2:"Genetically supported regulator, open field.",
     JAK2:"Pfizer already sells here; boxed safety warning.",JAK1:"JAK class: crowded and Pfizer-adjacent; class safety overhang.",JAK3:"JAK class: Pfizer owns tofacitinib; class safety overhang.",
@@ -4583,18 +4587,18 @@ function drawMethod(){
   const box_h=`
   <div class="method-sec">
     <h3>Where the AI works</h3>
-    <p class="sub">Four stages, straight from our roadmap. Two are deterministic and auditable. Two are genuine AI, because they turn unstructured evidence and judgment into something a scientist can read and challenge.</p>
+    <p class="sub">Four stages. Two are deterministic and auditable; two are real AI, turning messy evidence into something a scientist can challenge.</p>
     <div class="pipe">
-      <div class="pstep"><span class="pn">STAGE 1</span><h4>Collect evidence</h4><p>Open Targets, ClinicalTrials.gov, PubMed and public drug databases, pulled into one place per target.</p></div>
-      <div class="pstep isai"><span class="pn">STAGE 2</span><h4>Read &amp; reconcile</h4><p>An LLM extracts structured claims from unstructured trial and literature text, and reconciles conflicting sources into one evidence ledger.</p><span class="ai">AI</span></div>
-      <div class="pstep"><span class="pn">STAGE 3</span><h4>Score &amp; rank</h4><p>Transparent weighted model across all six factors. No black box: every point traces to a source and a weight you control.</p></div>
-      <div class="pstep isai"><span class="pn">STAGE 4</span><h4>Explain &amp; red-team</h4><p>The AI writes the assessment memo, the plain-language answer, and the mandatory counter-evidence that argues against each pick.</p><span class="ai">AI</span></div>
+      <div class="pstep"><span class="pn">STAGE 1</span><h4>Collect evidence</h4><p>Open Targets, ClinicalTrials.gov, PubMed and drug databases, pulled into one place per target.</p></div>
+      <div class="pstep isai"><span class="pn">STAGE 2</span><h4>Read &amp; reconcile</h4><p>An LLM turns unstructured trial and literature text into structured claims, reconciling conflicting sources.</p><span class="ai">AI</span></div>
+      <div class="pstep"><span class="pn">STAGE 3</span><h4>Score &amp; rank</h4><p>A transparent weighted model over all six factors. Every point traces to a source and a weight you control.</p></div>
+      <div class="pstep isai"><span class="pn">STAGE 4</span><h4>Explain &amp; red-team</h4><p>The AI writes the memo, the plain-language answer, and the counter-evidence against each pick.</p><span class="ai">AI</span></div>
     </div>
   </div>
 
   <div class="method-sec">
     <h3>Same targets, different answer</h3>
-    <p class="sub">Open Targets ranks by scientific association alone, by design. TargetCompass adds competition, portfolio and failure risk, so the ranking moves. This is the difference, on today's data, under the <b>${POSTURES[posture].name}</b> strategy.</p>
+    <p class="sub">Open Targets ranks by association alone. TargetCompass adds competition, portfolio and failure risk, so the ranking moves. Today's data, under the <b>${POSTURES[posture].name}</b> strategy.</p>
     <div class="movers">
       <div class="mv-col"><h4>&#9650; TargetCompass elevates</h4>${ups.map(m=>mv(m,true)).join('')}</div>
       <div class="mv-col"><h4>&#9660; TargetCompass demotes</h4>${downs.map(m=>mv(m,false)).join('')}</div>
@@ -4603,13 +4607,12 @@ function drawMethod(){
 
   <div class="method-sec">
     <h3>Built to be trusted, and to scale</h3>
-    <p class="sub">The three hard problems in target prioritization, and how the design answers each.</p>
     <div class="method-list">
-      <div class="ml"><h4>Data quality</h4><p>Sources conflict and are incomplete. Every claim is stored with its origin and date in an append-only ledger, so disagreements are visible, not averaged away.</p></div>
-      <div class="ml"><h4>Validation, not autonomy</h4><p>There is no perfect ground truth for the "best" target. TargetCompass supports the decision, it does not make it. Our backtest shows the logic would have called the last decade right.</p></div>
-      <div class="ml"><h4>Explainable by default</h4><p>Researchers need transparency. Every recommendation opens to its evidence and its counter-case, with links to the primary record. Nothing is asserted without a source.</p></div>
+      <div class="ml"><h4>Data quality</h4><p>Sources conflict. Every claim is stored with its origin and date in an append-only ledger, so disagreements stay visible, not averaged away.</p></div>
+      <div class="ml"><h4>Validation, not autonomy</h4><p>There is no ground truth for the "best" target. TargetCompass supports the decision; the backtest shows the logic would have called the last decade right.</p></div>
+      <div class="ml"><h4>Explainable by default</h4><p>Every recommendation opens to its evidence and its counter-case, each linked to the primary record.</p></div>
     </div>
-    <p class="val-foot" style="margin-top:16px"><b>Scale:</b> nothing here is UC-specific. Point the same pipeline at any disease EFO and it pulls, scores and explains a fresh landscape, which is how a one-disease prototype becomes a platform for prioritization across Pfizer's portfolio.</p>
+    <p class="val-foot" style="margin-top:16px"><b>Scale:</b> nothing here is UC-specific. Point the same pipeline at any disease EFO and it pulls, scores and explains a fresh landscape, turning a one-disease prototype into a portfolio-wide platform.</p>
   </div>`;
   box.innerHTML=box_h;
 }
@@ -5400,7 +5403,38 @@ window.removeCustom=function(sym){saveCustom(loadCustom().filter(c=>c.symbol!==s
   const i=T.findIndex(x=>x.symbol===sym);if(i>=0)T.splice(i,1);delete byId[sym];delete EXPR[sym];
   if(typeof shortlist!=='undefined'){shortlist=shortlist.filter(s=>s!==sym);saveSL();renderShortlist();}
   closeMemo();refreshAll();drawPlot(false);toast(sym+' removed');};
+/* ---- edit an existing (real) target: override its scoring inputs, keep its identity + evidence ---- */
+const EDITS_KEY='tc_edits';
+const _origTarget={}, _origExpr={};
+function loadEdits(){try{return JSON.parse(localStorage.getItem(EDITS_KEY))||{}}catch(e){return{}}}
+function saveEdits(o){try{localStorage.setItem(EDITS_KEY,JSON.stringify(o))}catch(e){}}
+function persistEdit(sym,inp){const e=loadEdits();e[sym]=inp;saveEdits(e);}
+function applyEdit(sym,inp){
+  const base=byId[sym];if(!base)return;
+  if(!_origTarget[sym])_origTarget[sym]=base;               // snapshot pristine object once
+  if(!(sym in _origExpr))_origExpr[sym]=EXPR[sym];
+  const genetic=_cl(inp.genetic),assoc=_cl(inp.assoc),drug=_cl(inp.drug),failrisk=_cl(inp.failrisk);
+  const active=Math.max(0,Math.round(inp.active||0)),owned=!!inp.owned;
+  const merged={...base,
+    genetic:round3(genetic),uc_score:round3(assoc),drug:round3(drug),failrisk:round3(failrisk),
+    active_trials:active,total_trials:Math.max(base.total_trials||0,active),
+    bio:round3(_cl(0.55*assoc+0.45*genetic)),
+    whitespace:round3(_cl(1-Math.log1p(active)/Math.log1p(MAXA))),
+    pfizer_owned:owned,redundancy:owned?1:(base.redundancy||0),edited:true};
+  byId[sym]=merged;const i=T.findIndex(x=>x.symbol===sym);if(i>=0)T[i]=merged;
+  const cur=EXPR[sym]||{};
+  const colon=inp.colon==null?cur.colon:Math.round(inp.colon*10)/10;
+  const pw=(inp.pathways&&inp.pathways.length)?inp.pathways.filter(Boolean).map(p=>[p,'User-defined']):cur.pw;
+  EXPR[sym]={...cur,colon,blood:inp.immune?'Immune cell enriched':cur.blood,pw};
+}
+window.resetEdit=function(sym){
+  const e=loadEdits();delete e[sym];saveEdits(e);
+  if(_origTarget[sym]){byId[sym]=_origTarget[sym];const i=T.findIndex(x=>x.symbol===sym);if(i>=0)T[i]=_origTarget[sym];delete _origTarget[sym];}
+  if(sym in _origExpr){if(_origExpr[sym]===undefined)delete EXPR[sym];else EXPR[sym]=_origExpr[sym];delete _origExpr[sym];}
+  if(typeof shortlist!=='undefined')renderShortlist&&renderShortlist();
+  refreshAll();drawPlot(false);closeMemo();openMemo(sym);toast(sym+' reset to original');};
 loadCustom().forEach(registerCustom);  // restore saved custom targets before first render
+Object.entries(loadEdits()).forEach(([sym,inp])=>{if(byId[sym]&&!byId[sym].custom)applyEdit(sym,inp);});
 (function initPropose(){
   const M=document.getElementById('pmodal'),SC=document.getElementById('pmscrim');if(!M)return;
   const el=id=>document.getElementById(id);
@@ -5418,17 +5452,42 @@ loadCustom().forEach(registerCustom);  // restore saved custom targets before fi
     if(!inp.symbol){pr.innerHTML='Give your target a name, then it scores against the whole field.';return;}
     const r=previewCustom(inp);pr.innerHTML=`<b>${inp.symbol}</b> would score <b>${r.fit}/100</b> and rank <b>#${r.rank} of ${r.n}</b> under the ${POSTURES[posture].name} strategy.`;}
   M.querySelectorAll('input').forEach(i=>i.addEventListener('input',preview));
-  function open(){SC.hidden=false;M.hidden=false;preview();el('pf_sym').focus();}
+  function fillFromTarget(sym,forceSym){const t=byId[sym];if(!t)return false;
+    if(forceSym||!el('pf_sym').value)el('pf_sym').value=t.symbol;
+    el('pf_gen').value=Math.round(t.genetic*100);el('pf_assoc').value=Math.round(t.uc_score*100);
+    el('pf_drug').value=Math.round((t.drug||.5)*100);el('pf_active').value=Math.min(40,t.active_trials);
+    el('pf_fail').value=Math.round(t.failrisk*100);el('pf_owned').checked=!!t.pfizer_owned;
+    const ex=EXPR[sym];
+    if(ex&&ex.colon!=null)el('pf_colon').value=Math.min(120,Math.round(ex.colon));
+    el('pf_immune').checked=!!(ex&&/immune/i.test(ex.blood||''));
+    el('pf_pw').value=(ex&&ex.pw&&ex.pw.length)?ex.pw.map(p=>p[0]).join(', '):'';
+    return true;}
+  function resetForm(){el('pf_sym').value='';el('pf_seed').value='';el('pf_pw').value='';
+    el('pf_gen').value=50;el('pf_assoc').value=50;el('pf_drug').value=50;el('pf_colon').value=10;
+    el('pf_active').value=4;el('pf_fail').value=20;el('pf_owned').checked=false;el('pf_immune').checked=false;}
+  let _editSym=null;
+  const H2=M.querySelector('.pm-h h2'),LBL=M.querySelector('.pm-h .lbl'),DESC=M.querySelector('.pm-h p');
+  const seedRow=el('pf_seed').closest('.pm-f'),symRow=el('pf_sym');
+  function setMode(sym){
+    _editSym=sym||null;
+    if(_editSym){
+      LBL.textContent='Edit an existing target';H2.textContent='Edit '+_editSym;
+      DESC.textContent='Adjust the science and business inputs for '+_editSym+'. TargetCompass re-scores it with the same engine and updates the map, the board, and its memo. Changes are saved on this device; you can reset to the original anytime.';
+      el('pmcreate').textContent='Save changes';symRow.readOnly=true;if(seedRow)seedRow.style.display='none';
+    }else{
+      LBL.textContent='Design & test your own target';H2.textContent='Propose a target';
+      DESC.textContent='Encode a hypothesis, real, novel, or a what-if, and TargetCompass scores it with the same engine and drops it onto the map to test against the whole field.';
+      el('pmcreate').textContent='Add to the map & test it';symRow.readOnly=false;if(seedRow)seedRow.style.display='';
+    }}
+  function open(editSym){resetForm();setMode(editSym);if(_editSym)fillFromTarget(_editSym,true);
+    SC.hidden=false;M.hidden=false;preview();if(!_editSym)el('pf_sym').focus();}
   function close(){SC.hidden=true;M.hidden=true;}
-  el('proposebtn').addEventListener('click',open);el('pmx').addEventListener('click',close);
+  window.openProposeEdit=sym=>open(sym);
+  el('proposebtn').addEventListener('click',()=>open());el('pmx').addEventListener('click',close);
   el('pmcancel').addEventListener('click',close);SC.addEventListener('click',close);
   el('pf_seedbtn').addEventListener('click',async()=>{const q=(el('pf_seed').value||'').trim().toUpperCase();if(!q)return;
     const pr=el('pmpreview');
-    if(byId[q]){const t=byId[q];if(!el('pf_sym').value)el('pf_sym').value=q;
-      el('pf_gen').value=Math.round(t.genetic*100);el('pf_assoc').value=Math.round(t.uc_score*100);el('pf_drug').value=Math.round((t.drug||.5)*100);
-      el('pf_active').value=Math.min(40,t.active_trials);el('pf_fail').value=Math.round(t.failrisk*100);el('pf_owned').checked=!!t.pfizer_owned;
-      if(EXPR[q]){if(EXPR[q].colon!=null)el('pf_colon').value=Math.min(120,Math.round(EXPR[q].colon));if(/immune/i.test(EXPR[q].blood||''))el('pf_immune').checked=true;if(EXPR[q].pw&&EXPR[q].pw.length)el('pf_pw').value=EXPR[q].pw.map(p=>p[0]).join(', ');}
-      preview();return;}
+    if(byId[q]){fillFromTarget(q,false);preview();return;}
     pr.textContent='Pulling '+q+' live from Open Targets + Human Protein Atlas...';
     let m=UNI_BY_SYM[q]?modelFromUniverse(q):null;
     if(!m){try{const s=await otFetch('query($x:String!){search(queryString:$x,entityNames:["target"]){hits{id object{... on Target{approvedSymbol}}}}}',{x:q});const hit=(s.data.search.hits||[])[0];if(hit)m={symbol:q,ensembl:hit.id,assoc:0,genetic:0,lit:0,knownDrug:0,bio:0,drug:.5,whitespace:.5,failrisk:.2};}catch(e){}}
@@ -5440,6 +5499,12 @@ loadCustom().forEach(registerCustom);  // restore saved custom targets before fi
       preview();}
     else pr.textContent='Could not find '+q+' to prefill. Set the sliders manually.';});
   el('pmcreate').addEventListener('click',()=>{const inp=readInp();
+    if(_editSym){inp.symbol=_editSym;const b=byId[_editSym];inp.name=b?b.name:_editSym;
+      if(b&&b.custom){saveCustom(loadCustom().filter(c=>c.symbol!==_editSym).concat([inp]));registerCustom(inp);}
+      else{applyEdit(_editSym,inp);persistEdit(_editSym,inp);}
+      refreshAll();drawPlot(false);close();
+      const rk=scored(posture).find(x=>x.t.symbol===_editSym);
+      openMemo(_editSym);toast(_editSym+' updated'+(rk?', ranks #'+rk.rank+' of '+T.length:''));return;}
     if(!inp.symbol){toast('Give your target a name first');el('pf_sym').focus();return;}
     if(byId[inp.symbol]&&!byId[inp.symbol].custom){inp.symbol=inp.symbol+'-NEW';inp.name=inp.name+' (custom)';}
     saveCustom(loadCustom().filter(c=>c.symbol!==inp.symbol).concat([inp]));
@@ -5490,6 +5555,7 @@ drawPlot(true);
     await Promise.all(mechs.map(async m=>{ const [a,tot]=await Promise.all([count(MECH_TERMS[m],true),count(MECH_TERMS[m],false)]); ct[m]={active:a,total:tot}; }));
     const maxactive=Math.max(1,...Object.values(ct).map(c=>c.active));
     DATA.targets.forEach(t=>{ const cr=ct[t.mech]; if(!cr)return;
+      if((byId[t.symbol]||t).edited)return;   // don't overwrite a target the user edited
       t.active_trials=cr.active; t.total_trials=cr.total;
       t.whitespace=clamp(1-Math.log1p(cr.active)/Math.log1p(maxactive));
       if(FAILM[t.mech])t.status='graveyard'; else if(OWNED[t.mech])t.status='owned';
