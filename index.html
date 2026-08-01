@@ -3394,11 +3394,11 @@ T.forEach(t=>{const p=t.prio||{}; const f=x=>x>0?1:(x<0?0:0.5);
 
 /* ---------- scoring weights (deck: customizable) : wB biology, wD druggability, wW open field, wF de-risk, wR portfolio ---------- */
 const POSTURES = {
-  balanced:      {name:"Balanced",           mark:"&#9670;",  wB:.34,wD:.12,wW:.28,wF:.26,wR:.20},
-  first_in_class:{name:"First-in-class",      mark:"&#10022;", wB:.24,wD:.10,wW:.44,wF:.32,wR:.45},
-  fast_follower: {name:"Fast-follower",       mark:"&#187;",   wB:.44,wD:.16,wW:.06,wF:.18,wR:.05},
-  diversify:     {name:"Diversify portfolio", mark:"&#8856;",  wB:.28,wD:.10,wW:.28,wF:.24,wR:.70},
-  custom:        {name:"Custom",              mark:"&#9881;",  wB:.34,wD:.12,wW:.28,wF:.26,wR:.20},
+  balanced:      {name:"Balanced",           blurb:"weighs the science and the business evenly.",                              mark:"&#9670;",  wB:.34,wD:.12,wW:.28,wF:.26,wR:.20},
+  first_in_class:{name:"First-in-class",      blurb:"chase novelty. Rewards wide-open fields and steers clear of crowded or Pfizer-owned classes.", mark:"&#10022;", wB:.24,wD:.10,wW:.44,wF:.32,wR:.45},
+  fast_follower: {name:"Fast-follower",       blurb:"back proven biology. Rewards strong science and tolerates a busier field.",  mark:"&#187;",   wB:.44,wD:.16,wW:.06,wF:.18,wR:.05},
+  diversify:     {name:"Diversify portfolio", blurb:"spread the bets. Strongly avoids mechanisms Pfizer already owns.",          mark:"&#8856;",  wB:.28,wD:.10,wW:.28,wF:.24,wR:.70},
+  custom:        {name:"Custom",              blurb:"your own weights.",                                                        mark:"&#9881;",  wB:.34,wD:.12,wW:.28,wF:.26,wR:.20},
 };
 const PRESET_KEYS=["balanced","first_in_class","fast_follower","diversify"];
 let posture = "balanced";
@@ -3478,12 +3478,13 @@ function drawPlot(animate){
       if(d<MIN){const p=(MIN-d)/2,ux=dx/d,uy=dy/d; a.x-=ux*p;a.y-=uy*p;b.x+=ux*p;b.y+=uy*p;moved=true;} }
     pts.forEach(p=>{p.x=Math.max(X0+RREF,Math.min(X1-RREF,p.x));p.y=Math.max(Y0+RREF,Math.min(Y1-RREF,p.y));});
     if(!moved)break; }
-  pts.forEach((p,di)=>{ const t=p.t, col=riskColor(t.failrisk);
+  pts.forEach((p,di)=>{ const t=p.t, col=riskColor(t.failrisk); const rk=scMap[t.symbol].rank;
     const ring=t.custom?`stroke="#5B3FBF" stroke-width="2.6" stroke-dasharray="3 2"`:t.pfizer_owned?`stroke="var(--owned)" stroke-width="2.5"`:`stroke="var(--panel)" stroke-width="1.75"`;
     const dly=animate?` style="animation-delay:${di*11}ms"`:``;
     s+=`<g class="dot${animate?' anim':''}" data-sym="${t.symbol}"${dly}>`;
     s+=`<circle class="hiring" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${(p.vr+3.5).toFixed(1)}" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="${p.hi?'.55':'0'}"/>`;
     s+=`<circle class="node" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${p.vr.toFixed(1)}" fill="${col}" ${ring}/>`;
+    s+=`<text class="ranknum" x="${p.x.toFixed(1)}" y="${(p.y+3.4).toFixed(1)}" text-anchor="middle" opacity="${rk<=5?'1':'0'}" style="font-family:var(--mono);font-size:10px;font-weight:800;fill:#fff;paint-order:stroke;stroke:rgba(15,20,35,.5);stroke-width:2px;pointer-events:none">${rk}</text>`;
     s+=`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${(RREF+3).toFixed(1)}" fill="transparent" pointer-events="all"/></g>`; });
   const labels=pts.map(p=>({t:p.t,x:p.x,y:p.y,r:RREF,hi:p.hi}));
   // label EVERY target: pick a side, declutter vertically within columns, leader-line the movers
@@ -3522,13 +3523,14 @@ function restyleForPosture(){
     const r=VR(rec.s);
     const node=g.querySelector('.node'); if(node)node.setAttribute('r',r.toFixed(1));
     const ring=g.querySelector('.hiring'); if(ring){ring.setAttribute('r',(r+3.5).toFixed(1)); ring.setAttribute('opacity',top.has(sym)?'.55':'0');}
+    const rn=g.querySelector('.ranknum'); if(rn){rn.textContent=rec.rank; rn.setAttribute('opacity',rec.rank<=5?'1':'0');}
   });
   document.querySelectorAll('#plot .dot-lbl').forEach(el=>{ const sym=el.getAttribute('data-sym'); if(sym)el.classList.toggle('hi',top.has(sym)); });
   drawBoard(sc); drawInsight(sc); updateTopCap(sc);
 }
 function updateTopCap(sc){ const el=document.getElementById('topcap'); if(!el)return;
   const t3=sc.slice(0,3).map(x=>x.t.symbol).join(' &middot; ');
-  el.innerHTML=`Top picks for the <b>${POSTURES[posture].name}</b> strategy: <span class="pk">${t3}</span>. Slide the weights and dot sizes update live; positions stay fixed.`;
+  el.innerHTML=`<b>${POSTURES[posture].name}</b> ${POSTURES[posture].blurb} Its top picks are numbered <b>1&#8211;5</b> on the map right now (<span class="pk">${t3}</span>&hellip;). Switch strategy and those numbers re-rank; the dots keep their places so you can see who moves.`;
 }
 function showTip(g){
   const sym=g.dataset.sym, t=byId[sym]; const x=scored(posture).find(y=>y.t.symbol===sym);
