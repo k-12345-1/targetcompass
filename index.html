@@ -327,9 +327,15 @@
   .expr-row{display:grid;grid-template-columns:minmax(112px,150px) 1fr 58px;gap:9px;align-items:center;margin:6px 0}
   .expr-row .tn{font-size:12px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .expr-row .tv{font-size:11.5px;text-align:right}
-  .expr-map{display:grid;grid-template-columns:190px minmax(0,1fr);gap:12px;align-items:start}
-  .expr-body{width:190px;height:355px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
-  .expr-body text{font-family:var(--mono);font-size:8px;fill:var(--ink-3)}
+  .expr-map{display:grid;grid-template-columns:200px minmax(0,1fr);gap:14px;align-items:start}
+  .expr-body-wrap{width:200px}
+  .expr-body{width:200px;height:auto;display:block;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+  .expr-legend{margin-top:9px;font-family:var(--mono);font-size:9.5px;color:var(--ink-3)}
+  .expr-legend .peak{display:block;color:var(--ink);font-weight:700;font-size:11px;margin-bottom:6px}
+  .expr-legend .peak b{color:#C43A2E}
+  .expr-legend .scale{display:flex;align-items:center;gap:7px}
+  .expr-legend .grad{flex:1;height:8px;border-radius:5px;background:linear-gradient(90deg,rgb(16,132,103),rgb(119,96,80),rgb(223,60,56))}
+  .expr-legend-note{margin-top:5px;line-height:1.4}
   .expr-chip-list{max-height:355px;overflow:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
   .expr-chip{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:6px;align-items:center;
     background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 7px}
@@ -337,7 +343,7 @@
   .expr-chip .name{font-size:11.5px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .expr-chip .val{font-family:var(--mono);font-size:10.5px;color:var(--ink);font-variant-numeric:tabular-nums}
   .expr-note{font-size:11.5px;color:var(--ink-3);line-height:1.45;margin-top:9px}
-  @media(max-width:560px){.expr-head{flex-direction:column}.expr-map{grid-template-columns:1fr}.expr-body{width:100%;height:auto}.expr-chip-list{grid-template-columns:1fr}.expr-row{grid-template-columns:104px 1fr 50px}}
+  @media(max-width:560px){.expr-head{flex-direction:column}.expr-map{grid-template-columns:1fr}.expr-body-wrap{width:100%}.expr-body{width:100%;height:auto}.expr-chip-list{grid-template-columns:1fr}.expr-row{grid-template-columns:104px 1fr 50px}}
 
   /* ---- Validation / backtest ---- */
   .val-score{display:flex;flex-wrap:wrap;align-items:center;gap:22px;background:var(--panel);
@@ -3719,19 +3725,19 @@ function hpaEntries(rec){
     .sort((a,b)=>b.value-a.value||a.name.localeCompare(b.name));
 }
 const BODY_TISSUE_POS={
-  'adipose tissue':[62,198], 'adrenal gland':[90,148], 'amygdala':[87,38], 'appendix':[84,224],
-  'basal ganglia':[95,45], 'blood vessel':[104,174], 'bone marrow':[73,284], 'breast':[75,103],
-  'cerebellum':[108,48], 'cerebral cortex':[95,30], 'cervix':[95,230], 'choroid plexus':[108,34],
-  'colon':[102,210], 'duodenum':[88,174], 'endometrium':[96,220], 'epididymis':[110,242],
-  'esophagus':[96,92], 'fallopian tube':[82,221], 'gallbladder':[82,151], 'heart muscle':[84,111],
-  'hippocampal formation':[82,46], 'hypothalamus':[96,52], 'kidney':[112,153], 'liver':[77,145],
-  'lung':[103,107], 'lymph node':[116,122], 'midbrain':[96,57], 'ovary':[80,230],
-  'pancreas':[96,162], 'parathyroid gland':[102,78], 'pituitary gland':[96,63], 'placenta':[94,222],
-  'prostate':[96,236], 'rectum':[96,224], 'retina':[82,32], 'salivary gland':[78,79],
-  'seminal vesicle':[84,240], 'skeletal muscle':[130,179], 'skin':[141,196], 'small intestine':[91,196],
-  'smooth muscle':[64,166], 'spinal cord':[111,72], 'spleen':[116,150], 'stomach':[92,153],
-  'testis':[102,249], 'thymus':[96,95], 'thyroid gland':[96,82], 'tongue':[91,82],
-  'tonsil':[112,83], 'urinary bladder':[96,221], 'vagina':[96,240]
+  'adipose tissue':[60,196], 'adrenal gland':[113,150], 'amygdala':[87,38], 'appendix':[80,222],
+  'basal ganglia':[95,45], 'blood vessel':[104,170], 'bone marrow':[73,300], 'breast':[75,103],
+  'cerebellum':[108,48], 'cerebral cortex':[95,30], 'cervix':[95,232], 'choroid plexus':[108,34],
+  'colon':[106,206], 'duodenum':[104,168], 'endometrium':[96,222], 'epididymis':[110,244],
+  'esophagus':[96,92], 'fallopian tube':[82,214], 'gallbladder':[80,146], 'heart muscle':[84,111],
+  'hippocampal formation':[82,46], 'hypothalamus':[100,52], 'kidney':[116,158], 'liver':[76,142],
+  'lung':[105,107], 'lymph node':[118,120], 'midbrain':[96,57], 'ovary':[80,228],
+  'pancreas':[94,160], 'parathyroid gland':[102,78], 'pituitary gland':[96,63], 'placenta':[92,220],
+  'prostate':[96,236], 'rectum':[98,222], 'retina':[82,32], 'salivary gland':[78,79],
+  'seminal vesicle':[86,240], 'skeletal muscle':[132,182], 'skin':[142,150], 'small intestine':[88,190],
+  'smooth muscle':[64,178], 'spinal cord':[100,64], 'spleen':[118,148], 'stomach':[90,150],
+  'testis':[102,250], 'thymus':[96,98], 'thyroid gland':[96,82], 'tongue':[91,86],
+  'tonsil':[112,86], 'urinary bladder':[96,214], 'vagina':[96,240]
 };
 function barPlotHTML(entries,max){
   return `<div class="expr-bars">${entries.map(e=>`<div class="expr-row" title="${e.name}: ${ntpm(e.value)} nTPM">
@@ -3742,24 +3748,41 @@ function barPlotHTML(entries,max){
 }
 function bodyMapHTML(entries,max){
   const mapped=entries.filter(e=>BODY_TISSUE_POS[e.name]);
-  const circles=mapped.map(e=>{
+  // only the top handful of tissues stay prominent; the rest fade to faint dots so the signal reads
+  const prom=new Set([...mapped].sort((a,b)=>b.value-a.value).slice(0,9)
+    .filter(e=>e.value>=1&&max>0&&e.value>=0.10*max).map(e=>e.name));
+  const ordered=[...mapped].sort((a,b)=>a.value-b.value); // paint faint first, prominent on top
+  const circles=ordered.map(e=>{
     const [x,y]=BODY_TISSUE_POS[e.name];
     const p=max>0?Math.sqrt(e.value/max):0;
-    const r=e.value>0?Math.max(2.2,2.5+5.5*p):1.8;
-    return `<circle cx="${x}" cy="${y}" r="${r.toFixed(1)}" fill="${e.value>0?exprColor(e.value,max):'transparent'}" stroke="${e.value>0?'#fff':'var(--line)'}" stroke-width="1"><title>${e.name}: ${ntpm(e.value)} nTPM</title></circle>`;
+    const low=!prom.has(e.name);
+    const r=low?1.5:(2.3+4.2*p);
+    const fill=e.value>0?exprColor(e.value,max):'#D7DEEA';
+    return `<circle cx="${x}" cy="${y}" r="${r.toFixed(1)}" fill="${fill}" fill-opacity="${low?0.45:1}" stroke="${low?'none':'#fff'}" stroke-width="1"><title>${e.name}: ${ntpm(e.value)} nTPM</title></circle>`;
   }).join('');
+  const top=mapped.find(e=>e.value===max&&max>0);
+  let ring='';
+  if(top){const [tx,ty]=BODY_TISSUE_POS[top.name];const r=2.3+4.2*Math.sqrt(top.value/max);
+    ring=`<circle cx="${tx}" cy="${ty}" r="${(r+2.6).toFixed(1)}" fill="none" stroke="var(--ink)" stroke-width="1" opacity=".4"/>`;}
   const chips=entries.map(e=>`<div class="expr-chip" title="${e.organ}">
     <span class="dot" style="background:${exprColor(e.value,max)}"></span><span class="name">${e.name}</span><span class="val">${ntpm(e.value)}</span>
   </div>`).join('');
   return `<div class="expr-map">
-    <svg class="expr-body" viewBox="0 0 190 355" role="img" aria-label="Approximate human body map of tissue RNA expression">
-      <path d="M95 18a20 20 0 1 1 0 40a20 20 0 0 1 0-40z" fill="#F8FAFF" stroke="var(--line)" stroke-width="2"/>
-      <path d="M69 82c6-14 45-14 52 0l10 58l20 50c2 7-2 13-8 13h-8l-8-36l-7 74l20 86c2 8-3 14-10 14h-11l-24-88l-24 88h-11c-7 0-12-6-10-14l20-86l-7-74l-8 36h-8c-6 0-10-6-8-13l20-50l10-58z" fill="#F8FAFF" stroke="var(--line)" stroke-width="2"/>
-      <path d="M75 116c12 13 28 13 40 0" fill="none" stroke="var(--line)" stroke-width="1.5"/>
-      <path d="M73 190c11 11 33 11 44 0" fill="none" stroke="var(--line)" stroke-width="1.5"/>
-      ${circles}
-      <text x="12" y="336">Color and size scale with nTPM</text>
+    <div class="expr-body-wrap">
+    <svg class="expr-body" viewBox="0 0 190 355" role="img" aria-label="Human body map of tissue RNA expression">
+      <defs><radialGradient id="bodyfill" cx="50%" cy="32%" r="72%"><stop offset="0%" stop-color="#FCFDFF"/><stop offset="100%" stop-color="#EDF1FA"/></radialGradient></defs>
+      <path d="M95 18a20 20 0 1 1 0 40a20 20 0 0 1 0-40z" fill="url(#bodyfill)" stroke="var(--line)" stroke-width="1.8"/>
+      <path d="M69 82c6-14 45-14 52 0l10 58l20 50c2 7-2 13-8 13h-8l-8-36l-7 74l20 86c2 8-3 14-10 14h-11l-24-88l-24 88h-11c-7 0-12-6-10-14l20-86l-7-74l-8 36h-8c-6 0-10-6-8-13l20-50l10-58z" fill="url(#bodyfill)" stroke="var(--line)" stroke-width="1.8"/>
+      <path d="M75 116c12 13 28 13 40 0" fill="none" stroke="var(--line)" stroke-width="1.3" opacity=".7"/>
+      <path d="M73 190c11 11 33 11 44 0" fill="none" stroke="var(--line)" stroke-width="1.3" opacity=".7"/>
+      ${ring}${circles}
     </svg>
+    <div class="expr-legend">
+      ${top?`<span class="peak">Peak: <b>${top.name}</b> &middot; ${ntpm(top.value)} nTPM</span>`:''}
+      <div class="scale"><span>low</span><i class="grad"></i><span>high</span></div>
+      <div class="expr-legend-note">Dot size &amp; colour scale with nTPM. Faint grey = negligible.</div>
+    </div>
+    </div>
     <div class="expr-chip-list" aria-label="All HPA consensus tissue nTPM values">${chips}</div>
   </div>`;
 }
