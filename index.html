@@ -4489,30 +4489,29 @@ function drawPatients(){
     <div class="ptview" id="pv-fit" hidden><div id="ptfit"></div></div>
     <div class="ptview" id="pv-evidence" hidden>
     <div class="method-sec">
-      <h3>Patient reality that calibrates the lens</h3>
-      <p class="sub">Ulcerative colitis is a lifelong, relapsing disease. Despite a decade of new mechanisms, most patients still do not reach durable remission, and many cycle through therapies that were never going to work for them.</p>
+      <h3>The unmet need</h3>
+      <p class="sub">UC is lifelong and relapsing. A decade of new mechanisms in, most patients still don't reach durable remission.</p>
       <div class="pt-stats">
-        <div class="pt-stat"><div class="big">~1 in 3</div><h4>reach lasting remission</h4><p>Across today's advanced therapies, remission rates plateau near a third of patients: a therapeutic ceiling that has barely moved as mechanisms changed.</p><div class="cite"><a href="https://pubmed.ncbi.nlm.nih.gov/?term=Breaking+Through+the+Therapeutic+Ceiling+inflammatory+bowel+disease" target="_blank" rel="noopener">Raine &amp; Danese, Gastroenterology 2022 &#8599;</a></div></div>
-        <div class="pt-stat"><div class="big">Months</div><h4>lost to the wrong drug</h4><p>Many patients fail anti-TNF up front or lose response over time, learning only after months of active disease that the mechanism does not fit them.</p><div class="cite"><a href="https://www.nature.com/articles/nm.4307" target="_blank" rel="noopener">West et al., Nature Medicine 2017 &#8599;</a></div></div>
-        <div class="pt-stat"><div class="big">Steroids</div><h4>are still the fallback</h4><p>Decades of steroid reliance carry real systemic toxicity. Pfizer's own Immunology &amp; Inflammation strategy frames this dependence as the past, not the future.</p><div class="cite"><a href="https://www.pfizer.com/science/therapeutic-areas/inflammation-immunology" target="_blank" rel="noopener">Pfizer Immunology &amp; Inflammation &#8599;</a></div></div>
+        <div class="pt-stat"><div class="big">~1 in 3</div><h4>reach lasting remission</h4><p>Remission rates plateau near a third of patients, a ceiling that has barely moved as mechanisms changed.</p><div class="cite"><a href="https://pubmed.ncbi.nlm.nih.gov/?term=Breaking+Through+the+Therapeutic+Ceiling+inflammatory+bowel+disease" target="_blank" rel="noopener">Raine &amp; Danese, Gastroenterology 2022 &#8599;</a></div></div>
+        <div class="pt-stat"><div class="big">Months</div><h4>lost to the wrong drug</h4><p>Many fail anti-TNF or lose response, learning only after months that the mechanism doesn't fit them.</p><div class="cite"><a href="https://www.nature.com/articles/nm.4307" target="_blank" rel="noopener">West et al., Nature Medicine 2017 &#8599;</a></div></div>
+        <div class="pt-stat"><div class="big">Steroids</div><h4>are still the fallback</h4><p>Decades of steroid reliance carry real toxicity. Pfizer's own I&amp;I strategy calls this the past, not the future.</p><div class="cite"><a href="https://www.pfizer.com/science/therapeutic-areas/inflammation-immunology" target="_blank" rel="noopener">Pfizer Immunology &amp; Inflammation &#8599;</a></div></div>
       </div>
     </div>
     <div class="method-sec">
-      <h3>Responder enrichment example: OSM</h3>
-      <p class="sub">Oncostatin M is the clearest example of a target axis that comes with a patient-selection signal: baseline OSM separates anti-TNF responders from non-responders before dosing.</p>
+      <h3>Finding the right patient</h3>
+      <p class="sub">Some targets come with a way to pick responders before dosing. Baseline OSM runs about ten-fold higher in anti-TNF non-responders.</p>
       <div class="rbar-wrap">
         <div class="rbar"><div class="lab"><b>Responders</b>to anti-TNF</div><div class="track2"><div class="fill good" style="width:${Math.max(wR,9)}%">${OSM_R} pg/mL</div></div><div class="val">low baseline OSM</div></div>
         <div class="rbar"><div class="lab"><b>Non-responders</b>to anti-TNF</div><div class="track2"><div class="fill bad" style="width:${wNR}%">${OSM_NR} pg/mL</div></div><div class="val">high baseline OSM</div></div>
       </div>
-      <p class="val-foot" style="margin-top:12px">A roughly ten-fold difference at baseline (illustrative, single cohort). A target that comes with a test can spare non-matching patients months on a therapy that will not work.</p>
+      <p class="val-foot" style="margin-top:12px">Illustrative, single cohort. A target that comes with a test spares the wrong patients months on a drug that won't work.</p>
     </div>
     <div class="method-sec">
-      <h3>Harm avoidance is patient impact</h3>
-      <p class="sub">A patient lens is not only about who benefits. It is also about which plausible targets should never reach patients without new safety biology.</p>
+      <h3>Avoiding harm</h3>
       <div class="method-list">
-        <div class="ml"><h4>IL-17</h4><p>The IL-23/Th17 pathway made IL-17 look obvious. Blocking it made Crohn's patients <b>worse</b> in a controlled trial.</p></div>
-        <div class="ml"><h4>JAK class</h4><p>JAK inhibitors work, but carry warnings for cardiovascular events, clots and malignancy. Benefit-risk belongs in target selection.</p></div>
-        <div class="ml"><h4>Tissue distribution</h4><p>Broadly expressed targets can create systemic on-target toxicity. Patient fit should read expression as well as genetics.</p></div>
+        <div class="ml"><h4>IL-17</h4><p>Looked obvious under the IL-23/Th17 pathway. Blocking it made Crohn's patients <b>worse</b> in a controlled trial.</p></div>
+        <div class="ml"><h4>JAK class</h4><p>They work, but carry warnings for heart events, clots and malignancy. Benefit-risk belongs in target selection.</p></div>
+        <div class="ml"><h4>Broad expression</h4><p>Widely expressed targets risk systemic toxicity. Patient fit should read expression, not just genetics.</p></div>
       </div>
     </div>
     </div>`;
