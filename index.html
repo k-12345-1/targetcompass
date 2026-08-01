@@ -571,7 +571,8 @@
   .valcase .vc-mech{font-size:12px;color:var(--ink-3)}
   .valcase .vc-badge{margin-left:auto;font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--risk-lo);white-space:nowrap}
   .valcase .vc-badge.miss{color:var(--risk-hi)}
-  .valcase>summary .chev{margin-left:14px}
+  details.valcase>summary .callpill{margin-left:auto}
+  details.valcase>summary .chev{margin-left:14px}
   .valcase .vc-h{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-4);margin-bottom:6px}
   .valcase .vc-body{font-size:13px;color:var(--ink-2);line-height:1.5}
   .valcase .vc-cite{margin-top:11px}
@@ -886,29 +887,12 @@
   </section>
 
   <!-- VALIDATION -->
-  <section class="view" id="v-val">
-    <div class="subnav" role="tablist">
-      <button data-sub="method" type="button">How it works</button>
-      <button class="on" data-sub="val" type="button">Does it work? (backtest)</button>
-    </div>
-    <div class="hero">
-      <span class="eyebrow">Pfizer Immunology &amp; Inflammation &middot; Does the engine actually work?</span>
-      <h2>Rewind to 2015. Would it have called it right?</h2>
-      <p>A prioritization tool is only worth trusting if it would have been right <b>before</b> the answer was known. We ran the same logic on ulcerative colitis as of a decade ago, using only what was published then, and checked its calls against what the field actually did. Every claim links to the record.</p>
-    </div>
-    <div id="valwrap"></div>
-  </section>
-
-  <!-- METHOD / HOW IT WORKS -->
+  <!-- HOW IT WORKS (pipeline + what's different + the backtest, one scroll) -->
   <section class="view" id="v-method">
-    <div class="subnav" role="tablist">
-      <button class="on" data-sub="method" type="button">How it works</button>
-      <button data-sub="val" type="button">Does it work? (backtest)</button>
-    </div>
     <div class="hero">
       <span class="eyebrow">Pfizer Immunology &amp; Inflammation &middot; How it works</span>
-      <h2>Transparent math. AI where it earns its place.</h2>
-      <p>The honest question behind "AI-powered" is where the AI actually earns its place. We keep the ranking math auditable and put the AI where judgment lives: reading the literature, reconciling sources, and writing an explanation a scientist can challenge. Here is the whole pipeline, and why the answer differs from Open Targets.</p>
+      <h2>Simple math, plus AI where it actually helps.</h2>
+      <p>"AI-powered" gets thrown around a lot, so here's where the AI really does something. The ranking math stays simple and easy to audit. The AI handles the messy judgment: reading the literature, squaring up sources that disagree, and writing an explanation you can push back on. Here's the whole pipeline, why our answer comes out different from Open Targets, and how the same calls would have aged since 2015.</p>
     </div>
     <div id="methodwrap"></div>
   </section>
@@ -4077,30 +4061,25 @@ const BACKTEST=[
 function drawValidation(){
   const box=document.getElementById('valwrap'); if(!box) return;
   if(box.dataset.done) return; box.dataset.done="1";
-  const hits=BACKTEST.filter(b=>b.hit).length, n=BACKTEST.length;
-  let h=`<div class="val-score">
-    <div class="big">${hits}<small>/${n}</small></div>
-    <div class="vs-txt"><b>Every historical call was directionally correct.</b> The engine would have elevated the three mechanisms that went on to define modern UC care, been skeptical of the target the field over-hyped, and refused the one that harmed patients, using only evidence available at the time.</div>
-  </div>`;
+  const n=BACKTEST.length;
   const label={elevate:"Elevated",avoid:"Avoided",caution:"Cautioned"};
-  h+=`<p class="val-lead">${n} calls the engine would have made in 2015. Scan the verdicts; open any one for the full evidence and what happened.</p>`;
+  let h=`<p class="val-lead">${n} calls, and how each one aged. Open any row for what it knew back then and what happened next.</p>`;
   BACKTEST.forEach(b=>{
     h+=`<details class="disclose valcase">
       <summary>
         <span class="vc-sym">${b.sym}</span>
         <span class="vc-mech">${b.mech}</span>
         <span class="callpill ${b.call}">${label[b.call]}</span>
-        <span class="vc-badge${b.hit?"":" miss"}">${b.hit?"&#10003; correct":"&#10007; miss"}</span>
         <span class="chev">&#9656;</span>
       </summary>
       <div class="disclose-body">
-        <div class="vc-h">What was known ~2015</div><div class="vc-body">${b.then}</div>
-        <div class="vc-h" style="margin-top:14px">What actually happened</div><div class="vc-body">${b.outcome}${b.kicker?`<div style="margin-top:8px;font-weight:600;color:var(--ink)">${b.kicker}</div>`:""}</div>
+        <div class="vc-h">The call, back in 2015</div><div class="vc-body">${b.then}</div>
+        <div class="vc-h" style="margin-top:14px">How it aged</div><div class="vc-body">${b.outcome}${b.kicker?`<div style="margin-top:8px;font-weight:600;color:var(--ink)">${b.kicker}</div>`:""}</div>
         <div class="vc-cite"><a href="${b.cite.u}" target="_blank" rel="noopener">${b.cite.t} &#8599;</a></div>
       </div>
     </details>`;
   });
-  h+=`<p class="val-foot"><b>How to read this honestly:</b> this is a retrospective directional check against the documented record, not a fully blinded re-run of a frozen 2015 database. In production, every evidence item is written to an append-only ledger stamped with the date it was true, which turns a real blinded backtest into an automated report we can run for any disease, on demand. That is the difference between a tool you believe and a tool you can audit.</p>`;
+  h+=`<p class="val-foot"><b>The honest fine print:</b> this is hindsight on cases we already know the endings to, not a blinded re-run of a frozen 2015 database, so don't over-read it. What it does show is that the reasoning holds up. And the real version is built in: every fact is logged with the date it was true, so a proper blinded backtest is just a report we can run, for any disease, on demand.</p>`;
   box.innerHTML=h;
 }
 /* ---------- PATIENT IMPACT: interactive patient + clinical-trial lens ---------- */
@@ -4586,45 +4565,51 @@ function drawMethod(){
 
   const box_h=`
   <div class="method-sec">
-    <h3>Where the AI works</h3>
-    <p class="sub">Four stages. Two are deterministic and auditable; two are real AI, turning messy evidence into something a scientist can challenge.</p>
+    <h3>Where the AI actually works</h3>
+    <p class="sub">Four steps. Two are plain, auditable math; two are the real AI, turning a mess of evidence into something you can argue with.</p>
     <div class="pipe">
-      <div class="pstep"><span class="pn">STAGE 1</span><h4>Collect evidence</h4><p>Open Targets, ClinicalTrials.gov, PubMed and drug databases, pulled into one place per target.</p></div>
-      <div class="pstep isai"><span class="pn">STAGE 2</span><h4>Read &amp; reconcile</h4><p>An LLM turns unstructured trial and literature text into structured claims, reconciling conflicting sources.</p><span class="ai">AI</span></div>
-      <div class="pstep"><span class="pn">STAGE 3</span><h4>Score &amp; rank</h4><p>A transparent weighted model over all six factors. Every point traces to a source and a weight you control.</p></div>
-      <div class="pstep isai"><span class="pn">STAGE 4</span><h4>Explain &amp; red-team</h4><p>The AI writes the memo, the plain-language answer, and the counter-evidence against each pick.</p><span class="ai">AI</span></div>
+      <div class="pstep"><span class="pn">STEP 1</span><h4>Gather the evidence</h4><p>Open Targets, ClinicalTrials.gov, PubMed and drug databases, all pulled together for each target.</p></div>
+      <div class="pstep isai"><span class="pn">STEP 2</span><h4>Read &amp; make sense of it</h4><p>An LLM reads the messy trial and paper text, pulls out the actual claims, and squares up sources that disagree.</p><span class="ai">AI</span></div>
+      <div class="pstep"><span class="pn">STEP 3</span><h4>Score &amp; rank</h4><p>A simple weighted model over the six factors. Every point traces back to a source and a weight you set.</p></div>
+      <div class="pstep isai"><span class="pn">STEP 4</span><h4>Explain &amp; push back</h4><p>The AI writes the memo, the plain-English answer, and the case against each pick.</p><span class="ai">AI</span></div>
     </div>
   </div>
 
   <div class="method-sec">
     <h3>Same targets, different answer</h3>
-    <p class="sub">Open Targets ranks by association alone. TargetCompass adds competition, portfolio and failure risk, so the ranking moves. Today's data, under the <b>${POSTURES[posture].name}</b> strategy.</p>
+    <p class="sub">Open Targets ranks on the science alone. We add competition, portfolio and failure risk, so the order shifts. Here's what moves today, under the <b>${POSTURES[posture].name}</b> strategy.</p>
     <div class="movers">
-      <div class="mv-col"><h4>&#9650; TargetCompass elevates</h4>${ups.map(m=>mv(m,true)).join('')}</div>
-      <div class="mv-col"><h4>&#9660; TargetCompass demotes</h4>${downs.map(m=>mv(m,false)).join('')}</div>
+      <div class="mv-col"><h4>&#9650; We move up</h4>${ups.map(m=>mv(m,true)).join('')}</div>
+      <div class="mv-col"><h4>&#9660; We move down</h4>${downs.map(m=>mv(m,false)).join('')}</div>
     </div>
+  </div>
+
+  <div class="method-sec">
+    <h3>Does it actually work?</h3>
+    <p class="sub">Showing you today's rankings proves nothing, of course we like our own answers. So here's a fairer check: rewind to 2015 and look at the calls this same logic would have made from only what was known then. We already know how each one turned out. It's hindsight, not a blinded trial, so read it as a gut-check on the reasoning, not a victory lap.</p>
+    <div id="valwrap"></div>
   </div>
 
   <div class="method-sec">
     <h3>Built to be trusted, and to scale</h3>
     <div class="method-list">
-      <div class="ml"><h4>Data quality</h4><p>Sources conflict. Every claim is stored with its origin and date in an append-only ledger, so disagreements stay visible, not averaged away.</p></div>
-      <div class="ml"><h4>Validation, not autonomy</h4><p>There is no ground truth for the "best" target. TargetCompass supports the decision; the backtest shows the logic would have called the last decade right.</p></div>
-      <div class="ml"><h4>Explainable by default</h4><p>Every recommendation opens to its evidence and its counter-case, each linked to the primary record.</p></div>
+      <div class="ml"><h4>Messy data, handled honestly</h4><p>Sources disagree and have gaps. We keep every claim with its source and date in an append-only log, so the disagreements stay visible instead of getting averaged away.</p></div>
+      <div class="ml"><h4>It helps, it doesn't decide</h4><p>There's no perfect answer for the "best" target, so the tool supports your call, it doesn't make it for you. The backtest above shows the reasoning would have held up over the last decade.</p></div>
+      <div class="ml"><h4>You can always see why</h4><p>Every pick opens up to its evidence and its counter-case, each linked straight to the source.</p></div>
     </div>
-    <p class="val-foot" style="margin-top:16px"><b>Scale:</b> nothing here is UC-specific. Point the same pipeline at any disease EFO and it pulls, scores and explains a fresh landscape, turning a one-disease prototype into a portfolio-wide platform.</p>
+    <p class="val-foot" style="margin-top:16px"><b>It scales past UC:</b> none of this is UC-specific. Point the same pipeline at any disease and it pulls, scores and explains a fresh landscape, which is how a one-disease demo becomes a platform for the whole portfolio.</p>
   </div>`;
   box.innerHTML=box_h;
+  drawValidation();
 }
-// Compare lives under Prioritize; Validation lives under How it works.
-const VIEW_PARENT={cmp:'land',val:'method'};
+// Compare lives under Prioritize; the backtest is folded into How it works.
+const VIEW_PARENT={cmp:'land'};
 function activateView(v){
   const parent=VIEW_PARENT[v]||v;
   document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected', x.dataset.view===parent ? 'true':'false'));
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
   const sec=document.getElementById('v-'+v); if(sec)sec.classList.add('on');
   if(v==='cmp'){buildPick();drawCompare();}
-  if(v==='val'){drawValidation();}
   if(v==='method'){drawMethod();}
   if(v==='pt'){drawPatients();}
   window.scrollTo(0,0);
@@ -4887,8 +4872,8 @@ function methodAnswer(){
     <p class="bot-ground">The AI-shaped part is explanation and red-teaming; the ranking math stays auditable and every recommendation opens to source-linked evidence.</p>`);
 }
 function validationAnswer(){
-  return botWrap('Validation',`<p class="lead">The backtest asks whether the same logic would have made directionally right calls before the field already knew the answer. In the embedded validation set, it elevates the mechanisms that later became UC pillars and flags the mechanisms that failed or harmed patients.</p>
-    <div class="bot-actions"><button onclick="chatOpenTab('val')">Open Validation</button><button onclick="askQuestion('Which targets already failed?')">Show failures</button></div>
+  return botWrap('Does it work?',`<p class="lead">The backtest rewinds to 2015 and asks whether the same logic would have made the right calls before the field knew the answer. On the embedded set, it moves up the mechanisms that later became UC pillars and flags the ones that failed or harmed patients. It's hindsight, so read it as a gut-check, not proof.</p>
+    <div class="bot-actions"><button onclick="chatOpenTab('method')">See the backtest</button><button onclick="askQuestion('Which targets already failed?')">Show failures</button></div>
     <p class="bot-ground">This is a retrospective directional check, not a claim that the model can replace scientific judgment.</p>`);
 }
 function patientAnswer(){
