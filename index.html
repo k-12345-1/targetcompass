@@ -915,8 +915,8 @@
           <div class="fb sci"><span class="fb-tag">Science</span><b>Druggability</b><span>Open Targets tractability</span></div>
           <div class="fb biz"><span class="fb-tag">Business</span><b>Novelty / open field</b><span>Live competitor trials</span></div>
           <div class="fb biz"><span class="fb-tag">Business</span><b>Portfolio fit</b><span>What Pfizer already owns</span></div>
-          <div class="fb biz"><span class="fb-tag">Business</span><b>Failure risk</b><span>Disconfirmation + class history</span></div>
-          <div class="fb biz"><span class="fb-tag">TargetCompass</span><b>Genetic direction</b><span>Protective vs risk allele, in diseased tissue</span></div>
+          <div class="fb biz"><span class="fb-tag">Business</span><b>Failure risk</b><span>Past failures + safety history</span></div>
+          <div class="fb biz"><span class="fb-tag">TargetCompass</span><b>Genetic direction</b><span>Which way to drug it, and if it's up in the gut</span></div>
         </div>
       </div>
       </div>
@@ -4135,17 +4135,17 @@ function causalHTML(t){
   const tier=causalTier(c);
   const lesLit=!!(c.les&&(c.les.ind==="up"||c.les.ind==="moderate"));
   const rungs=[
-    {k:"Genetic-causal", lit:!!c.gc, ev:c.gc||"No causal human-genetic evidence in UC", sub:"Colocalization, coding, rare-variant burden, or allelic series"},
-    {k:"Disease-tissue", lit:lesLit, ev:c.les?(c.les.note||("Expressed in "+(c.les.cell||"disease tissue"))):"Not induced / not curated in inflamed mucosa", sub:"Induced in inflamed mucosa, in a defined cell type"},
-    {k:"Baseline expression", lit:true, ev:"Present in the relevant tissue (Human Protein Atlas)", sub:"Steady-state expression only"}
+    {key:"Genetic-causal", label:"Human genetics point to it", lit:!!c.gc, ev:c.gc||"No human-genetics evidence yet that this gene causes UC"},
+    {key:"Disease-tissue", label:"Switched on in the inflamed gut", lit:lesLit, ev:c.les?(c.les.note||("Expressed in "+(c.les.cell||"disease tissue"))):"Not turned up in the inflamed lining (or not curated)"},
+    {key:"Baseline expression", label:"Just present in the body", lit:true, ev:"Expressed in the relevant tissue at rest (Human Protein Atlas)"}
   ];
-  const ladder=rungs.map(r=>`<div class="clad-rung ${r.lit?'lit':'dim'} ${r.k===tier?'top':''}"><span class="clad-dot"></span><div class="clad-txt"><b>${r.k}${r.k===tier?' <span class="clad-here">highest here</span>':''}</b><span class="clad-ev">${r.ev}</span></div></div>`).join('');
+  const ladder=rungs.map(r=>`<div class="clad-rung ${r.lit?'lit':'dim'} ${r.key===tier?'top':''}"><span class="clad-dot"></span><div class="clad-txt"><b>${r.label}${r.key===tier?' <span class="clad-here">strongest evidence here</span>':''}</b><span class="clad-ev">${r.ev}</span></div></div>`).join('');
   const dm=dirMeta(c.dir);
-  const conflict=c.cf?`<div class="clad-conflict"><b>&#9888; Direction / evidence conflict.</b> ${c.cf}</div>`:'';
-  return `<div class="sec"><span class="lbl">Causal evidence ladder &amp; direction of effect</span>
-    <p class="clad-intro">How strong is the evidence that this gene is <b>causal</b> in UC, and which way would you drug it? Causal-gene confidence, not association magnitude, is a strong and under-used predictor of clinical success (Minikel, Nature 2024). Direction is anchored on the highest tier that carries a signal; lower tiers can only corroborate or conflict.</p>
+  const conflict=c.cf?`<div class="clad-conflict"><b>&#9888; Catch: the evidence disagrees.</b> ${c.cf}</div>`:'';
+  return `<div class="sec"><span class="lbl">Is it a real cause, and which way do you drug it?</span>
+    <p class="clad-intro">Being <b>linked</b> to a disease is not the same as <b>causing</b> it, and genes we are confident actually cause UC go on to become successful drugs far more often (Minikel, Nature 2024). The rungs below are the strongest kind of evidence we have that this gene truly drives the disease; the badge is which way you would drug it, set by the strongest rung.</p>
     <div class="clad">${ladder}</div>
-    <div class="clad-dir"><span class="clad-dk">Direction of effect</span><span class="dir-badge ${dm[1]}">${dm[0]}</span> <span class="clad-basis">${c.basis}</span></div>
+    <div class="clad-dir"><span class="clad-dk">Which way to drug it</span><span class="dir-badge ${dm[1]}">${dm[0]}</span> <span class="clad-basis">${c.basis}</span></div>
     ${conflict}
   </div>`;
 }
@@ -4158,8 +4158,8 @@ function diseaseContextHTML(t){
   const les=c.les, il=inductionLevel(les.ind);
   const causal=!!c.gc, induced=(les.ind==='up'||les.ind==='moderate');
   let verdict,vcls;
-  if(induced&&causal){ verdict='Driver signal: induced in the lesion <b>and</b> genetically causal.'; vcls='dc-driver'; }
-  else if(induced&&!causal){ verdict='Interpret with care: induced in inflamed tissue, but with no causal human genetics this may be a <b>reactive or bystander</b> response to inflammation rather than a driver.'; vcls='dc-reactive'; }
+  if(induced&&causal){ verdict='Likely a real driver: switched on in the inflamed gut <b>and</b> backed by human genetics.'; vcls='dc-driver'; }
+  else if(induced&&!causal){ verdict='Read with care: it is switched on in the inflamed gut, but with no genetics behind it this could be a <b>bystander</b> reacting to the inflammation rather than a cause of it.'; vcls='dc-reactive'; }
   else { verdict='Flat between healthy and inflamed tissue: disease relevance rests on genetics or mechanism, not on lesional induction.'; vcls='dc-flat'; }
   const steps=[1,2,3].map(n=>`<span class="dc-seg ${n<=il[2]?il[1]:''}"></span>`).join('');
   return `<div class="sec"><span class="lbl">Disease-context expression: is it up where the disease is?</span>
@@ -4187,9 +4187,9 @@ function tractGate(t){ const p=TPROFILE[t.symbol]; if(!p) return 1;
   return 1; }
 function posEstimate(t,p){
   let base=0.10, mult=1; const why=[];
-  if(p.g==="protective"){mult*=2.6;why.push("&times;2.6 for protective human genetics (Minikel, Nature 2024)");}
-  else if(p.g==="risk"){mult*=1.5;why.push("&times;1.5 for a GWAS risk locus");}
-  else why.push("no genetic multiplier");
+  if(p.g==="protective"){mult*=2.6;why.push("&times;2.6 because human genetics back it (Minikel, Nature 2024)");}
+  else if(p.g==="risk"){mult*=1.5;why.push("&times;1.5 for a genetics link to IBD risk");}
+  else why.push("no genetics boost");
   const stage=(t.prio&&t.prio.maxClinicalStage!=null)?t.prio.maxClinicalStage:0;
   if(stage>=0.6){mult*=1.3;why.push("mechanism already clinically validated");}
   const dis=1-Math.min(0.8,(t.failrisk||0)*0.7);
@@ -4199,20 +4199,20 @@ function posEstimate(t,p){
 }
 function targetProfileHTML(t){
   const p=tprofile(t.symbol); if(!p) return "";
-  const gdLabel={protective:"Protective human LoF",risk:"Risk locus (GWAS)",none:"No direct genetic hit"}[p.g]||"Genetic signal";
+  const gdLabel={protective:"Protective variant",risk:"IBD-risk variant",none:"No genetic link"}[p.g]||"Genetic signal";
   const les={up:'<span class="tp-les up">&#9650; Up in inflamed mucosa</span>',down:'<span class="tp-les down">&#9660; Down in disease</span>',ns:'<span class="tp-les ns">Not disease-restricted</span>'}[p.l]||"";
   const undrug=/Undruggable|Difficult/.test(p.m)||/Transcription factor|Phosphatase/.test(p.c);
   const pos=posEstimate(t,p);
   const posLabel={high:"Higher",mod:"Moderate",low:"Lower"}[pos.tier];
   return `<div class="sec tprofile">
-    <span class="lbl">Target profile: is this real, druggable and translatable?</span>
+    <span class="lbl">Target profile: is it real, can you drug it, does it fit patients?</span>
     <div class="tp-grid">
-      <div class="tp-item"><span class="tp-k">Human genetics &amp; direction</span><div class="tp-v"><span class="gd-badge gd-${p.g}">${gdLabel}</span> ${p.gn}</div></div>
-      <div class="tp-item"><span class="tp-k">How you would drug it</span><div class="tp-v"><b>${p.m}</b> &middot; ${p.c}${undrug?' <span class="tp-warn">tractability caveat: no current modality</span>':''}</div></div>
+      <div class="tp-item"><span class="tp-k">What the genetics say</span><div class="tp-v"><span class="gd-badge gd-${p.g}">${gdLabel}</span> ${p.gn}</div></div>
+      <div class="tp-item"><span class="tp-k">How you would drug it</span><div class="tp-v"><b>${p.m}</b> &middot; ${p.c}${undrug?' <span class="tp-warn">no way to drug it yet</span>':''}</div></div>
       <div class="tp-item"><span class="tp-k">In diseased tissue</span><div class="tp-v">${les} ${p.ln}</div></div>
-      <div class="tp-item"><span class="tp-k">Cross-indication read-across</span><div class="tp-v">${p.p}</div></div>
-      <div class="tp-item"><span class="tp-k">On-target safety</span><div class="tp-v">${p.ox}</div></div>
-      <div class="tp-item"><span class="tp-k">Genetics-adjusted success</span><div class="tp-v"><b class="pos-${pos.tier}">${posLabel} &middot; ~${pos.pct}%</b> <span class="tp-illus">illustrative: base ~10%, ${pos.why}, then adjusted for failure signals.</span></div></div>
+      <div class="tp-item"><span class="tp-k">Proven in related diseases?</span><div class="tp-v">${p.p}</div></div>
+      <div class="tp-item"><span class="tp-k">Safety of hitting it</span><div class="tp-v">${p.ox}</div></div>
+      <div class="tp-item"><span class="tp-k">Odds of success</span><div class="tp-v"><b class="pos-${pos.tier}">${posLabel} &middot; ~${pos.pct}%</b> <span class="tp-illus">rough estimate: starts at ~10%, ${pos.why}, then adjusted for warning signs.</span></div></div>
     </div>
   </div>`;
 }
@@ -4234,7 +4234,7 @@ function openMemo(sym){
       <div class="memo-title"><h2>${t.symbol}</h2><span class="full">${t.name}</span>
         <span class="pill p-${t.status}">${t.status}</span></div>
       <div class="memo-rec" style="color:${rec.col};border-color:${rec.col}">${rec.txt}</div>
-      ${TPROFILE[sym]?`<div class="memo-chips">${TPROFILE[sym].g==='protective'?'<span class="mchip gene">&#10003; Genetically validated (protective LoF)</span>':''}<span class="mchip">${TPROFILE[sym].m}</span></div>`:''}
+      ${TPROFILE[sym]?`<div class="memo-chips">${TPROFILE[sym].g==='protective'?'<span class="mchip gene">&#10003; Backed by protective human genetics</span>':''}<span class="mchip">${TPROFILE[sym].m}</span></div>`:''}
       ${t.custom?`<div style="margin-top:12px;font-size:12px;color:#5B3FBF;background:#EDE7FB;border-radius:10px;padding:9px 12px;line-height:1.45"><b>Your proposed target.</b> Scored by the same engine as real targets, from the inputs you set, not retrieved evidence. <a href="#" onclick="removeCustom('${sym}');return false;" style="color:#5B3FBF;font-weight:700;text-decoration:underline">Remove it</a>.</div>`:''}
       ${t.edited&&!t.custom?`<div style="margin-top:12px;font-size:12px;color:var(--accent-ink);background:var(--accent-bg);border-radius:10px;padding:9px 12px;line-height:1.45"><b>You edited this target's inputs.</b> The scores and its place on the map reflect your changes, not the retrieved snapshot. <a href="#" onclick="resetEdit('${sym}');return false;" style="color:var(--accent-ink);font-weight:700;text-decoration:underline">Reset to original</a>.</div>`:''}
       <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
@@ -4445,10 +4445,10 @@ function backtestEngineRead(sym){
   const t=byId[sym]; if(!t) return "";
   const p=TPROFILE[sym]; const chips=[];
   if(p){
-    const gd={protective:["Protective LoF genetics","er-good"],risk:["Risk-locus genetics","er-mid"],none:["No genetic license","er-none"]}[p.g];
+    const gd={protective:["Protective genetics","er-good"],risk:["IBD-risk genetics","er-mid"],none:["No genetic support","er-none"]}[p.g];
     if(gd)chips.push(`<span class="er-chip ${gd[1]}">${gd[0]}</span>`);
     const gate=tractGate(t);
-    chips.push(gate<1?`<span class="er-chip er-bad">Developability gate &times;${gate.toFixed(2)}</span>`:`<span class="er-chip er-good">Tractable: ${p.m.split("(")[0].trim()}</span>`);
+    chips.push(gate<1?`<span class="er-chip er-bad">Hard to drug &times;${gate.toFixed(2)}</span>`:`<span class="er-chip er-good">Druggable: ${p.m.split("(")[0].trim()}</span>`);
   }
   chips.push(`<span class="er-chip ${t.whitespace>=.55?"er-good":t.whitespace<=.15?"er-bad":"er-mid"}">Open field ${Math.round(t.whitespace*100)}/100</span>`);
   chips.push(`<span class="er-chip ${t.failrisk<=.2?"er-good":t.failrisk>=.5?"er-bad":"er-mid"}">Failure risk ${Math.round(t.failrisk*100)}%</span>`);
