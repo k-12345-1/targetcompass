@@ -883,6 +883,7 @@
     <div class="subnav" role="tablist">
       <button class="on" data-sub="land" type="button">The map</button>
       <button data-sub="cmp" type="button">Compare finalists</button>
+      <button data-sub="mom" type="button">Whitespace &times; momentum</button>
     </div>
     <div class="hero">
       <span class="eyebrow">Pfizer Immunology &amp; Inflammation &middot; Target Prioritization</span>
@@ -959,6 +960,7 @@
     <div class="subnav" role="tablist">
       <button data-sub="land" type="button">The map</button>
       <button class="on" data-sub="cmp" type="button">Compare finalists</button>
+      <button data-sub="mom" type="button">Whitespace &times; momentum</button>
     </div>
     <div class="hero">
       <span class="eyebrow">Pfizer Immunology &amp; Inflammation &middot; Head-to-head</span>
@@ -976,6 +978,28 @@
     <div class="cmp-pick" id="cmp-pick"></div>
     <div class="cmp-grid" id="cmp-grid"></div>
     <p class="cmp-note" id="cmp-note"></p>
+  </section>
+
+  <!-- WHITESPACE x MOMENTUM -->
+  <section class="view" id="v-mom">
+    <div class="subnav" role="tablist">
+      <button data-sub="land" type="button">The map</button>
+      <button data-sub="cmp" type="button">Compare finalists</button>
+      <button class="on" data-sub="mom" type="button">Whitespace &times; momentum</button>
+    </div>
+    <div class="hero">
+      <span class="eyebrow">Pfizer Immunology &amp; Inflammation &middot; Timing &amp; white space</span>
+      <h2>Where is the field empty, and heating up?</h2>
+      <p>Evidence tells you which targets are good. Timing tells you which are a smart move right now. This maps competitive crowding (active UC trials) against scientific momentum (recent publication and funding attention). The prize is the top-left: an open field that is heating up, the buy signal a pure evidence score cannot see.</p>
+    </div>
+    <div class="card">
+      <div class="plot-wrap"><svg class="plot" id="momplot" viewBox="0 0 620 500" role="img" aria-label="Whitespace versus momentum map"></svg></div>
+      <div class="legend">
+        <span class="k">Colour = failure risk <span class="grad"></span><span class="mono" style="font-size:10px;color:var(--ink-3)">safe&#8594;risky</span></span>
+        <span class="k"><span class="swatch" style="background:none;border:2px solid var(--accent)"></span> Ringed = open field that is heating up</span>
+      </div>
+      <div class="topcap" id="momcap"></div>
+    </div>
   </section>
 
   <!-- VALIDATION -->
@@ -4952,13 +4976,79 @@ function drawMethod(){
   drawValidation();
 }
 // Compare lives under Prioritize; the backtest is folded into How it works.
-const VIEW_PARENT={cmp:'land'};
+/* ---------- Whitespace x Momentum: competitive crowding vs recent scientific attention ----------
+   momentum is a curated, literature-informed estimate of recent publication + funding + dealmaking attention
+   (0-100). x = active UC trials (crowding, already in the model). Prize quadrant = low crowding + high momentum. */
+const MOMENTUM={
+ TNFSF15:{m:92,why:"~$18B of 2023 TL1A dealmaking + multiple Phase 2 wins"},
+ TYK2:{m:85,why:"Selective TYK2 wave following deucravacitinib"},
+ OSM:{m:80,why:"Rising anti-OSM programs + responder-biomarker interest"},
+ OSMR:{m:78,why:"Inflammatory-fibroblast biology drawing new attention"},
+ IL23A:{m:74,why:"Selective p19 is still a very active IBD class"},
+ IL23R:{m:70,why:"Validated axis, heavily worked but maturing"},
+ PTPN2:{m:56,why:"Growing functional-genetics interest (hard to drug)"},
+ S1PR1:{m:55,why:"Recent UC approvals; attention now maturing"},
+ JAK1:{m:50,why:"Approved, but the safety overhang is cooling enthusiasm"},
+ IRF5:{m:48,why:"Genetics interest + early degrader ideas; nothing clinical"},
+ IL12B:{m:45,why:"Mature p40 class (ustekinumab established)"},
+ GPR35:{m:42,why:"Understudied orphan GPCR, modest but real interest"},
+ IL10:{m:40,why:"Renewed delivery / engineering interest, niche"},
+ ITGA4:{m:40,why:"Gut-selective homing established; incremental"},
+ ITGB7:{m:38,why:"Gut-homing axis, incremental"},
+ IL10RA:{m:36,why:"Niche monogenic-IBD biology"},
+ JAK3:{m:35,why:"TEC/JAK3 selectivity work under a safety overhang"},
+ CXCR2:{m:33,why:"Flat; neutrophil axis under-pursued in UC"},
+ TNFRSF9:{m:30,why:"Mostly oncology attention, not IBD"},
+ JAK2:{m:28,why:"Cytopenia risk; little UC-specific momentum"},
+ IL17A:{m:22,why:"Disconfirmed in IBD; attention is elsewhere"},
+ TNF:{m:20,why:"Legacy backbone; biosimilar-era, incremental"},
+ IL17RA:{m:20,why:"Same inverted-direction cooling in IBD"},
+ IL13:{m:16,why:"Cooled after UC efficacy failures"},
+ PPARG:{m:15,why:"Legacy 5-ASA-adjacent, flat"},
+ CCR9:{m:14,why:"Cooled after Phase 3 failure"},
+ SMAD7:{m:12,why:"Collapsed after Phase 3 futility"},
+ NR3C1:{m:12,why:"Legacy steroids, declining interest"},
+ PTGS2:{m:10,why:"Poor IBD fit; not pursued"},
+ ALOX5:{m:10,why:"Limited historical efficacy; flat"}
+};
+function drawMomentum(){
+  const svg=document.getElementById('momplot'); if(!svg) return;
+  const XMAX=40, gl="var(--line)";
+  const mx=v=>px(Math.min(v,XMAX)/XMAX), my=v=>py(v/100);
+  let s="";
+  s+=`<rect x="${px(0)}" y="${py(1)}" width="${(px(0.4)-px(0)).toFixed(1)}" height="${(py(0.5)-py(1)).toFixed(1)}" fill="color-mix(in srgb,var(--risk-lo) 8%,transparent)"/>`;
+  s+=`<line x1="${px(0.4)}" y1="${py(0)}" x2="${px(0.4)}" y2="${py(1)}" stroke="${gl}" stroke-dasharray="4 4"/>`;
+  s+=`<line x1="${px(0)}" y1="${py(0.5)}" x2="${px(1)}" y2="${py(0.5)}" stroke="${gl}" stroke-dasharray="4 4"/>`;
+  s+=`<text class="axis-t" x="${px(0.5)}" y="${PH-8}" text-anchor="middle" style="font-size:11px;fill:var(--ink-2)">COMPETITIVE CROWDING (active UC trials) &#8594;</text>`;
+  s+=`<text class="axis-t" transform="translate(14,${py(0.5)}) rotate(-90)" text-anchor="middle" style="font-size:11px;fill:var(--ink-2)">SCIENTIFIC MOMENTUM (recent attention) &#8594;</text>`;
+  s+=`<text class="quad-t" x="${px(0.02)}" y="${(py(0.97)).toFixed(1)}" style="fill:var(--accent);font-weight:700">&#9733; WHITE SPACE, HEATING</text>`;
+  s+=`<text class="quad-t" x="${px(0.98)}" y="${(py(0.97)).toFixed(1)}" text-anchor="end">CROWDED, BUT HOT</text>`;
+  s+=`<text class="quad-t" x="${px(0.02)}" y="${(py(0.04)).toFixed(1)}">QUIET / UNDERSTUDIED</text>`;
+  s+=`<text class="quad-t" x="${px(0.98)}" y="${(py(0.04)).toFixed(1)}" text-anchor="end">CROWDED &amp; COOLING</text>`;
+  const pts=T.filter(t=>MOMENTUM[t.symbol]).map(t=>{const mo=MOMENTUM[t.symbol];
+    const cr=Math.min(t.active_trials||0,XMAX)/XMAX, prize=cr<0.4 && mo.m>50;
+    return {t,mo,x:mx(t.active_trials||0),y:my(mo.m),prize,label:(cr<0.4&&mo.m>50)||mo.m>=45||(t.active_trials||0)>=18};});
+  pts.forEach(p=>{const t=p.t, col=riskColor(t.failrisk);
+    s+=`<g class="dot" data-sym="${t.symbol}"><title>${t.symbol}: momentum ${p.mo.m}/100, ${t.active_trials||0} active UC trials</title>`;
+    if(p.prize) s+=`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="9" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity=".6"/>`;
+    s+=`<circle class="node" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="6" fill="${col}" stroke="var(--panel)" stroke-width="1.5"/>`;
+    s+=`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="14" fill="transparent" pointer-events="all"/>`;
+    if(p.label) s+=`<text class="dot-lbl ${p.prize?'hi':''}" x="${(p.x+9).toFixed(1)}" y="${(p.y+3.5).toFixed(1)}" text-anchor="start">${t.symbol}</text>`;
+    s+=`</g>`;});
+  svg.innerHTML=s;
+  svg.querySelectorAll('.dot').forEach(g=>g.addEventListener('click',()=>openMemo(g.dataset.sym)));
+  const prizeSyms=pts.filter(p=>p.prize).sort((a,b)=>b.mo.m-a.mo.m).map(p=>p.t.symbol);
+  const cap=document.getElementById('momcap');
+  if(cap) cap.innerHTML = prizeSyms.length?`<b>White space that is heating up:</b> <span class="pk">${prizeSyms.join(' &middot; ')}</span>. Low competition, rising attention: the defensible, well-timed bets. Momentum is a curated estimate of recent publication, funding and dealmaking activity. Click any dot for its memo.`:`Momentum is a curated estimate of recent attention. Click any dot for its memo.`;
+}
+const VIEW_PARENT={cmp:'land',mom:'land'};
 function activateView(v){
   const parent=VIEW_PARENT[v]||v;
   document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected', x.dataset.view===parent ? 'true':'false'));
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
   const sec=document.getElementById('v-'+v); if(sec)sec.classList.add('on');
   if(v==='cmp'){buildPick();drawCompare();}
+  if(v==='mom'){drawMomentum();}
   if(v==='method'){drawMethod();}
   if(v==='pt'){drawPatients();}
   window.scrollTo(0,0);
