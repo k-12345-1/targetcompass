@@ -213,6 +213,23 @@
   .dv-meta{font-size:12px;color:var(--ink-3)}.dv-meta b{color:var(--ink);font-family:var(--mono)}
   .decision p{font-size:12.5px;color:var(--ink-2);line-height:1.55;margin:0 0 8px}
   .decision .dv-fine{font-size:11px;color:var(--ink-3);margin-top:2px}
+  /* ---- defensibility / flagged-for-review ---- */
+  .flag-mark{color:#B23A2E;font-size:12px;margin-left:5px;vertical-align:middle}
+  .flag-chip{font-family:var(--mono);font-size:9.5px;font-weight:700;color:#8A5A00;background:#FBF0DC;border:1px solid #F0DCB4;border-radius:6px;padding:2px 8px}
+  .flagpanel{margin-top:16px}
+  .flagpanel>summary{font-size:14px}
+  .flag-intro{font-size:12.5px;color:var(--ink-2);line-height:1.55;margin:0 0 14px}
+  #flagwrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:11px}
+  .flag-item{background:var(--panel);border:1px solid var(--line);border-left:3px solid #E0A72E;border-radius:12px;padding:12px 14px}
+  .flag-item.flagdirectionofeffect{border-left-color:#B23A2E}
+  .flag-item.flagclinicaldisconfirmation{border-left-color:var(--ink-4)}
+  .flag-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:7px}
+  .flag-sym{font-family:var(--mono);font-weight:800;font-size:14px;color:var(--ink)}
+  .flag-type{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);background:var(--panel-2);border-radius:5px;padding:2px 7px}
+  .flag-msg{font-size:12px;color:var(--ink-2);line-height:1.5;margin:0 0 6px}
+  .flag-dir{font-size:11.5px;color:#B23A2E;margin:0 0 8px}
+  .flag-open{background:none;border:none;color:var(--accent-ink);font-weight:600;font-size:12px;padding:0;cursor:pointer}
+  .flag-open:hover{text-decoration:underline}
   .sec.contra{background:linear-gradient(90deg,color-mix(in srgb,var(--risk-hi) 8%,transparent),transparent);
     margin:0 -20px;padding:16px 20px;border-radius:8px;border-bottom:1px solid var(--line)}
   .sec.contra .lbl{color:var(--risk-hi)}
@@ -930,6 +947,11 @@
         <div id="board"></div>
       </div>
     </div>
+
+    <details class="disclose flagpanel">
+      <summary>&#9873; Flagged for review <span class="dsub" id="flagcount"></span><span class="chev">&#9656;</span></summary>
+      <div class="disclose-body"><p class="flag-intro">TargetCompass refuses to over-claim. When a target's evidence carries an unresolved conflict, most often a <b>direction-of-effect</b> problem, it is held back from RECOMMEND and shown here with the counter-evidence, not quietly averaged into one number. Resolve the flag, and it becomes eligible again.</p><div id="flagwrap"></div></div>
+    </details>
   </section>
 
   <!-- COMPARE -->
@@ -3686,7 +3708,7 @@ function decisionHTML(t){
     : d.verdict==='PASS' && t.status==='graveyard' ? 'Only a mechanism that separates the protective from the pathogenic axis would reopen this.'
     : `It would need to clear the decision bar (currently ${d.bar}); today it scores ${d.score}.`;
   return `<div class="sec decision"><span class="lbl">Decision &middot; at your bar of ${d.bar}/100</span>
-    <div class="dv-row"><span class="dv-badge ${vmeta[1]}">${vmeta[0]}</span>
+    <div class="dv-row"><span class="dv-badge ${vmeta[1]}">${vmeta[0]}</span>${isFlagged(t)?'<span class="flag-chip">&#9873; Flagged: not RECOMMEND-eligible until resolved</span>':''}
       <span class="dv-meta">score <b>${d.score}</b> &middot; rank <b>#${d.rank}</b> &middot; causal confidence <b>${d.conf.level}</b></span></div>
     <p class="dv-why"><b>Why:</b> ${t.symbol} ${d.reason}. Its strongest drivers under the ${POSTURES[posture].name} strategy are ${drivers}. ${successFraming(t)}</p>
     <p class="dv-move"><b>What would move it:</b> ${move}</p>
@@ -3699,6 +3721,36 @@ function decisionCounts(sc){
   return {rec,hold,pass};
 }
 window.setDecisionBar=function(v){ decisionBar=+v; drawBoard(scored(posture)); };
+/* ---------- defensibility gate: unresolved conflicts hold a target back from RECOMMEND, shown with counter-evidence ---------- */
+function conflictType(t,c){
+  if(t.status==='graveyard') return 'Clinical disconfirmation';
+  if(c.dir==='restore') return 'Direction of effect';
+  if(/INVERTED|inverted/.test(c.cf||'')) return 'Direction of effect';
+  if(/transcription factor|modality|undruggable/i.test(c.cf||'')) return 'Tractability';
+  if(/ubiquitous|systemic tox/i.test(c.cf||'')) return 'On-target safety';
+  return 'Benefit-risk';
+}
+function isFlagged(t){ const c=causalOf(t.symbol); return !!(c && (c.cf || t.status==='graveyard')); }
+function flaggedTargets(){ return T.filter(isFlagged).map(t=>({t,c:causalOf(t.symbol)})); }
+function renderFlags(){
+  const wrap=document.getElementById('flagwrap'); if(!wrap) return;
+  const list=flaggedTargets();
+  // flagship first: direction-of-effect conflicts, then tractability/safety, then disconfirmed
+  const order={'Direction of effect':0,'Tractability':1,'On-target safety':2,'Benefit-risk':3,'Clinical disconfirmation':4};
+  list.sort((a,b)=>(order[conflictType(a.t,a.c)]-order[conflictType(b.t,b.c)]));
+  const cnt=document.getElementById('flagcount');
+  if(cnt) cnt.textContent=`${list.length} targets held back from RECOMMEND until a conflict is resolved`;
+  wrap.innerHTML=list.map(({t,c})=>{
+    const type=conflictType(t,c); const dv=decisionFor(t);
+    const dirLine = c.dir==='restore'?'Causal direction is to <b>restore / agonize</b>, not inhibit.':c.dir==='activate'?'Direction is to <b>activate</b>, not inhibit.':'';
+    return `<div class="flag-item flag-${type.replace(/[^a-z]/gi,'').toLowerCase()}">
+      <div class="flag-h"><span class="flag-sym">${t.symbol}</span><span class="flag-type">${type}</span><span class="dv-chip ${dv.verdict==='PASS'?'dv-pass':'dv-hold'}">${dv.verdict}</span></div>
+      <p class="flag-msg">${c.cf||'Mechanism was clinically disconfirmed in UC.'}</p>
+      ${dirLine?`<p class="flag-dir">${dirLine}</p>`:''}
+      <button class="flag-open" type="button" onclick="openMemo('${t.symbol}')">Open the evidence &#8594;</button>
+    </div>`;
+  }).join('');
+}
 function drawBoard(sc){
   document.getElementById('board-h').innerHTML=`Ranked &middot; ${POSTURES[posture].name}`;
   const counts=decisionCounts(sc);
@@ -3712,7 +3764,7 @@ function drawBoard(sc){
     const dvm={RECOMMEND:['REC','dv-rec'],HOLD:['HOLD','dv-hold'],PASS:['PASS','dv-pass']}[dv.verdict];
     const d=document.createElement('div'); d.className='row'; d.tabIndex=0;
     d.innerHTML=`<span class="rk">${x.rank}</span>
-      <div><span class="sym">${t.symbol}</span><span class="dv-chip ${dvm[1]}">${dvm[0]}</span><span class="pill p-${t.status}">${t.status}</span>
+      <div><span class="sym">${t.symbol}</span>${isFlagged(t)?'<span class="flag-mark" title="Flagged for review">&#9873;</span>':''}<span class="dv-chip ${dvm[1]}">${dvm[0]}</span><span class="pill p-${t.status}">${t.status}</span>
       <div class="meta">${t.name.length>34?t.name.slice(0,33)+'&#8230;':t.name}</div></div>
       <button class="rowpin${isPinned(t.symbol)?' on':''}" data-pin="${t.symbol}" title="Add to shortlist" aria-label="Pin ${t.symbol}">${isPinned(t.symbol)?'&#9733;':'&#9734;'}</button>
       <span class="sc" style="color:${riskColor(t.failrisk)}">${x.s}</span>`;
@@ -3720,6 +3772,7 @@ function drawBoard(sc){
     d.addEventListener('keydown',e=>{if(e.key==='Enter')openMemo(t.symbol);});
     b.appendChild(d);
   });
+  renderFlags();
 }
 
 /* ---------- memo drawer ---------- */
