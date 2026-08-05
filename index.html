@@ -82,6 +82,7 @@
   .drow{display:grid;grid-template-columns:92px 1fr;gap:10px;align-items:center;margin:5px 0;font-size:12px;color:var(--ink-2)}
   .dtrack{height:6px;background:var(--panel-2);border-radius:4px;overflow:hidden}
   .dfill{height:100%;background:var(--accent);border-radius:4px}
+  .dgate{margin-top:9px;font-size:11px;color:#8A5A00;background:#FBF0DC;border-radius:8px;padding:6px 10px;line-height:1.4}
   .seg{display:inline-flex;flex-wrap:wrap;gap:4px;background:var(--panel-2);border:1px solid var(--line);
     border-radius:999px;padding:5px}
   .seg button{background:none;border:none;padding:9px 17px;border-radius:999px;font-size:13px;font-weight:600;
@@ -830,7 +831,7 @@
     </div>
 
     <details class="disclose factbar-d">
-      <summary>What goes into the score <span class="dsub">six factors: three from Open Targets, three TargetCompass adds</span><span class="chev">&#9656;</span></summary>
+      <summary>What goes into the score <span class="dsub">seven factors: three from Open Targets, four TargetCompass adds</span><span class="chev">&#9656;</span></summary>
       <div class="disclose-body">
       <div class="factbar" id="factbar" style="margin:0">
         <div class="fb-grid">
@@ -840,6 +841,7 @@
           <div class="fb biz"><span class="fb-tag">Business</span><b>Novelty / open field</b><span>Live competitor trials</span></div>
           <div class="fb biz"><span class="fb-tag">Business</span><b>Portfolio fit</b><span>What Pfizer already owns</span></div>
           <div class="fb biz"><span class="fb-tag">Business</span><b>Failure risk</b><span>Disconfirmation + class history</span></div>
+          <div class="fb biz"><span class="fb-tag">TargetCompass</span><b>Genetic direction</b><span>Protective vs risk allele, in diseased tissue</span></div>
         </div>
       </div>
       </div>
@@ -3417,11 +3419,11 @@ T.forEach(t=>{const p=t.prio||{}; const f=x=>x>0?1:(x<0?0:0.5);
 
 /* ---------- scoring weights (deck: customizable) : wB biology, wD druggability, wW open field, wF de-risk, wR portfolio ---------- */
 const POSTURES = {
-  balanced:      {name:"Balanced",           blurb:"weighs the science and the business evenly.",                              mark:"&#9670;",  wB:.34,wD:.12,wW:.28,wF:.26,wR:.20},
-  first_in_class:{name:"First-in-class",      blurb:"chase novelty. Rewards wide-open fields and steers clear of crowded or Pfizer-owned classes.", mark:"&#10022;", wB:.24,wD:.10,wW:.44,wF:.32,wR:.45},
-  fast_follower: {name:"Fast-follower",       blurb:"back proven biology. Rewards strong science and tolerates a busier field.",  mark:"&#187;",   wB:.44,wD:.16,wW:.06,wF:.18,wR:.05},
-  diversify:     {name:"Diversify portfolio", blurb:"spread the bets. Strongly avoids mechanisms Pfizer already owns.",          mark:"&#8856;",  wB:.28,wD:.10,wW:.28,wF:.24,wR:.70},
-  custom:        {name:"Custom",              blurb:"your own weights.",                                                        mark:"&#9881;",  wB:.34,wD:.12,wW:.28,wF:.26,wR:.20},
+  balanced:      {name:"Balanced",           blurb:"weighs the science and the business evenly.",                              mark:"&#9670;",  wB:.34,wD:.12,wW:.28,wF:.26,wR:.20,wS:.22},
+  first_in_class:{name:"First-in-class",      blurb:"chase novelty. Rewards wide-open fields and steers clear of crowded or Pfizer-owned classes.", mark:"&#10022;", wB:.24,wD:.10,wW:.44,wF:.32,wR:.45,wS:.20},
+  fast_follower: {name:"Fast-follower",       blurb:"back proven biology. Rewards strong science and tolerates a busier field.",  mark:"&#187;",   wB:.44,wD:.16,wW:.06,wF:.18,wR:.05,wS:.28},
+  diversify:     {name:"Diversify portfolio", blurb:"spread the bets. Strongly avoids mechanisms Pfizer already owns.",          mark:"&#8856;",  wB:.28,wD:.10,wW:.28,wF:.24,wR:.70,wS:.18},
+  custom:        {name:"Custom",              blurb:"your own weights.",                                                        mark:"&#9881;",  wB:.34,wD:.12,wW:.28,wF:.26,wR:.20,wS:.22},
 };
 const PRESET_KEYS=["balanced","first_in_class","fast_follower","diversify"];
 let posture = "balanced";
@@ -3429,7 +3431,9 @@ let showUniverse = true;
 
 function rawScore(t,pk){
   const p=POSTURES[pk];
-  return p.wB*t.bio + (p.wD||0)*t.drug + p.wW*t.whitespace - p.wF*t.failrisk - p.wR*t.redundancy;
+  const feas=(t.feas!=null?t.feas:0.5);
+  const opp=p.wB*t.bio + (p.wD||0)*t.drug + p.wW*t.whitespace + (p.wS||0)*feas;   // the upside
+  return opp*tractGate(t) - p.wF*t.failrisk - p.wR*t.redundancy;                    // gate it, then subtract risk
 }
 // normalize to 0-100 within current posture for display
 function scored(pk){
@@ -3907,6 +3911,20 @@ const TPROFILE={
  ALOX5:{g:"none",gn:"No disease genetics; leukotriene enzyme.",m:"Oral small molecule",c:"Enzyme",l:"ns",ln:"Leukotriene pathway.",p:"5-LOX inhibition showed limited IBD efficacy historically.",ox:"Limited efficacy precedent."}
 };
 function tprofile(sym){return TPROFILE[sym]||null;}
+/* genetic-direction factor folded into the ranking: protective vs risk allele + whether it is up in diseased tissue.
+   Tractability is deliberately NOT in here: it is a gate (below), not a weight, so you cannot up-weight past undruggability. */
+function feasScore(t){
+  const p=TPROFILE[t.symbol]; if(!p) return 0.5;
+  const gq=p.g==="protective"?0.95:p.g==="risk"?0.6:0.35;
+  const les=p.l==="up"?0.75:p.l==="down"?0.3:0.5;
+  return Math.max(0,Math.min(1, 0.6*gq+0.4*les));
+}
+T.forEach(t=>{ t.feas=feasScore(t); });
+/* developability gate: a target with no current modality can't become a drug, so its opportunity is discounted regardless of how open the field is. A gate, not a weight: it keeps undruggable targets off the top without burying real biology below disconfirmed failures. */
+function tractGate(t){ const p=TPROFILE[t.symbol]; if(!p) return 1;
+  if(/Undruggable/.test(p.m)||/Transcription factor/.test(p.c)) return 0.7;   // no current modality
+  if(/Difficult/.test(p.m)||/Phosphatase/.test(p.c)) return 0.82;             // historically very hard to drug
+  return 1; }
 function posEstimate(t,p){
   let base=0.10, mult=1; const why=[];
   if(p.g==="protective"){mult*=2.6;why.push("&times;2.6 for protective human genetics (Minikel, Nature 2024)");}
@@ -4008,7 +4026,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMemo();});
 
 /* ---------- scoring strategy: presets + customizable weights (deck) ---------- */
 const ps=document.getElementById('postures');
-const WDEF=[['wB','Biology','sci'],['wD','Druggability','sci'],['wW','Open field','biz'],['wF','De-risk','biz'],['wR','Portfolio fit','biz']];
+const WDEF=[['wB','Biology','sci'],['wD','Druggability','sci'],['wW','Open field','biz'],['wF','De-risk','biz'],['wR','Portfolio fit','biz'],['wS','Genetic direction','biz']];
 function refreshAll(){[...ps.children].forEach(c=>c.setAttribute('aria-pressed',c.dataset.k===posture));
   restyleForPosture(); if(cmpSel&&cmpSel.size&&document.getElementById('v-cmp').classList.contains('on'))drawCompare();}
 PRESET_KEYS.forEach(k=>{const p=POSTURES[k];const b=document.createElement('button');b.dataset.k=k;
@@ -4650,7 +4668,7 @@ function drawMethod(){
     <div class="pipe">
       <div class="pstep"><span class="pn">STEP 1</span><h4>Gather the evidence</h4><p>Open Targets, ClinicalTrials.gov, PubMed and drug databases, all pulled together for each target.</p></div>
       <div class="pstep isai"><span class="pn">STEP 2</span><h4>Read &amp; make sense of it</h4><p>An LLM reads the messy trial and paper text, pulls out the actual claims, and squares up sources that disagree.</p><span class="ai">AI</span></div>
-      <div class="pstep"><span class="pn">STEP 3</span><h4>Score &amp; rank</h4><p>A simple weighted model over the six factors. Every point traces back to a source and a weight you set.</p></div>
+      <div class="pstep"><span class="pn">STEP 3</span><h4>Score &amp; rank</h4><p>A simple weighted model over the seven factors. Every point traces back to a source and a weight you set.</p></div>
       <div class="pstep isai"><span class="pn">STEP 4</span><h4>Explain &amp; push back</h4><p>The AI writes the memo, the plain-English answer, and the case against each pick.</p><span class="ai">AI</span></div>
     </div>
   </div>
@@ -4815,10 +4833,12 @@ function leadFor(t){
 function citeChip(e){return `<a class="cite" href="${e.url}" target="_blank" rel="noopener">${e.id}&#8599;</a>`;}
 function driversHTML(t){const p=POSTURES[posture];
   const rows=[['Biology',p.wB*t.bio],['Druggability',(p.wD||0)*t.drug],['Open field',p.wW*t.whitespace],
-    ['De-risk',p.wF*(1-t.failrisk)],['Portfolio fit',p.wR*(1-t.redundancy)]];
+    ['De-risk',p.wF*(1-t.failrisk)],['Portfolio fit',p.wR*(1-t.redundancy)],['Genetic direction',(p.wS||0)*(t.feas!=null?t.feas:0.5)]];
   const mx=Math.max(...rows.map(r=>r[1]),0.001);
+  const gate=tractGate(t);
+  const gateNote=gate<1?`<div class="dgate">&times; developability gate ${gate.toFixed(2)}: no current modality, so the whole opportunity is discounted.</div>`:'';
   return `<div class="drivers"><div class="dh">Why this score &middot; ${POSTURES[posture].name} weighting</div>
-    ${rows.map(r=>`<div class="drow"><span>${r[0]}</span><div class="dtrack"><div class="dfill" style="width:${Math.round(100*r[1]/mx)}%"></div></div></div>`).join('')}</div>`;}
+    ${rows.map(r=>`<div class="drow"><span>${r[0]}</span><div class="dtrack"><div class="dfill" style="width:${Math.round(100*r[1]/mx)}%"></div></div></div>`).join('')}${gateNote}</div>`;}
 function botWrap(sub,body){return `<div class="msg-bot"><div class="bot-card">
   <div class="bot-head"><span class="avatar">TC</span><span class="who">TargetCompass<br><span>${sub}</span></span></div>
   <div class="bot-body">${body}</div></div></div>`;}
@@ -5459,8 +5479,8 @@ function applyCustomExpr(inp){const colon=inp.colon==null?null:Math.round(inp.co
   EXPR[inp.symbol]={cls:'User-defined',blood:inp.immune?'Immune cell enriched':undefined,subcell:null,colon,rectum:null,ileum:null,pw};}
 function registerCustom(inp){const t=buildCustom(inp);byId[t.symbol]=t;
   const i=T.findIndex(x=>x.symbol===t.symbol);if(i>=0)T[i]=t;else T.push(t);applyCustomExpr(inp);}
-function previewCustom(inp){const t=buildCustom(inp),p=POSTURES[posture];
-  const raw=q=>p.wB*q.bio+(p.wD||0)*q.drug+p.wW*q.whitespace-p.wF*q.failrisk-p.wR*q.redundancy;
+function previewCustom(inp){const t=buildCustom(inp);
+  const raw=q=>rawScore(q,posture);
   const rr=raw(t),others=T.filter(x=>x.symbol!==t.symbol),all=others.map(raw).concat(rr);
   const lo=Math.min(...all),hi=Math.max(...all);
   return {fit:Math.round(100*_cl((rr-lo)/((hi-lo)||1))),rank:others.filter(x=>raw(x)>rr).length+1,n:others.length+1};}
