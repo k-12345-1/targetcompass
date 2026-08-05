@@ -5056,20 +5056,40 @@ function drawMomentum(){
   s+=`<line x1="${px(0)}" y1="${py(0.5)}" x2="${px(1)}" y2="${py(0.5)}" stroke="${gl}" stroke-dasharray="4 4"/>`;
   s+=`<text class="axis-t" x="${px(0.5)}" y="${PH-8}" text-anchor="middle" style="font-size:11px;fill:var(--ink-2)">COMPETITIVE CROWDING (active UC trials) &#8594;</text>`;
   s+=`<text class="axis-t" transform="translate(14,${py(0.5)}) rotate(-90)" text-anchor="middle" style="font-size:11px;fill:var(--ink-2)">SCIENTIFIC MOMENTUM (recent attention) &#8594;</text>`;
-  s+=`<text class="quad-t" x="${px(0.02)}" y="${(py(0.97)).toFixed(1)}" style="fill:var(--accent);font-weight:700">&#9733; WHITE SPACE, HEATING</text>`;
-  s+=`<text class="quad-t" x="${px(0.98)}" y="${(py(0.97)).toFixed(1)}" text-anchor="end">CROWDED, BUT HOT</text>`;
-  s+=`<text class="quad-t" x="${px(0.02)}" y="${(py(0.04)).toFixed(1)}">QUIET / UNDERSTUDIED</text>`;
-  s+=`<text class="quad-t" x="${px(0.98)}" y="${(py(0.04)).toFixed(1)}" text-anchor="end">CROWDED &amp; COOLING</text>`;
+  s+=`<text class="quad-t" x="${px(0.02)}" y="${(py(0.985)).toFixed(1)}" style="fill:var(--accent);font-weight:700">&#9733; WHITE SPACE, HEATING</text>`;
+  s+=`<text class="quad-t" x="${px(0.98)}" y="${(py(0.985)).toFixed(1)}" text-anchor="end">CROWDED, BUT HOT</text>`;
+  s+=`<text class="quad-t" x="${px(0.02)}" y="${(py(0.015)).toFixed(1)}">QUIET / UNDERSTUDIED</text>`;
+  s+=`<text class="quad-t" x="${px(0.98)}" y="${(py(0.015)).toFixed(1)}" text-anchor="end">CROWDED &amp; COOLING</text>`;
+  const RREF=6, MIN=2*RREF+8;
+  const X0=px(0)+RREF+2, X1=px(1)-RREF-2, Y0=M.t+20, Y1=(PH-M.b)-20;
   const pts=T.filter(t=>MOMENTUM[t.symbol]).map(t=>{const mo=MOMENTUM[t.symbol];
-    const cr=Math.min(t.active_trials||0,XMAX)/XMAX, prize=cr<0.4 && mo.m>50;
-    return {t,mo,x:mx(t.active_trials||0),y:my(mo.m),prize,label:(cr<0.4&&mo.m>50)||mo.m>=45||(t.active_trials||0)>=18};});
-  pts.forEach(p=>{const t=p.t, col=riskColor(t.failrisk);
+    const cr=Math.min(t.active_trials||0,XMAX)/XMAX;
+    return {t,mo,x:mx(t.active_trials||0),y:my(mo.m),prize:cr<0.4&&mo.m>50};});
+  // de-overlap (bias vertical so the crowding x-axis stays honest)
+  for(let it=0;it<240;it++){ let moved=false;
+    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){ const a=pts[i],b=pts[j];
+      let dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy);
+      if(d<0.01){dx=(i%2?0.4:-0.4);dy=(j%2?1:-1);d=Math.hypot(dx,dy)||1;}
+      if(d<MIN){const p=(MIN-d)/2,ux=dx/d,uy=dy/d; a.x-=ux*p*0.4;a.y-=uy*p;b.x+=ux*p*0.4;b.y+=uy*p;moved=true;} }
+    pts.forEach(p=>{p.x=Math.max(X0,Math.min(X1,p.x));p.y=Math.max(Y0,Math.min(Y1,p.y));});
+    if(!moved)break; }
+  pts.forEach(p=>{const t=p.t,col=riskColor(t.failrisk);
     s+=`<g class="dot" data-sym="${t.symbol}"><title>${t.symbol}: momentum ${p.mo.m}/100, ${t.active_trials||0} active UC trials</title>`;
-    if(p.prize) s+=`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="9" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity=".6"/>`;
-    s+=`<circle class="node" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="6" fill="${col}" stroke="var(--panel)" stroke-width="1.5"/>`;
-    s+=`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="14" fill="transparent" pointer-events="all"/>`;
-    if(p.label) s+=`<text class="dot-lbl ${p.prize?'hi':''}" x="${(p.x+9).toFixed(1)}" y="${(p.y+3.5).toFixed(1)}" text-anchor="start">${t.symbol}</text>`;
+    if(p.prize) s+=`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="8.5" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity=".55"/>`;
+    s+=`<circle class="node" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="5.5" fill="${col}" stroke="var(--panel)" stroke-width="1.5"/>`;
+    s+=`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="13" fill="transparent" pointer-events="all"/>`;
     s+=`</g>`;});
+  // labels: every target, smart side (right-side dots label leftward), vertical declutter + leader lines
+  const labels=pts.map(p=>({t:p.t,x:p.x,y:p.y,prize:p.prize}));
+  labels.forEach(l=>{l.side=l.x>px(0.66)?'L':'R';l.lx=l.side==='R'?l.x+8:l.x-8;l.ly=l.y+3.4;l.w=l.t.symbol.length*6.1+2;});
+  ['R','L'].forEach(side=>{const col=labels.filter(l=>l.side===side).sort((a,b)=>a.ly-b.ly);
+    for(let pass=0;pass<8;pass++)for(let i=1;i<col.length;i++){const a=col[i];
+      for(let j=0;j<i;j++){const b=col[j];
+        if(Math.abs(a.lx-b.lx)<Math.max(a.w,b.w)&&Math.abs(a.ly-b.ly)<11.5)a.ly=b.ly+11.5;}}});
+  labels.forEach(l=>{l.ly=Math.max(M.t+18,Math.min(PH-M.b-8,l.ly));});
+  labels.forEach(l=>{if(Math.abs(l.ly-(l.y+3.4))>7){const ex=l.side==='R'?l.x+5.5:l.x-5.5,tx=l.side==='R'?l.lx-2:l.lx+2;
+    s+=`<line x1="${ex.toFixed(1)}" y1="${l.y.toFixed(1)}" x2="${tx.toFixed(1)}" y2="${(l.ly-3).toFixed(1)}" stroke="var(--line)" stroke-width="1"/>`;}});
+  labels.forEach(l=>{s+=`<text class="dot-lbl ${l.prize?'hi':''}" x="${l.lx.toFixed(1)}" y="${l.ly.toFixed(1)}" text-anchor="${l.side==='R'?'start':'end'}">${l.t.symbol}</text>`;});
   svg.innerHTML=s;
   svg.querySelectorAll('.dot').forEach(g=>g.addEventListener('click',()=>openMemo(g.dataset.sym)));
   const prizeSyms=pts.filter(p=>p.prize).sort((a,b)=>b.mo.m-a.mo.m).map(p=>p.t.symbol);
