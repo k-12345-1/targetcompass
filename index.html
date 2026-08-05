@@ -157,6 +157,25 @@
   .sec:last-child{border-bottom:none}
   .sec .lbl{display:block;margin-bottom:7px}
   .sec p{margin:0;color:var(--ink);font-size:13.5px}
+  /* ---- expert target profile ---- */
+  .memo-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+  .mchip{font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--ink-2);background:var(--panel-2);border:1px solid var(--line);border-radius:999px;padding:4px 10px}
+  .mchip.gene{color:#0B7A52;background:#E6F5EE;border-color:#B7E3CE}
+  .tprofile .tp-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px 20px;margin-top:2px}
+  @media(max-width:640px){.tprofile .tp-grid{grid-template-columns:1fr}}
+  .tp-item{min-width:0}
+  .tp-k{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-4);margin-bottom:5px}
+  .tp-v{font-size:12.5px;color:var(--ink-2);line-height:1.5}
+  .tp-v b{color:var(--ink)}
+  .gd-badge{display:inline-block;font-family:var(--mono);font-size:9.5px;font-weight:700;border-radius:6px;padding:2px 7px;margin-right:5px;white-space:nowrap}
+  .gd-protective{color:#0B7A52;background:#E6F5EE}
+  .gd-risk{color:var(--accent-ink);background:var(--accent-bg)}
+  .gd-none{color:var(--ink-3);background:var(--panel-2)}
+  .tp-les{font-weight:700;font-size:11.5px;white-space:nowrap}
+  .tp-les.up{color:#B23A2E} .tp-les.down{color:#0B7A52} .tp-les.ns{color:var(--ink-3)}
+  .tp-warn{display:inline-block;font-family:var(--mono);font-size:9.5px;font-weight:700;color:#8A5A00;background:#FBF0DC;border-radius:6px;padding:1px 6px;margin-left:4px}
+  .pos-high{color:#0B7A52} .pos-mod{color:#8A5A00} .pos-low{color:var(--ink-3)}
+  .tp-illus{color:var(--ink-3);font-size:11px}
   .sec.contra{background:linear-gradient(90deg,color-mix(in srgb,var(--risk-hi) 8%,transparent),transparent);
     margin:0 -20px;padding:16px 20px;border-radius:8px;border-bottom:1px solid var(--line)}
   .sec.contra .lbl{color:var(--risk-hi)}
@@ -3854,6 +3873,71 @@ function loadHpaExpression(){
     .catch(()=>{if(!rec)host.innerHTML=`<div style="font-size:12.5px;color:var(--ink-3)">Tissue-level expression could not be loaded from Human Protein Atlas in this browser session. Open the HPA tissue page below to inspect where <b>${sym}</b> is expressed.</div>`;});
 }
 
+/* ---------- expert target profile: directional genetics, modality/tractability, lesional expression, read-across, PoS ---------- */
+const TPROFILE={
+ IL23R:{g:"protective",gn:"IL23R R381Q is a loss-of-function variant that protects against IBD (Duerr, Science 2006): direct human genetic license to inhibit this axis.",m:"Antibody (targets IL-23 p19)",c:"Cytokine receptor",l:"up",ln:"IL-23 axis is elevated in inflamed UC mucosa.",p:"IL-23 blockade approved across psoriasis, PsA, Crohn's and UC (ustekinumab, risankizumab, mirikizumab).",ox:"Selective and gut-relevant; clean class safety versus JAK."},
+ IL23A:{g:"risk",gn:"IL-23 p19 subunit; same genetically validated axis as IL23R.",m:"Antibody (p19)",c:"Cytokine subunit",l:"up",ln:"Elevated in inflamed mucosa.",p:"Risankizumab, mirikizumab, guselkumab approved across IBD and psoriasis.",ox:"Selective, clean class safety."},
+ IL12B:{g:"risk",gn:"IL12B (p40) sits in a replicated IBD GWAS risk locus.",m:"Antibody (p40)",c:"Cytokine subunit",l:"up",ln:"Elevated in inflamed mucosa.",p:"Ustekinumab (anti-p40) approved in Crohn's and UC.",ox:"Established safety, but blocks both IL-12 and IL-23 (less selective than p19)."},
+ TYK2:{g:"protective",gn:"TYK2 P1104A partial loss-of-function protects against multiple autoimmune diseases including IBD: the rationale behind allosteric TYK2 inhibitors.",m:"Oral small molecule (allosteric)",c:"Kinase (pseudokinase domain)",l:"up",ln:"JAK/TYK2-STAT signaling is active in inflamed mucosa.",p:"Deucravacitinib approved in plaque psoriasis; in trials for IBD, PsA and lupus.",ox:"More selective than pan-JAK; avoids much of the JAK class safety burden."},
+ JAK1:{g:"none",gn:"Efficacy is pharmacological, not from disease genetics.",m:"Oral small molecule",c:"Kinase",l:"up",ln:"JAK-STAT signaling active in disease.",p:"Upadacitinib (JAK1) approved in UC.",ox:"Broadly expressed: class boxed warning (cardiovascular, thrombosis, malignancy, infection)."},
+ JAK2:{g:"none",gn:"Downstream signaling node, no disease-genetic license.",m:"Oral small molecule",c:"Kinase",l:"up",ln:"JAK-STAT active in disease.",p:"Tofacitinib (JAK family) approved in UC.",ox:"Broad expression; JAK2 inhibition risks cytopenias; class safety overhang."},
+ JAK3:{g:"none",gn:"Downstream node; efficacy is pharmacological.",m:"Oral small molecule",c:"Kinase",l:"up",ln:"JAK-STAT active in disease.",p:"Tofacitinib and ritlecitinib in the JAK/TEC space.",ox:"Class safety overhang; Pfizer already markets this class."},
+ TNFSF15:{g:"risk",gn:"TNFSF15/TL1A is a consistently replicated IBD risk locus and a fibrosis modifier.",m:"Antibody (anti-TL1A)",c:"TNF-superfamily cytokine",l:"up",ln:"TL1A is up in inflamed mucosa and linked to fibrostenosis.",p:"Tulisokibart and RVT-3101 positive in Phase 2 UC: the driver of the 2023 TL1A acquisitions.",ox:"Cytokine-specific, expected clean safety, with a potential anti-fibrotic bonus."},
+ GPR35:{g:"risk",gn:"GPR35 T108M is an IBD-associated coding variant (GWAS).",m:"Oral small molecule (GPCR)",c:"Orphan GPCR",l:"up",ln:"Expressed on gut epithelium and immune cells.",p:"No clinical UC precedent: genuinely first-in-class.",ox:"Gut-enriched expression suggests a favorable on-target safety window."},
+ CXCR2:{g:"risk",gn:"Chemokine receptor with supportive but modest human genetic signal.",m:"Oral small molecule (GPCR)",c:"Chemokine GPCR",l:"up",ln:"Drives neutrophil recruitment into inflamed mucosa.",p:"Small-molecule CXCR2 antagonists tested in other inflammatory diseases.",ox:"Neutrophil axis: watch host-defense and infection effects."},
+ IRF5:{g:"risk",gn:"IRF5 risk haplotype is one of the strongest shared autoimmune loci (lupus, RA, IBD), a gain-of-function signal.",m:"Undruggable with current modalities",c:"Transcription factor",l:"up",ln:"IRF5 is active in inflamed myeloid cells.",p:"No clinical-stage direct inhibitor: this is the tractability catch.",ox:"Broad myeloid role raises theoretical breadth of immunosuppression."},
+ OSMR:{g:"none",gn:"Not a genetic hit; the case is expression and response prediction.",m:"Antibody (anti-OSM / anti-OSMR)",c:"Cytokine receptor",l:"up",ln:"OSM is markedly elevated in inflamed mucosa and predicts anti-TNF non-response (West, Nature Medicine 2017).",p:"No approved drug; anti-OSM programs in development.",ox:"Cytokine-specific; the standout is a built-in patient-selection biomarker."},
+ OSM:{g:"none",gn:"Not a genetic hit; expression-driven with a predictive biomarker.",m:"Antibody (anti-OSM)",c:"Cytokine",l:"up",ln:"Baseline OSM runs ~10-fold higher in anti-TNF non-responders (West, Nature Medicine 2017).",p:"No approved drug; biomarker-anchored programs in development.",ox:"Cytokine-specific; enrichment biomarker is the differentiator."},
+ PTPN2:{g:"protective",gn:"PTPN2 loss-of-function is an IBD risk factor. It is a negative regulator, so the therapeutic direction is to RESTORE its activity (hard), not inhibit it.",m:"Difficult (phosphatase)",c:"Phosphatase",l:"ns",ln:"Regulatory node; not a clean up-in-disease target.",p:"No direct clinical precedent.",ox:"Phosphatases are historically hard to drug selectively."},
+ IL10:{g:"protective",gn:"Rare IL10/IL10R loss-of-function causes monogenic very-early-onset IBD (Glocker, NEJM 2009), so therapy must RESTORE IL-10 signaling (agonism), not block it.",m:"Cytokine replacement / agonism",c:"Anti-inflammatory cytokine",l:"ns",ln:"Regulatory cytokine; deficiency drives colitis.",p:"Recombinant IL-10 trials failed historically on delivery and PK, not biology.",ox:"Agonism carries less immunosuppression risk, but delivery is the hurdle."},
+ IL10RA:{g:"protective",gn:"IL10RA loss-of-function causes infantile IBD; direction is agonism/restoration, not inhibition.",m:"Receptor agonism (biologic)",c:"Cytokine receptor",l:"ns",ln:"Regulatory axis.",p:"Same axis as IL-10.",ox:"Restoring regulation; delivery is the challenge."},
+ S1PR1:{g:"none",gn:"Mechanism-driven (lymphocyte egress), not a genetic hit.",m:"Oral small molecule (S1P modulator)",c:"GPCR",l:"ns",ln:"Sequesters lymphocytes from circulation; oral mechanism.",p:"Ozanimod and etrasimod approved in UC.",ox:"Bradycardia, macular edema, lymphopenia and infection monitoring."},
+ ITGA4:{g:"none",gn:"Mechanism-driven (gut lymphocyte homing).",m:"Antibody (gut-selective)",c:"Integrin",l:"up",ln:"Mediates lymphocyte homing to gut mucosa.",p:"Vedolizumab (a4b7) approved in UC and Crohn's; gut-selective.",ox:"Gut-selective (vedolizumab) is clean; a4 (natalizumab) carries PML risk."},
+ ITGB7:{g:"none",gn:"Mechanism-driven; b7 pairs with a4 for gut homing.",m:"Antibody (gut-selective)",c:"Integrin",l:"up",ln:"Gut homing axis.",p:"a4b7 blockade (vedolizumab) approved in UC.",ox:"Gut-selective, clean safety profile."},
+ TNF:{g:"none",gn:"No strong disease-genetic anchor; validated pharmacologically.",m:"Antibody",c:"Cytokine",l:"up",ln:"Central inflammatory cytokine, up in disease.",p:"Anti-TNF is the legacy IBD backbone (infliximab, adalimumab, golimumab).",ox:"Immunosuppression and infection risk; loss of response over time."},
+ IL17A:{g:"risk",gn:"IL-17/Th17 pathway is genetically implicated, but direction of effect in gut is the trap.",m:"Antibody",c:"Cytokine",l:"up",ln:"Th17 axis is up in inflamed mucosa.",p:"Anti-IL-17 approved in psoriasis/PsA/AS but WORSENED Crohn's in a controlled trial: the cautionary read-across.",ox:"IL-17 protects the gut epithelial barrier; blocking it harms IBD."},
+ IL17RA:{g:"risk",gn:"Receptor for the IL-17 axis; same directional trap as IL17A.",m:"Antibody",c:"Cytokine receptor",l:"up",ln:"Th17 axis up in mucosa.",p:"IL-17-receptor blockade (brodalumab) not beneficial in IBD.",ox:"Barrier protection lost: harmful in the gut."},
+ IL13:{g:"none",gn:"No strong disease-genetic anchor.",m:"Antibody",c:"Cytokine",l:"ns",ln:"Th2 cytokine; a UC hypothesis that did not hold.",p:"Anti-IL-13 (anrukinzumab, tralokinumab) failed in UC.",ox:"An efficacy failure, not a safety story."},
+ SMAD7:{g:"none",gn:"No disease-genetic anchor; a signaling-inhibition hypothesis.",m:"Antisense oligonucleotide",c:"Intracellular signaling",l:"ns",ln:"Intracellular TGF-b brake.",p:"Mongersen: striking Phase 2, then Phase 3 futility.",ox:"Target and PK questions after the Phase 3 failure."},
+ CCR9:{g:"none",gn:"Mechanism-driven gut-homing chemokine receptor.",m:"Oral small molecule (GPCR)",c:"Chemokine GPCR",l:"up",ln:"Gut-homing chemokine axis.",p:"Vercirnon Phase 3 failed in Crohn's.",ox:"Clinical failure precedent for this mechanism."},
+ TNFRSF9:{g:"none",gn:"Limited disease genetics; a costimulation node.",m:"Antibody (modulator)",c:"TNF-superfamily receptor",l:"ns",ln:"Costimulatory receptor, mostly studied in oncology.",p:"Limited IBD precedent; predominantly an oncology target.",ox:"Costimulation modulation carries uncertain IBD safety."},
+ NR3C1:{g:"none",gn:"No genetics; the ubiquitous steroid receptor.",m:"Oral small molecule (steroid)",c:"Nuclear receptor",l:"ns",ln:"Expressed everywhere.",p:"Corticosteroids: the universal but toxic fallback.",ox:"Ubiquitous expression drives systemic toxicity: the problem to move past."},
+ PPARG:{g:"none",gn:"No disease genetics; partial mechanism of 5-ASA.",m:"Oral small molecule",c:"Nuclear receptor",l:"ns",ln:"Metabolic nuclear receptor.",p:"5-ASA acts partly via PPAR-gamma.",ox:"Metabolic and fluid-retention effects."},
+ PTGS2:{g:"none",gn:"No disease genetics; COX-2 enzyme.",m:"Oral small molecule",c:"Enzyme",l:"ns",ln:"Prostaglandin synthesis.",p:"COX inhibition is poorly suited to IBD.",ox:"GI and cardiovascular risk make it a poor IBD fit."},
+ ALOX5:{g:"none",gn:"No disease genetics; leukotriene enzyme.",m:"Oral small molecule",c:"Enzyme",l:"ns",ln:"Leukotriene pathway.",p:"5-LOX inhibition showed limited IBD efficacy historically.",ox:"Limited efficacy precedent."}
+};
+function tprofile(sym){return TPROFILE[sym]||null;}
+function posEstimate(t,p){
+  let base=0.10, mult=1; const why=[];
+  if(p.g==="protective"){mult*=2.6;why.push("&times;2.6 for protective human genetics (Minikel, Nature 2024)");}
+  else if(p.g==="risk"){mult*=1.5;why.push("&times;1.5 for a GWAS risk locus");}
+  else why.push("no genetic multiplier");
+  const stage=(t.prio&&t.prio.maxClinicalStage!=null)?t.prio.maxClinicalStage:0;
+  if(stage>=0.6){mult*=1.3;why.push("mechanism already clinically validated");}
+  const dis=1-Math.min(0.8,(t.failrisk||0)*0.7);
+  const pct=Math.round(Math.min(0.72,base*mult*dis)*100);
+  const tier=pct>=25?"high":pct>=14?"mod":"low";
+  return {pct,tier,why:why.join(", ")};
+}
+function targetProfileHTML(t){
+  const p=tprofile(t.symbol); if(!p) return "";
+  const gdLabel={protective:"Protective human LoF",risk:"Risk locus (GWAS)",none:"No direct genetic hit"}[p.g]||"Genetic signal";
+  const les={up:'<span class="tp-les up">&#9650; Up in inflamed mucosa</span>',down:'<span class="tp-les down">&#9660; Down in disease</span>',ns:'<span class="tp-les ns">Not disease-restricted</span>'}[p.l]||"";
+  const undrug=/Undruggable|Difficult/.test(p.m)||/Transcription factor|Phosphatase/.test(p.c);
+  const pos=posEstimate(t,p);
+  const posLabel={high:"Higher",mod:"Moderate",low:"Lower"}[pos.tier];
+  return `<div class="sec tprofile">
+    <span class="lbl">Target profile: is this real, druggable and translatable?</span>
+    <div class="tp-grid">
+      <div class="tp-item"><span class="tp-k">Human genetics &amp; direction</span><div class="tp-v"><span class="gd-badge gd-${p.g}">${gdLabel}</span> ${p.gn}</div></div>
+      <div class="tp-item"><span class="tp-k">How you would drug it</span><div class="tp-v"><b>${p.m}</b> &middot; ${p.c}${undrug?' <span class="tp-warn">tractability caveat: no current modality</span>':''}</div></div>
+      <div class="tp-item"><span class="tp-k">In diseased tissue</span><div class="tp-v">${les} ${p.ln}</div></div>
+      <div class="tp-item"><span class="tp-k">Cross-indication read-across</span><div class="tp-v">${p.p}</div></div>
+      <div class="tp-item"><span class="tp-k">On-target safety</span><div class="tp-v">${p.ox}</div></div>
+      <div class="tp-item"><span class="tp-k">Genetics-adjusted success</span><div class="tp-v"><b class="pos-${pos.tier}">${posLabel} &middot; ~${pos.pct}%</b> <span class="tp-illus">illustrative: base ~10%, ${pos.why}, then adjusted for failure signals.</span></div></div>
+    </div>
+  </div>`;
+}
 function openMemo(sym){
   const t=byId[sym]; const f=t.facts; const rec=recFor(t);
   const supEv=t.evidence.filter(e=>e.id.startsWith('OT')||e.id.startsWith('CT')&&t.active_trials>0);
@@ -3872,6 +3956,7 @@ function openMemo(sym){
       <div class="memo-title"><h2>${t.symbol}</h2><span class="full">${t.name}</span>
         <span class="pill p-${t.status}">${t.status}</span></div>
       <div class="memo-rec" style="color:${rec.col};border-color:${rec.col}">${rec.txt}</div>
+      ${TPROFILE[sym]?`<div class="memo-chips">${TPROFILE[sym].g==='protective'?'<span class="mchip gene">&#10003; Genetically validated (protective LoF)</span>':''}<span class="mchip">${TPROFILE[sym].m}</span></div>`:''}
       ${t.custom?`<div style="margin-top:12px;font-size:12px;color:#5B3FBF;background:#EDE7FB;border-radius:10px;padding:9px 12px;line-height:1.45"><b>Your proposed target.</b> Scored by the same engine as real targets, from the inputs you set, not retrieved evidence. <a href="#" onclick="removeCustom('${sym}');return false;" style="color:#5B3FBF;font-weight:700;text-decoration:underline">Remove it</a>.</div>`:''}
       ${t.edited&&!t.custom?`<div style="margin-top:12px;font-size:12px;color:var(--accent-ink);background:var(--accent-bg);border-radius:10px;padding:9px 12px;line-height:1.45"><b>You edited this target's inputs.</b> The scores and its place on the map reflect your changes, not the retrieved snapshot. <a href="#" onclick="resetEdit('${sym}');return false;" style="color:var(--accent-ink);font-weight:700;text-decoration:underline">Reset to original</a>.</div>`:''}
       <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
@@ -3891,6 +3976,7 @@ function openMemo(sym){
         </div>
       </div>
       <div class="sec"><span class="lbl">Mechanism thesis</span><p>${thesis}</p></div>
+      ${targetProfileHTML(t)}
       ${translationalEvidenceHTML(t)}
       ${tissueExpressionHTML(t)}
       <div class="sec"><span class="lbl">Supporting evidence</span>${evList(supList)}</div>
