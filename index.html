@@ -197,6 +197,22 @@
   .dir-modulate{color:var(--ink-3);background:var(--panel-2)}
   .clad-conflict{margin-top:11px;font-size:12px;color:#8A5A00;background:#FBF0DC;border:1px solid #F0DCB4;border-radius:10px;padding:10px 12px;line-height:1.5}
   .clad-conflict b{color:#7A4E00}
+  /* ---- decision gate ---- */
+  .decbar{padding:2px 12px 12px;margin-bottom:4px;border-bottom:1px solid var(--line)}
+  .dec-counts{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px}
+  .dc{font-family:var(--mono);font-size:10px;font-weight:700;border-radius:6px;padding:3px 8px}
+  .dc.rec{color:#0B7A52;background:#E6F5EE} .dc.hold{color:#8A5A00;background:#FBF0DC} .dc.pass{color:var(--ink-3);background:var(--panel-2)}
+  .dec-slider{display:block}
+  .dec-slider span{display:block;font-size:11px;color:var(--ink-3);margin-bottom:3px}
+  .dec-slider span b{color:var(--ink);font-family:var(--mono)}
+  .dec-slider input[type=range]{width:100%}
+  .dv-chip{font-family:var(--mono);font-size:8.5px;font-weight:800;letter-spacing:.03em;border-radius:5px;padding:1px 5px;margin-left:6px;vertical-align:middle}
+  .dv-rec{color:#0B7A52;background:#E6F5EE} .dv-hold{color:#8A5A00;background:#FBF0DC} .dv-pass{color:var(--ink-4);background:var(--panel-2)}
+  .decision .dv-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:9px}
+  .dv-badge{font-family:var(--mono);font-size:12px;font-weight:800;letter-spacing:.04em;border-radius:7px;padding:5px 12px}
+  .dv-meta{font-size:12px;color:var(--ink-3)}.dv-meta b{color:var(--ink);font-family:var(--mono)}
+  .decision p{font-size:12.5px;color:var(--ink-2);line-height:1.55;margin:0 0 8px}
+  .decision .dv-fine{font-size:11px;color:var(--ink-3);margin-top:2px}
   .sec.contra{background:linear-gradient(90deg,color-mix(in srgb,var(--risk-hi) 8%,transparent),transparent);
     margin:0 -20px;padding:16px 20px;border-radius:8px;border-bottom:1px solid var(--line)}
   .sec.contra .lbl{color:var(--risk-hi)}
@@ -910,6 +926,7 @@
 
       <div class="card board">
         <h3 id="board-h">Ranked for posture</h3>
+        <div class="decbar" id="decbar"></div>
         <div id="board"></div>
       </div>
     </div>
@@ -3456,6 +3473,7 @@ const POSTURES = {
 const PRESET_KEYS=["balanced","first_in_class","fast_follower","diversify"];
 let posture = "balanced";
 let showUniverse = true;
+let decisionBar = 60;   // user-set decision threshold (0-100 score) for the RECOMMEND/HOLD/PASS gate
 
 function rawScore(t,pk){
   const p=POSTURES[pk];
@@ -3623,14 +3641,78 @@ function drawInsight(sc){
   }
 }
 
+/* ---------- decision gate: turn the ranking into an explicit, threshold-driven, auditable go/no-go ----------
+   Deliberately NO absolute probability-of-success arithmetic: genetics->success is stated as a cited RELATIVE
+   likelihood, confidence is qualitative (from the causal tier), and every verdict shows its rationale. */
+function causalConfidence(t){
+  const c=causalOf(t.symbol);
+  if(!c) return { level:'Low', tier:'—', conflict:false };
+  const tier=causalTier(c);
+  let level = tier==='Genetic-causal'?'High':tier==='Disease-tissue'?'Moderate':'Low';
+  if(c.cf) level = level==='High'?'Moderate':'Low';   // an unresolved direction conflict lowers confidence
+  return { level, tier, conflict:!!c.cf };
+}
+function decisionFor(t){
+  const sc=scored(posture); const x=sc.find(y=>y.t.symbol===t.symbol); const s=x?x.s:0;
+  const conf=causalConfidence(t); const bar=decisionBar;
+  const c=causalOf(t.symbol); const cf=c?c.cf:null;
+  const hardNeg = t.status==='graveyard';   // clinically disconfirmed (IL17A/IL13/SMAD7/CCR9); a restore-direction conflict is NOT a hard-neg
+  let verdict, reason;
+  if(hardNeg){ verdict='PASS'; reason='clinically disconfirmed in UC'; }
+  else if(s < bar-18){ verdict='PASS'; reason='scores below the decision bar'; }
+  else if(cf){ verdict='HOLD'; reason='unresolved direction / tractability question'; }
+  else if(t.pfizer_owned){ verdict='HOLD'; reason='portfolio redundancy (Pfizer already markets this class)'; }
+  else if(s>=bar){ verdict='RECOMMEND'; reason='clears the bar with a clean direction of effect'; }
+  else { verdict='HOLD'; reason='near the bar, not yet a clean recommend'; }
+  return { verdict, score:s, rank:x?x.rank:null, conf, bar, reason, cf };
+}
+function successFraming(t){
+  const c=causalOf(t.symbol); const tier=c?causalTier(c):'Baseline expression';
+  if(tier==='Genetic-causal') return 'Historically, genetically-supported targets have reached approval about <b>twice</b> as often (Minikel, Nature 2024). This target carries that de-risking.';
+  if(tier==='Disease-tissue') return 'No human-genetic de-risking multiplier applies here; the case rests on disease-tissue biology, which is weaker evidence for eventual success.';
+  return 'No genetic or disease-tissue de-risking: treat success odds as the low base rate for the stage until stronger evidence appears.';
+}
+function decisionHTML(t){
+  const d=decisionFor(t); const c=causalOf(t.symbol);
+  const vmeta={RECOMMEND:['RECOMMEND','dv-rec'],HOLD:['HOLD','dv-hold'],PASS:['PASS','dv-pass']}[d.verdict];
+  // top two positive drivers, reusing the score decomposition
+  const p=POSTURES[posture];
+  const pos=[['stronger biology',p.wB*t.bio],['an open field',p.wW*t.whitespace],['tractability',(p.wD||0)*t.drug],['genetic direction',(p.wS||0)*(t.feas!=null?t.feas:0.5)]];
+  pos.sort((a,b)=>b[1]-a[1]);
+  const drivers=pos.slice(0,2).map(x=>x[0]).join(' and ');
+  const move = d.verdict==='RECOMMEND' ? 'It already clears your bar. Lowering confidence risk means resolving any open safety or tractability question before committing medicinal chemistry.'
+    : d.cf ? 'Resolve the flagged direction / tractability question (below) before this can become a clean recommend.'
+    : t.pfizer_owned ? 'A differentiated asset (new modality, biomarker-defined population) would be needed to justify pursuing a class Pfizer already sells.'
+    : d.verdict==='PASS' && t.status==='graveyard' ? 'Only a mechanism that separates the protective from the pathogenic axis would reopen this.'
+    : `It would need to clear the decision bar (currently ${d.bar}); today it scores ${d.score}.`;
+  return `<div class="sec decision"><span class="lbl">Decision &middot; at your bar of ${d.bar}/100</span>
+    <div class="dv-row"><span class="dv-badge ${vmeta[1]}">${vmeta[0]}</span>
+      <span class="dv-meta">score <b>${d.score}</b> &middot; rank <b>#${d.rank}</b> &middot; causal confidence <b>${d.conf.level}</b></span></div>
+    <p class="dv-why"><b>Why:</b> ${t.symbol} ${d.reason}. Its strongest drivers under the ${POSTURES[posture].name} strategy are ${drivers}. ${successFraming(t)}</p>
+    <p class="dv-move"><b>What would move it:</b> ${move}</p>
+    <p class="dv-fine">This is an assumption-explicit gate, not a calibrated probability. Move the <b>decision bar</b> on the ranked board to see the shortlist change; every verdict shows the evidence and threshold behind it.</p>
+  </div>`;
+}
+function decisionCounts(sc){
+  let rec=0,hold=0,pass=0;
+  sc.forEach(x=>{const v=decisionFor(x.t).verdict; if(v==='RECOMMEND')rec++; else if(v==='HOLD')hold++; else pass++;});
+  return {rec,hold,pass};
+}
+window.setDecisionBar=function(v){ decisionBar=+v; drawBoard(scored(posture)); };
 function drawBoard(sc){
   document.getElementById('board-h').innerHTML=`Ranked &middot; ${POSTURES[posture].name}`;
+  const counts=decisionCounts(sc);
+  const dec=document.getElementById('decbar');
+  if(dec) dec.innerHTML=`<div class="dec-counts"><span class="dc rec">${counts.rec} recommend</span><span class="dc hold">${counts.hold} hold</span><span class="dc pass">${counts.pass} pass</span></div>
+    <label class="dec-slider"><span>Decision bar <b>${decisionBar}</b>/100</span>
+      <input type="range" min="30" max="90" value="${decisionBar}" oninput="setDecisionBar(this.value)" aria-label="Decision threshold"></label>`;
   const b=document.getElementById('board'); b.innerHTML='';
   sc.slice(0,12).forEach(x=>{
-    const t=x.t;
+    const t=x.t; const dv=decisionFor(t);
+    const dvm={RECOMMEND:['REC','dv-rec'],HOLD:['HOLD','dv-hold'],PASS:['PASS','dv-pass']}[dv.verdict];
     const d=document.createElement('div'); d.className='row'; d.tabIndex=0;
     d.innerHTML=`<span class="rk">${x.rank}</span>
-      <div><span class="sym">${t.symbol}</span><span class="pill p-${t.status}">${t.status}</span>
+      <div><span class="sym">${t.symbol}</span><span class="dv-chip ${dvm[1]}">${dvm[0]}</span><span class="pill p-${t.status}">${t.status}</span>
       <div class="meta">${t.name.length>34?t.name.slice(0,33)+'&#8230;':t.name}</div></div>
       <button class="rowpin${isPinned(t.symbol)?' on':''}" data-pin="${t.symbol}" title="Add to shortlist" aria-label="Pin ${t.symbol}">${isPinned(t.symbol)?'&#9733;':'&#9734;'}</button>
       <span class="sc" style="color:${riskColor(t.failrisk)}">${x.s}</span>`;
@@ -4083,6 +4165,7 @@ function openMemo(sym){
           <span class="mol-note" id="molnote"></span>
         </div>
       </div>
+      ${decisionHTML(t)}
       <div class="sec"><span class="lbl">Mechanism thesis</span><p>${thesis}</p></div>
       ${causalHTML(t)}
       ${targetProfileHTML(t)}
