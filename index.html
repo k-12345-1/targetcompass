@@ -197,6 +197,18 @@
   .dir-modulate{color:var(--ink-3);background:var(--panel-2)}
   .clad-conflict{margin-top:11px;font-size:12px;color:#8A5A00;background:#FBF0DC;border:1px solid #F0DCB4;border-radius:10px;padding:10px 12px;line-height:1.5}
   .clad-conflict b{color:#7A4E00}
+  /* ---- disease-context expression ---- */
+  .dc-row{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin:2px 0 9px}
+  .dc-cell{font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--ink-2);background:var(--panel-2);border:1px solid var(--line);border-radius:6px;padding:3px 9px}
+  .dc-bar{display:inline-flex;gap:3px}
+  .dc-seg{width:20px;height:8px;border-radius:2px;background:var(--line)}
+  .dc-seg.ind-strong{background:#C43A2E} .dc-seg.ind-mod{background:#E0872E} .dc-seg.ind-flat{background:var(--ink-4)} .dc-seg.ind-down{background:#0B7A52}
+  .dc-lvl{font-size:11.5px;font-weight:700;color:var(--ink-2)}
+  .dc-note{font-size:12.5px;color:var(--ink-2);line-height:1.5;margin:0 0 7px}
+  .dc-verdict{font-size:12.5px;line-height:1.5;margin:0 0 8px;padding:8px 11px;border-radius:9px}
+  .dc-verdict.dc-driver{color:#0B5C3E;background:#E6F5EE} .dc-verdict.dc-reactive{color:#7A4E00;background:#FBF0DC} .dc-verdict.dc-flat{color:var(--ink-3);background:var(--panel-2)}
+  .dc-verdict b{font-weight:800}
+  .dc-fine{font-size:11px;color:var(--ink-3);line-height:1.5;margin:0}
   /* ---- decision gate ---- */
   .decbar{padding:2px 12px 12px;margin-bottom:4px;border-bottom:1px solid var(--line)}
   .dec-counts{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px}
@@ -4160,6 +4172,28 @@ function causalHTML(t){
     ${conflict}
   </div>`;
 }
+/* ---------- cell-type disease-context signal (additive flag, NOT a re-ranking sort key) ----------
+   Honest per the adversarial review: qualitative induction (no false-precision cross-unit deltas), single-atlas
+   sourcing, and the load-bearing driver-vs-reactive distinction (induced WITHOUT causal genetics may be a bystander). */
+function inductionLevel(ind){return {up:['Strong','ind-strong',3],moderate:['Moderate','ind-mod',2],flat:['Flat','ind-flat',1],ns:['Flat','ind-flat',1],down:['Lower in disease','ind-down',1]}[ind]||['Flat','ind-flat',1];}
+function diseaseContextHTML(t){
+  const c=causalOf(t.symbol); if(!c||!c.les) return "";
+  const les=c.les, il=inductionLevel(les.ind);
+  const causal=!!c.gc, induced=(les.ind==='up'||les.ind==='moderate');
+  let verdict,vcls;
+  if(induced&&causal){ verdict='Driver signal: induced in the lesion <b>and</b> genetically causal.'; vcls='dc-driver'; }
+  else if(induced&&!causal){ verdict='Interpret with care: induced in inflamed tissue, but with no causal human genetics this may be a <b>reactive or bystander</b> response to inflammation rather than a driver.'; vcls='dc-reactive'; }
+  else { verdict='Flat between healthy and inflamed tissue: disease relevance rests on genetics or mechanism, not on lesional induction.'; vcls='dc-flat'; }
+  const steps=[1,2,3].map(n=>`<span class="dc-seg ${n<=il[2]?il[1]:''}"></span>`).join('');
+  return `<div class="sec"><span class="lbl">Disease-context expression: is it up where the disease is?</span>
+    <div class="dc-row"><span class="dc-cell">${les.cell||'colonic tissue'}</span>
+      <div class="dc-bar" title="Induction in inflamed vs uninflamed mucosa">${steps}</div>
+      <span class="dc-lvl">${il[0]}</span></div>
+    <p class="dc-note">${les.note}</p>
+    <p class="dc-verdict ${vcls}">${verdict}</p>
+    <p class="dc-fine">Baseline healthy-tissue expression alone is weakly informative for IBD targets; whether a gene is switched on in the inflamed lesion, and in which cell, adds mechanism that steady-state atlases (like the Human Protein Atlas used below) miss. This is an interpretive flag, not a ranking factor. Source: UC single-cell atlas (Smillie et al., Cell 2019) and the Gut Cell Atlas; curated, qualitative induction.</p>
+  </div>`;
+}
 /* genetic-direction factor folded into the ranking: protective vs risk allele + whether it is up in diseased tissue.
    Tractability is deliberately NOT in here: it is a gate (below), not a weight, so you cannot up-weight past undruggability. */
 function feasScore(t){
@@ -4245,6 +4279,7 @@ function openMemo(sym){
       ${decisionHTML(t)}
       <div class="sec"><span class="lbl">Mechanism thesis</span><p>${thesis}</p></div>
       ${causalHTML(t)}
+      ${diseaseContextHTML(t)}
       ${targetProfileHTML(t)}
       ${translationalEvidenceHTML(t)}
       ${tissueExpressionHTML(t)}
