@@ -602,6 +602,14 @@
   .valcase .vc-cite{margin-top:11px}
   .valcase .vc-cite a{font-family:var(--mono);font-size:10.5px;color:var(--accent-ink)}
   .val-lead{font-size:13px;color:var(--ink-3);margin:18px 0 4px}
+  .er{margin-top:12px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .er-h{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-4);margin-bottom:7px}
+  .er-chips{display:flex;flex-wrap:wrap;gap:6px}
+  .er-chip{font-family:var(--mono);font-size:10px;font-weight:700;border-radius:6px;padding:3px 8px;border:1px solid transparent;white-space:nowrap}
+  .er-good{color:#0B7A52;background:#E6F5EE;border-color:#B7E3CE}
+  .er-mid{color:var(--accent-ink);background:var(--accent-bg)}
+  .er-bad{color:#8A5A00;background:#FBF0DC;border-color:#F0DCB4}
+  .er-none{color:var(--ink-3);background:var(--panel);border-color:var(--line)}
 
   /* ---- Patients in-page sub-nav (one focused view at a time) ---- */
   .ptnav{display:flex;gap:6px;flex-wrap:wrap;background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:5px;margin:0 0 18px}
@@ -4150,6 +4158,11 @@ const BACKTEST=[
   then:"IL23R is one of the strongest genetically-validated IBD loci; p40 (ustekinumab) was already working, but selective p19 was unproven in IBD.",
   outcome:"Risankizumab approved for Crohn's (2022) and UC (2024); mirikizumab approved for UC (2023). Selective IL-23 became a pillar of IBD care.",
   cite:{t:"FDA approval, mirikizumab (Omvoh)",u:"https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761279"},hit:true},
+ {sym:"TYK2",mech:"TYK2 (allosteric)",call:"elevate",
+  then:"TYK2's protective P1104A partial loss-of-function was emerging as a shared autoimmune signal, and a selective allosteric oral was newly feasible. A protective human allele plus a real modality is the strongest possible license to inhibit a target.",
+  outcome:"Deucravacitinib, an allosteric TYK2 inhibitor, was approved in plaque psoriasis (2022) and taken into trials across IBD, PsA and lupus: a drug built directly on a protective human allele.",
+  cite:{t:"Deucravacitinib and TYK2 genetics (literature)",u:"https://pubmed.ncbi.nlm.nih.gov/?term=deucravacitinib+TYK2+P1104A+psoriasis"},hit:true,
+  kicker:"This is the genetic-direction factor in a single target: a protective allele said inhibit, years before the drug existed."},
  {sym:"S1PR1",mech:"S1P modulation",call:"elevate",
   then:"A novel oral mechanism with human genetic and immunological support, and little competition in UC at the time.",
   outcome:"Ozanimod approved for UC (2021); etrasimod, now a Pfizer asset, approved for UC (2023). An entirely new oral class in the indication.",
@@ -4167,13 +4180,31 @@ const BACKTEST=[
   then:"Real, marketed-grade efficacy signal, but the engine down-weighted it for class safety exposure and, for Pfizer specifically, portfolio redundancy.",
   outcome:"Tofacitinib was approved in UC (2018), then received an FDA boxed warning for cardiovascular events, thrombosis and malignancy (2021). Efficacy real; safety flag real.",
   cite:{t:"FDA Drug Safety Communication, 2021",u:"https://www.fda.gov/drugs/drug-safety-and-availability/fda-requires-warnings-about-increased-risk-serious-heart-related-events-cancer-blood-clots-and-death"},hit:true},
+ {sym:"IRF5",mech:"IRF5 (transcription factor)",call:"caution",
+  then:"IRF5 was one of the strongest shared autoimmune risk loci, so on genetics alone it looked like a top pick. But it is a transcription factor with no tractable modality, which is exactly what the developability gate flags.",
+  outcome:"A decade later there is still no approved IRF5 inhibitor and no selective direct modality has reached the clinic. The biology held up; the developability did not.",
+  cite:{t:"IRF5 as an autoimmune locus (literature)",u:"https://pubmed.ncbi.nlm.nih.gov/?term=IRF5+autoimmune+risk+locus+transcription+factor"},hit:true,
+  kicker:"The developability gate earns its place here: great genetics, no molecule, so the tool would not have sunk a program into it."},
 ];
+function backtestEngineRead(sym){
+  const t=byId[sym]; if(!t) return "";
+  const p=TPROFILE[sym]; const chips=[];
+  if(p){
+    const gd={protective:["Protective LoF genetics","er-good"],risk:["Risk-locus genetics","er-mid"],none:["No genetic license","er-none"]}[p.g];
+    if(gd)chips.push(`<span class="er-chip ${gd[1]}">${gd[0]}</span>`);
+    const gate=tractGate(t);
+    chips.push(gate<1?`<span class="er-chip er-bad">Developability gate &times;${gate.toFixed(2)}</span>`:`<span class="er-chip er-good">Tractable: ${p.m.split("(")[0].trim()}</span>`);
+  }
+  chips.push(`<span class="er-chip ${t.whitespace>=.55?"er-good":t.whitespace<=.15?"er-bad":"er-mid"}">Open field ${Math.round(t.whitespace*100)}/100</span>`);
+  chips.push(`<span class="er-chip ${t.failrisk<=.2?"er-good":t.failrisk>=.5?"er-bad":"er-mid"}">Failure risk ${Math.round(t.failrisk*100)}%</span>`);
+  return `<div class="er"><div class="er-h">Engine read &middot; today's model</div><div class="er-chips">${chips.join("")}</div></div>`;
+}
 function drawValidation(){
   const box=document.getElementById('valwrap'); if(!box) return;
   if(box.dataset.done) return; box.dataset.done="1";
   const n=BACKTEST.length;
   const label={elevate:"Elevated",avoid:"Avoided",caution:"Cautioned"};
-  let h=`<p class="val-lead">${n} calls, and how each one aged. Open any row for what it knew back then and what happened next.</p>`;
+  let h=`<p class="val-lead">${n} calls, and how each one aged. Open any row to see how <b>today's model</b> reads that target, then what actually happened.</p>`;
   BACKTEST.forEach(b=>{
     h+=`<details class="disclose valcase">
       <summary>
@@ -4184,12 +4215,13 @@ function drawValidation(){
       </summary>
       <div class="disclose-body">
         <div class="vc-h">The call, back in 2015</div><div class="vc-body">${b.then}</div>
+        ${backtestEngineRead(b.sym)}
         <div class="vc-h" style="margin-top:14px">How it aged</div><div class="vc-body">${b.outcome}${b.kicker?`<div style="margin-top:8px;font-weight:600;color:var(--ink)">${b.kicker}</div>`:""}</div>
         <div class="vc-cite"><a href="${b.cite.u}" target="_blank" rel="noopener">${b.cite.t} &#8599;</a></div>
       </div>
     </details>`;
   });
-  h+=`<p class="val-foot"><b>The honest fine print:</b> this is hindsight on cases we already know the endings to, not a blinded re-run of a frozen 2015 database, so don't over-read it. What it does show is that the reasoning holds up. And the real version is built in: every fact is logged with the date it was true, so a proper blinded backtest is just a report we can run, for any disease, on demand.</p>`;
+  h+=`<p class="val-foot"><b>The honest fine print:</b> this is hindsight on cases we already know the endings to, not a blinded re-run of a frozen 2015 database, so don't over-read it. What it does show is that the reasoning holds up. And the real version is built in: every fact is logged with the date it was true, so a proper blinded backtest is just a report we can run, for any disease, on demand. The "engine read" chips show how the <b>current</b> model scores each target, so you can see the same genetic-direction and developability signals that would have driven the call.</p>`;
   box.innerHTML=h;
 }
 /* ---------- PATIENT IMPACT: interactive patient + clinical-trial lens ---------- */
