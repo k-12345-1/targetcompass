@@ -177,6 +177,26 @@
   .tp-warn{display:inline-block;font-family:var(--mono);font-size:9.5px;font-weight:700;color:#8A5A00;background:#FBF0DC;border-radius:6px;padding:1px 6px;margin-left:4px}
   .pos-high{color:#0B7A52} .pos-mod{color:#8A5A00} .pos-low{color:var(--ink-3)}
   .tp-illus{color:var(--ink-3);font-size:11px}
+  /* ---- causal evidence ladder ---- */
+  .clad-intro{font-size:12.5px;color:var(--ink-2);line-height:1.5;margin:0 0 12px}
+  .clad{display:flex;flex-direction:column;gap:0;border-left:2px solid var(--line);margin:0 0 14px;padding-left:0}
+  .clad-rung{display:flex;gap:11px;align-items:flex-start;padding:9px 0 9px 14px;position:relative;margin-left:-1px}
+  .clad-rung .clad-dot{position:absolute;left:-7px;top:12px;width:11px;height:11px;border-radius:50%;background:var(--panel);border:2px solid var(--ink-4)}
+  .clad-rung.lit .clad-dot{background:var(--accent);border-color:var(--accent)}
+  .clad-rung.top .clad-dot{background:#0B7A52;border-color:#0B7A52;box-shadow:0 0 0 3px rgba(11,122,82,.18)}
+  .clad-rung.dim{opacity:.5}
+  .clad-txt b{display:block;font-size:12.5px;color:var(--ink);font-weight:700}
+  .clad-here{font-family:var(--mono);font-size:9px;font-weight:700;color:#0B7A52;background:#E6F5EE;border-radius:5px;padding:1px 6px;letter-spacing:.05em;text-transform:uppercase;vertical-align:middle}
+  .clad-ev{display:block;font-size:11.5px;color:var(--ink-3);line-height:1.45;margin-top:2px}
+  .clad-dir{display:flex;align-items:center;flex-wrap:wrap;gap:9px;font-size:12.5px;color:var(--ink-2)}
+  .clad-dk{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-4)}
+  .clad-basis{color:var(--ink-3);font-size:12px}
+  .dir-badge{font-family:var(--mono);font-size:10.5px;font-weight:700;border-radius:6px;padding:3px 9px}
+  .dir-inhibit{color:var(--accent-ink);background:var(--accent-bg)}
+  .dir-restore,.dir-activate{color:#0B7A52;background:#E6F5EE}
+  .dir-modulate{color:var(--ink-3);background:var(--panel-2)}
+  .clad-conflict{margin-top:11px;font-size:12px;color:#8A5A00;background:#FBF0DC;border:1px solid #F0DCB4;border-radius:10px;padding:10px 12px;line-height:1.5}
+  .clad-conflict b{color:#7A4E00}
   .sec.contra{background:linear-gradient(90deg,color-mix(in srgb,var(--risk-hi) 8%,transparent),transparent);
     margin:0 -20px;padding:16px 20px;border-radius:8px;border-bottom:1px solid var(--line)}
   .sec.contra .lbl{color:var(--risk-hi)}
@@ -3919,6 +3939,68 @@ const TPROFILE={
  ALOX5:{g:"none",gn:"No disease genetics; leukotriene enzyme.",m:"Oral small molecule",c:"Enzyme",l:"ns",ln:"Leukotriene pathway.",p:"5-LOX inhibition showed limited IBD efficacy historically.",ox:"Limited efficacy precedent."}
 };
 function tprofile(sym){return TPROFILE[sym]||null;}
+/* ---------- Causal-evidence ladder + direction-of-effect verdict ----------
+   Ranks the PROVENANCE of causal support (genetic-causal > disease-tissue induction > baseline expression),
+   and states which way to drug it, anchored on the highest DIRECTIONAL tier. Colocalization sets the tier, never the sign.
+   Conflict flags fire when a lower tier or clinical result disagrees with the anchor. Curated from cited literature. */
+const CAUSAL={
+ IL23R:{gc:"R381Q protective loss-of-function coding variant + replicated GWAS/colocalization (Duerr, Science 2006)",les:{cell:"myeloid & T cells",ind:"up",note:"IL-23 axis induced in inflamed UC mucosa"},dir:"inhibit",basis:"Anchored on a protective LoF coding variant: the highest-tier directional signal.",cf:null},
+ IL23A:{gc:"IL-23 p19; the same genetically validated axis as IL23R (shared locus / coloc)",les:{cell:"myeloid / dendritic cells",ind:"up",note:"Induced in inflamed mucosa"},dir:"inhibit",basis:"Risk axis; mirrors the protective-LoF direction established at IL23R.",cf:null},
+ IL12B:{gc:"p40 subunit in a replicated IBD GWAS risk locus",les:{cell:"myeloid",ind:"up",note:"Induced in inflamed mucosa"},dir:"inhibit",basis:"GWAS risk locus (gain-of-function direction).",cf:null},
+ TYK2:{gc:"P1104A protective partial loss-of-function, shared across autoimmune disease",les:{cell:"broad immune",ind:"up",note:"JAK/TYK2-STAT signaling active in inflamed mucosa"},dir:"inhibit",basis:"Anchored on a protective LoF coding variant.",cf:null},
+ IL10:{gc:"Monogenic IL10 loss-of-function causes very-early-onset IBD (Glocker, NEJM 2009): causal rare-variant evidence",les:{cell:"regulatory",ind:"flat",note:"Regulatory cytokine, not induced in the lesion"},dir:"restore",basis:"Loss-of-function CAUSES disease, so the causal direction is to restore signaling.",cf:"Direction is the opposite of inhibition. You must RESTORE / agonize IL-10, not block it. Delivery, not biology, is the historical failure."},
+ IL10RA:{gc:"Monogenic IL10RA loss-of-function causes infantile IBD: causal rare-variant evidence",les:{cell:"regulatory",ind:"flat",note:"Regulatory axis"},dir:"restore",basis:"Receptor loss drives colitis, so restore/agonize.",cf:"Restore, not inhibit: blocking this receptor would worsen disease."},
+ TNFSF15:{gc:"Replicated TL1A IBD risk locus + colocalization; also a fibrosis modifier",les:{cell:"myeloid & epithelial",ind:"up",note:"TL1A up in inflamed mucosa; linked to fibrostenosis"},dir:"inhibit",basis:"Risk locus (gain-of-function direction).",cf:null},
+ PTPN2:{gc:"IBD risk driven by loss-of-function of a negative regulator (gene is a brake on inflammation)",les:{cell:"broad immune",ind:"flat",note:"Regulatory node, not a clean up-in-lesion signal"},dir:"restore",basis:"The risk allele is loss-of-function, so restoring activity is the protective direction.",cf:"Inhibiting PTPN2 would WORSEN disease (it is a brake). Causal direction is restore, and it is a phosphatase (hard to drug)."},
+ IRF5:{gc:"One of the strongest shared autoimmune risk haplotypes (gain-of-function)",les:{cell:"myeloid",ind:"up",note:"Active in inflamed myeloid cells"},dir:"inhibit",basis:"Risk gain-of-function haplotype: direction is clear.",cf:"Direction is clear (inhibit) but there is no tractable modality: IRF5 is a transcription factor."},
+ GPR35:{gc:"T108M IBD-associated coding variant",les:{cell:"epithelium & immune",ind:"up",note:"Expressed on gut epithelium and immune cells"},dir:"inhibit",basis:"Coding risk variant on a druggable GPCR.",cf:null},
+ CXCR2:{gc:null,les:{cell:"neutrophils",ind:"up",note:"Neutrophils infiltrate inflamed mucosa"},dir:"inhibit",basis:"Mechanism: neutrophil recruitment (no strong human genetic anchor).",cf:null},
+ OSMR:{gc:null,les:{cell:"inflammatory fibroblasts",ind:"up",note:"OSM/OSMR strongly induced in inflamed mucosa and predict anti-TNF non-response (Smillie, Cell 2019; West, Nat Med 2017)"},dir:"inhibit",basis:"Disease-tissue induction + a predictive biomarker (no genetics).",cf:null},
+ OSM:{gc:null,les:{cell:"inflammatory monocytes / fibroblasts",ind:"up",note:"Markedly up in inflamed mucosa; baseline OSM ~10-fold higher in anti-TNF non-responders (Smillie 2019; West 2017)"},dir:"inhibit",basis:"Disease-tissue induction + predictive biomarker.",cf:null},
+ JAK1:{gc:null,les:{cell:"broad immune",ind:"up",note:"JAK-STAT signaling active in disease"},dir:"inhibit",basis:"Pharmacological (downstream signaling node), not a disease-genetic hit.",cf:null},
+ JAK2:{gc:null,les:{cell:"broad immune",ind:"up",note:"JAK-STAT active in disease"},dir:"inhibit",basis:"Pharmacological node.",cf:null},
+ JAK3:{gc:null,les:{cell:"lymphoid",ind:"up",note:"JAK-STAT active in disease"},dir:"inhibit",basis:"Pharmacological node.",cf:null},
+ TNF:{gc:null,les:{cell:"myeloid",ind:"up",note:"Central inflammatory cytokine, induced in inflamed mucosa"},dir:"inhibit",basis:"Pharmacologically validated; no strong disease-genetic anchor.",cf:null},
+ S1PR1:{gc:null,les:{cell:"lymphocytes",ind:"flat",note:"Acts by sequestering lymphocytes, not by lesional induction"},dir:"modulate",basis:"Functional antagonism / receptor modulation (mechanism-driven).",cf:null},
+ ITGA4:{gc:null,les:{cell:"T cells",ind:"up",note:"Mediates lymphocyte homing to gut mucosa"},dir:"inhibit",basis:"Mechanism: gut lymphocyte homing.",cf:null},
+ ITGB7:{gc:null,les:{cell:"T cells",ind:"up",note:"Gut-homing integrin"},dir:"inhibit",basis:"Mechanism: gut homing.",cf:null},
+ NR3C1:{gc:null,les:{cell:"ubiquitous",ind:"flat",note:"Ubiquitous receptor, no disease selectivity"},dir:"activate",basis:"Receptor agonism (corticosteroids).",cf:"Ubiquitous expression, no disease-tissue selectivity: the source of systemic steroid toxicity."},
+ PPARG:{gc:null,les:{cell:"epithelial / immune",ind:"flat",note:"Metabolic nuclear receptor"},dir:"activate",basis:"Nuclear-receptor agonism (partial 5-ASA mechanism).",cf:null},
+ PTGS2:{gc:null,les:{cell:"epithelial / myeloid",ind:"up",note:"COX-2 is induced in inflammation"},dir:"inhibit",basis:"Enzyme inhibition.",cf:"Despite induction, COX inhibition can WORSEN IBD: a direction/benefit-risk trap."},
+ ALOX5:{gc:null,les:{cell:"myeloid",ind:"flat",note:"Leukotriene pathway"},dir:"inhibit",basis:"Enzyme inhibition; limited historical efficacy.",cf:null},
+ IL13:{gc:null,les:{cell:"Th2 / ILC2",ind:"flat",note:"Th2 cytokine; the UC hypothesis did not hold"},dir:"inhibit",basis:"Mechanistic Th2 hypothesis.",cf:"Clinically disconfirmed in UC (anti-IL-13 failed on efficacy)."},
+ SMAD7:{gc:null,les:{cell:"epithelial / immune",ind:"flat",note:"Intracellular TGF-beta brake"},dir:"inhibit",basis:"Antisense inhibition hypothesis.",cf:"Target and direction questioned after the Phase 3 futility of mongersen."},
+ CCR9:{gc:null,les:{cell:"T cells",ind:"up",note:"Gut-homing chemokine axis"},dir:"inhibit",basis:"Mechanism: gut homing.",cf:"Phase 3 failure precedent (vercirnon)."},
+ IL17A:{gc:"IL-17/Th17 pathway is genetically implicated in IBD",les:{cell:"T cells (Th17)",ind:"up",note:"Th17 axis up in inflamed mucosa"},dir:"inhibit",basis:"Pathway genetics implicate involvement.",cf:"DIRECTION INVERTED: genetics implicate the axis, but clinically INHIBITING IL-17 worsened disease (it protects the gut barrier). The causal direction in the gut is not inhibition."},
+ IL17RA:{gc:"IL-17 receptor axis; same pathway genetics",les:{cell:"epithelial / immune",ind:"up",note:"Th17 axis up in mucosa"},dir:"inhibit",basis:"Pathway genetics.",cf:"Same inverted direction as IL17A: receptor blockade was not beneficial in IBD."},
+ TNFRSF9:{gc:null,les:{cell:"T cells",ind:"flat",note:"Costimulatory receptor, mostly studied in oncology"},dir:"modulate",basis:"Costimulation modulation (uncertain in IBD).",cf:null}
+};
+function causalOf(sym){return CAUSAL[sym]||null;}
+function causalTier(c){
+  if(c.gc) return "Genetic-causal";
+  if(c.les&&(c.les.ind==="up"||c.les.ind==="moderate")) return "Disease-tissue";
+  return "Baseline expression";
+}
+function dirMeta(dir){return {inhibit:["Inhibit / block","dir-inhibit"],activate:["Activate / agonize","dir-activate"],restore:["Restore function","dir-restore"],modulate:["Modulate","dir-modulate"]}[dir]||["Direction unclear","dir-modulate"];}
+function causalHTML(t){
+  const c=causalOf(t.symbol); if(!c) return "";
+  const tier=causalTier(c);
+  const lesLit=!!(c.les&&(c.les.ind==="up"||c.les.ind==="moderate"));
+  const rungs=[
+    {k:"Genetic-causal", lit:!!c.gc, ev:c.gc||"No causal human-genetic evidence in UC", sub:"Colocalization, coding, rare-variant burden, or allelic series"},
+    {k:"Disease-tissue", lit:lesLit, ev:c.les?(c.les.note||("Expressed in "+(c.les.cell||"disease tissue"))):"Not induced / not curated in inflamed mucosa", sub:"Induced in inflamed mucosa, in a defined cell type"},
+    {k:"Baseline expression", lit:true, ev:"Present in the relevant tissue (Human Protein Atlas)", sub:"Steady-state expression only"}
+  ];
+  const ladder=rungs.map(r=>`<div class="clad-rung ${r.lit?'lit':'dim'} ${r.k===tier?'top':''}"><span class="clad-dot"></span><div class="clad-txt"><b>${r.k}${r.k===tier?' <span class="clad-here">highest here</span>':''}</b><span class="clad-ev">${r.ev}</span></div></div>`).join('');
+  const dm=dirMeta(c.dir);
+  const conflict=c.cf?`<div class="clad-conflict"><b>&#9888; Direction / evidence conflict.</b> ${c.cf}</div>`:'';
+  return `<div class="sec"><span class="lbl">Causal evidence ladder &amp; direction of effect</span>
+    <p class="clad-intro">How strong is the evidence that this gene is <b>causal</b> in UC, and which way would you drug it? Causal-gene confidence, not association magnitude, is a strong and under-used predictor of clinical success (Minikel, Nature 2024). Direction is anchored on the highest tier that carries a signal; lower tiers can only corroborate or conflict.</p>
+    <div class="clad">${ladder}</div>
+    <div class="clad-dir"><span class="clad-dk">Direction of effect</span><span class="dir-badge ${dm[1]}">${dm[0]}</span> <span class="clad-basis">${c.basis}</span></div>
+    ${conflict}
+  </div>`;
+}
 /* genetic-direction factor folded into the ranking: protective vs risk allele + whether it is up in diseased tissue.
    Tractability is deliberately NOT in here: it is a gate (below), not a weight, so you cannot up-weight past undruggability. */
 function feasScore(t){
@@ -4002,6 +4084,7 @@ function openMemo(sym){
         </div>
       </div>
       <div class="sec"><span class="lbl">Mechanism thesis</span><p>${thesis}</p></div>
+      ${causalHTML(t)}
       ${targetProfileHTML(t)}
       ${translationalEvidenceHTML(t)}
       ${tissueExpressionHTML(t)}
