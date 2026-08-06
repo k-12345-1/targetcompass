@@ -3691,19 +3691,31 @@ function causalConfidence(t){
   if(c.cf) level = level==='High'?'Moderate':'Low';   // an unresolved direction conflict lowers confidence
   return { level, tier, conflict:!!c.cf };
 }
+/* Pfizer portfolio state: the one dimension no sponsor-agnostic tool has.
+   owned = Pfizer already markets the node (S1P: Velsipity; JAK/TEC: Xeljanz, Litfulo);
+   contested = high-conviction but partnered/crowded (TL1A: Pfizer via Roche, Merck + Sanofi in Ph3);
+   whitespace = conviction biology with no owned asset (recommend-eligible). */
+function portfolioState(t){
+  if(t.pfizer_owned) return 'owned';
+  if(t.symbol==='TNFSF15') return 'contested';
+  if((t.whitespace||0)>=0.55) return 'whitespace';
+  return 'neutral';
+}
 function decisionFor(t){
   const sc=scored(posture); const x=sc.find(y=>y.t.symbol===t.symbol); const s=x?x.s:0;
   const conf=causalConfidence(t); const bar=decisionBar;
   const c=causalOf(t.symbol); const cf=c?c.cf:null;
+  const pf=portfolioState(t);
   const hardNeg = t.status==='graveyard';   // clinically disconfirmed (IL17A/IL13/SMAD7/CCR9); a restore-direction conflict is NOT a hard-neg
   let verdict, reason;
   if(hardNeg){ verdict='PASS'; reason='clinically disconfirmed in UC'; }
   else if(s < bar-18){ verdict='PASS'; reason='scores below the decision bar'; }
   else if(cf){ verdict='HOLD'; reason='unresolved direction / tractability question'; }
-  else if(t.pfizer_owned){ verdict='HOLD'; reason='portfolio redundancy (Pfizer already markets this class)'; }
-  else if(s>=bar){ verdict='RECOMMEND'; reason='clears the bar with a clean direction of effect'; }
+  else if(pf==='owned'){ verdict='HOLD'; reason='Pfizer already owns this node (S1P / JAK-TEC): a new program here is portfolio-redundant'; }
+  else if(pf==='contested'){ verdict='HOLD'; reason='contested, not whitespace: partnered via Roche, with Merck and Sanofi in Phase 3'; }
+  else if(s>=bar){ verdict='RECOMMEND'; reason=(pf==='whitespace'?'open field, clean direction, and no Pfizer asset here':'clears the bar with a clean direction of effect')+(conf.tier==='Genetic-causal'?'; human genetics put approval odds ~2.6&times; higher':''); }
   else { verdict='HOLD'; reason='near the bar, not yet a clean recommend'; }
-  return { verdict, score:s, rank:x?x.rank:null, conf, bar, reason, cf };
+  return { verdict, score:s, rank:x?x.rank:null, conf, bar, reason, cf, pf };
 }
 function successFraming(t){
   const c=causalOf(t.symbol); const tier=c?causalTier(c):'Baseline expression';
@@ -4164,6 +4176,15 @@ function causalHTML(t){
   </div>`;
 }
 /* live provenance: pull the target's Open Targets genetic-association score right now, and show it beside the curated tier */
+/* plain-language read of Open Targets' live LoF/GoF + risk/protective direction of effect */
+function directionPhrase(dot,dtr,sym){
+  const lof=/LoF/i.test(dot), gof=/GoF/i.test(dot), prot=/protect/i.test(dtr), risk=/risk/i.test(dtr);
+  if(lof&&prot) return `reducing ${sym} is protective in UC, so an inhibitor is the right direction.`;
+  if(gof&&risk) return `gain of ${sym} function drives UC risk, so inhibiting it is the right direction.`;
+  if(lof&&risk) return `loss of ${sym} raises UC risk, so it may need restoring, not inhibiting (a direction caution).`;
+  if(gof&&prot) return `gain of ${sym} is protective, so agonism may be the play, not inhibition.`;
+  return `Open Targets reports ${dot||'n/a'} on target, ${dtr||'n/a'} on trait for ${sym}.`;
+}
 async function verifyCausalLive(sym,ens){
   const el=document.getElementById('clive-'+sym); if(!el||!ens) return;
   try{
@@ -4175,6 +4196,20 @@ async function verifyCausalLive(sym,ens){
     const g=((uc.datatypeScores||[]).find(d=>d.id==='genetic_association')||{}).score||0;
     el.innerHTML=`<b>&#10003; Open Targets, checked live:</b> genetic-association score <b>${g.toFixed(2)}</b> for UC (fetched just now). ${g>=0.3?'That backs up the human-genetics rung above.':'The genetics case above rests on the specific variant cited; the summary score alone is modest, which is why we name the variant.'}`;
     el.classList.add('clive-ok');
+    /* live direction of effect from Open Targets evidence (LoF/GoF + risk/protective) */
+    try{
+      const dq='query($e:String!,$d:String!){disease(efoId:$d){evidences(ensemblIds:[$e],size:250){rows{datasourceId directionOnTarget directionOnTrait}}}}';
+      const dr=await otFetch(dq,{e:ens,d:'MONDO_0005101'});
+      const erows=((((dr.data||{}).disease||{}).evidences||{}).rows)||[];
+      const dirs=erows.filter(x=>x.directionOnTarget||x.directionOnTrait);
+      if(dirs.length){
+        const cnt={}; dirs.forEach(x=>{const k=(x.directionOnTarget||'?')+'|'+(x.directionOnTrait||'?');cnt[k]=(cnt[k]||0)+1;});
+        const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0][0].split('|');
+        el.innerHTML+=`<div style="margin-top:6px"><b>&#10003; Direction of effect, live:</b> ${directionPhrase(top[0],top[1],sym)} <span style="color:var(--mut)">Open Targets evidence, ${dirs.length} row${dirs.length>1?'s':''}.</span></div>`;
+      } else {
+        el.innerHTML+=`<div style="margin-top:6px;color:var(--mut)">Direction of effect: Open Targets has not resolved a live LoF/GoF call for this target in UC yet, so the curated direction above stands.</div>`;
+      }
+    }catch(e){}
   }catch(e){ el.innerHTML='<span class="clive-off">Live Open Targets check is blocked here (it runs on the hosted site); the curated evidence above stands.</span>'; }
 }
 /* live-derived causal ladder for a target OUTSIDE the curated 30, built from Open Targets right now */
