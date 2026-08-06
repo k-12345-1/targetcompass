@@ -4177,11 +4177,12 @@ function causalHTML(t){
 }
 /* live provenance: pull the target's Open Targets genetic-association score right now, and show it beside the curated tier */
 /* plain-language read of Open Targets' live LoF/GoF + risk/protective direction of effect */
-function directionPhrase(dot,dtr,sym){
+function directionPhrase(dot,dtr,sym,dis){
+  dis=dis||'UC';
   const lof=/LoF/i.test(dot), gof=/GoF/i.test(dot), prot=/protect/i.test(dtr), risk=/risk/i.test(dtr);
-  if(lof&&prot) return `reducing ${sym} is protective in UC, so an inhibitor is the right direction.`;
-  if(gof&&risk) return `gain of ${sym} function drives UC risk, so inhibiting it is the right direction.`;
-  if(lof&&risk) return `loss of ${sym} raises UC risk, so it may need restoring, not inhibiting (a direction caution).`;
+  if(lof&&prot) return `reducing ${sym} is protective in ${dis}, so an inhibitor is the right direction.`;
+  if(gof&&risk) return `gain of ${sym} function drives ${dis} risk, so inhibiting it is the right direction.`;
+  if(lof&&risk) return `loss of ${sym} raises ${dis} risk, so it may need restoring, not inhibiting (a direction caution).`;
   if(gof&&prot) return `gain of ${sym} is protective, so agonism may be the play, not inhibition.`;
   return `Open Targets reports ${dot||'n/a'} on target, ${dtr||'n/a'} on trait for ${sym}.`;
 }
@@ -5318,6 +5319,62 @@ function pfGoToFit(sym){
   const d=document.getElementById('pf-detail');if(d)setTimeout(()=>d.scrollIntoView({behavior:'smooth',block:'center'}),120);
 }
 /* ---------- METHOD: pipeline, vs-Open-Targets movers, trust + scale ---------- */
+/* ===== PLATFORM PROOF: the live evidence layer, run on any disease Open Targets covers ===== */
+const PLATFORM_DISEASES=[
+  {id:'MONDO_0005101',name:'Ulcerative colitis',home:true},
+  {id:'MONDO_0008383',name:'Rheumatoid arthritis'},
+  {id:'MONDO_0005083',name:'Psoriasis'},
+  {id:'MONDO_0004980',name:'Atopic dermatitis'},
+  {id:'MONDO_0011849',name:'Psoriatic arthritis'},
+  {id:'MONDO_0007915',name:'Lupus (SLE)'},
+  {id:'MONDO_0005306',name:'Ankylosing spondylitis'}
+];
+let _platRun=0;
+function renderPlatform(){
+  const box=document.getElementById('platwrap'); if(!box||box.dataset.done)return; box.dataset.done="1";
+  const chips=PLATFORM_DISEASES.map(d=>`<button class="pinb${d.home?' on':''}" data-id="${d.id}" onclick="runPlatform('${d.id}','${d.name.replace(/'/g,'')}')">${d.name}${d.home?' &middot; home':''}</button>`).join('');
+  box.innerHTML=`
+    <p style="font-size:13.5px;line-height:1.5;color:var(--ink)">The decision layer above is tuned for ulcerative colitis. But the <b>evidence layer underneath is disease-agnostic</b>: it reads live from Open Targets, which covers every disease. Pick one the tool has never seen and watch it rank the field in real time.</p>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin:10px 0">${chips}</div>
+    <div id="platout" style="margin-top:6px"></div>
+    <p class="dc-fine" style="margin-top:10px">Live from the Open Targets GraphQL API for the selected disease: genetics-weighted association and direction of effect, fetched now. This is the <b>evidence layer only</b>; the deeper layer (crowding, portfolio fit, combinations, patient coverage) stays UC-curated today. It shows the engine ports to any indication Pfizer works in.</p>`;
+  runPlatform(PLATFORM_DISEASES[0].id, PLATFORM_DISEASES[0].name);
+}
+async function runPlatform(id,name){
+  const out=document.getElementById('platout'); if(!out)return;
+  const my=++_platRun;
+  document.querySelectorAll('#platwrap .pinb').forEach(b=>b.classList.toggle('on', b.dataset.id===id));
+  out.innerHTML=`<div style="color:var(--mut);font-size:13px">Fetching ${name} targets live from Open Targets&hellip;</div>`;
+  try{
+    const q='query($d:String!){disease(efoId:$d){name associatedTargets(page:{index:0,size:12}){count rows{target{approvedSymbol approvedName} score datatypeScores{id score}}}}}';
+    const r=await otFetch(q,{d:id});
+    const dz=r.data.disease; const at=dz.associatedTargets; const rows=at.rows||[];
+    const ranked=rows.map(x=>{ const g=((x.datatypeScores||[]).find(s=>s.id==='genetic_association')||{}).score||0; const overall=x.score||0; return {sym:x.target.approvedSymbol, overall, g, ps:0.55*overall+0.45*g}; }).sort((a,b)=>b.ps-a.ps);
+    if(my!==_platRun)return;
+    const mx=ranked.length?ranked[0].ps:1;
+    const list=ranked.slice(0,10).map((t,i)=>`<div class="bar-row" style="padding:5px 0">
+      <span style="width:24px;color:var(--mut);font-family:var(--mono);font-size:12px">${i+1}</span>
+      <span style="width:96px;font-weight:750;font-size:13px">${t.sym}</span>
+      <div class="bar-track" style="flex:1;height:14px"><div class="bar-fill" style="width:${Math.round(100*t.ps/(mx||1))}%"></div></div>
+      <span style="width:110px;text-align:right;font-size:11px;color:var(--mut)">genetics ${t.g.toFixed(2)}</span></div>`).join('');
+    out.innerHTML=`<div style="font-size:12.5px;color:var(--risk-lo);font-weight:700;margin-bottom:6px">&#10003; ${dz.name}: ${at.count.toLocaleString()} associated targets, ranked live just now</div>${list}<div id="platdir" style="margin-top:8px;font-size:12.5px"></div>`;
+    if(ranked.length){
+      try{
+        const eq='query($q:String!){search(queryString:$q,entityNames:["target"],page:{index:0,size:1}){hits{id}}}';
+        const er=await otFetch(eq,{q:ranked[0].sym}); const ens=((er.data.search.hits||[])[0]||{}).id;
+        const pd=document.getElementById('platdir');
+        if(ens&&pd){
+          const dq='query($e:String!,$d:String!){disease(efoId:$d){evidences(ensemblIds:[$e],size:200){rows{directionOnTarget directionOnTrait}}}}';
+          const dr=await otFetch(dq,{e:ens,d:id});
+          const drs=((((dr.data||{}).disease||{}).evidences||{}).rows||[]).filter(x=>x.directionOnTarget||x.directionOnTrait);
+          if(my!==_platRun)return;
+          if(drs.length){ const cnt={}; drs.forEach(x=>{const k=(x.directionOnTarget||'?')+'|'+(x.directionOnTrait||'?');cnt[k]=(cnt[k]||0)+1;}); const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0][0].split('|'); pd.innerHTML=`<b style="color:var(--risk-lo)">&#10003; Direction of effect, live for ${ranked[0].sym}:</b> ${directionPhrase(top[0],top[1],ranked[0].sym,dz.name)}`; }
+          else { pd.innerHTML=`<span style="color:var(--mut)">Direction of effect for ${ranked[0].sym}: not resolved live in Open Targets for ${dz.name} yet.</span>`; }
+        }
+      }catch(e){}
+    }
+  }catch(e){ out.innerHTML=`<div style="color:var(--risk-md);font-size:13px">The live Open Targets fetch is blocked in this sandbox; on the hosted URL it ranks ${name} in real time.</div>`; }
+}
 function drawMethod(){
   const box=document.getElementById('methodwrap'); if(!box||box.dataset.done) return; box.dataset.done="1";
   // vs Open Targets: OT ranks by raw association; TargetCompass by the current strategy
@@ -5367,6 +5424,11 @@ function drawMethod(){
   </div>
 
   <div class="method-sec">
+    <h3>Platform proof: point it at any disease, live</h3>
+    <div id="platwrap"></div>
+  </div>
+
+  <div class="method-sec">
     <h3>Built to be trusted, and to scale</h3>
     <div class="method-list">
       <div class="ml"><h4>Messy data, handled honestly</h4><p>Sources disagree and have gaps. We keep every claim with its source and date in an append-only log, so the disagreements stay visible instead of getting averaged away.</p></div>
@@ -5378,6 +5440,7 @@ function drawMethod(){
   box.innerHTML=box_h;
   drawValidation();
   drawBlinded();
+  renderPlatform();
 }
 // Compare lives under Prioritize; the backtest is folded into How it works.
 /* ---------- Whitespace x Momentum: competitive crowding vs recent scientific attention ----------
