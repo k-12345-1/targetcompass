@@ -4587,18 +4587,19 @@ function openMemo(sym){
       <div class="sec"><span class="lbl">Mechanism thesis</span><p>${thesis}</p></div>
       ${causalHTML(t)}
       ${diseaseContextHTML(t)}
-      ${targetProfileHTML(t)}
+      <details class="disclose"><summary>Can you drug it, and is it safe?<span class="dsub">tractability, read-across, on-target safety</span><span class="chev">&#9656;</span></summary><div class="disclose-body">${targetProfileHTML(t)}
       ${translationalEvidenceHTML(t)}
-      ${comboHTML(t)}
+      </div></details><details class="disclose"><summary>Business &amp; Pfizer fit<span class="dsub">combinations, modality, companion diagnostic</span><span class="chev">&#9656;</span></summary><div class="disclose-body">${comboHTML(t)}
       ${modalityFitHTML(t)}
       ${cdxHTML(t)}
-      ${tissueExpressionHTML(t)}
+      </div></details><details class="disclose"><summary>Expression, evidence &amp; next steps<span class="dsub">tissue, supporting &amp; disconfirming evidence, what would change it</span><span class="chev">&#9656;</span></summary><div class="disclose-body">${tissueExpressionHTML(t)}
       <div class="sec"><span class="lbl">Supporting evidence</span>${evList(supList)}</div>
       <div class="sec contra"><span class="lbl">Disconfirming evidence: why this could fail</span>
         ${conEv.length?evList(conEv.map(e=>({id:e.id,url:e.url,text:e.text}))):'<p style="color:var(--ink-3);font-size:12.5px">No material disconfirming signals in the current evidence set. Absence of evidence is not evidence of safety. Flag for wet-lab confirmation.</p>'}</div>
       <div class="sec"><span class="lbl">Competitive position</span><p>${market}</p></div>
       <div class="sec"><span class="lbl">What would change our mind</span><p>${change}</p></div>
       <div class="sec"><span class="lbl">Recommended next experiment</span><p>${exp}</p></div>
+    </div></details>
     </div>
     <div class="memo-foot">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-3)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
