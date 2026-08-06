@@ -197,6 +197,10 @@
   .dir-modulate{color:var(--ink-3);background:var(--panel-2)}
   .clad-conflict{margin-top:11px;font-size:12px;color:#8A5A00;background:#FBF0DC;border:1px solid #F0DCB4;border-radius:10px;padding:10px 12px;line-height:1.5}
   .clad-conflict b{color:#7A4E00}
+  .clad-live{margin-top:11px;font-size:11.5px;color:var(--ink-3);line-height:1.5;background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:8px 11px}
+  .clad-live.clive-ok{color:var(--ink-2);border-color:#B7E3CE;background:#EDF7F1}
+  .clad-live b{color:var(--ink)}
+  .clive-off{color:var(--ink-4)}
   /* ---- disease-context expression ---- */
   .dc-row{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin:2px 0 9px}
   .dc-cell{font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--ink-2);background:var(--panel-2);border:1px solid var(--line);border-radius:6px;padding:3px 9px}
@@ -4148,6 +4152,36 @@ function causalHTML(t){
     <div class="clad">${ladder}</div>
     <div class="clad-dir"><span class="clad-dk">Which way to drug it</span><span class="dir-badge ${dm[1]}">${dm[0]}</span> <span class="clad-basis">${c.basis}</span></div>
     ${conflict}
+    ${t.ensembl?`<div class="clad-live" id="clive-${t.symbol}">Checking Open Targets live&hellip;</div>`:''}
+  </div>`;
+}
+/* live provenance: pull the target's Open Targets genetic-association score right now, and show it beside the curated tier */
+async function verifyCausalLive(sym,ens){
+  const el=document.getElementById('clive-'+sym); if(!el||!ens) return;
+  try{
+    const q='query($e:String!){target(ensemblId:$e){associatedDiseases(page:{index:0,size:600}){rows{disease{id} datatypeScores{id score}}}}}';
+    const r=await otFetch(q,{e:ens});
+    const rows=(r.data.target&&r.data.target.associatedDiseases&&r.data.target.associatedDiseases.rows)||[];
+    const uc=rows.find(x=>x.disease.id==='MONDO_0005101');
+    if(!uc){ el.innerHTML='<b>Open Targets, live:</b> no ulcerative-colitis association on record right now.'; el.classList.add('clive-ok'); return; }
+    const g=((uc.datatypeScores||[]).find(d=>d.id==='genetic_association')||{}).score||0;
+    el.innerHTML=`<b>&#10003; Open Targets, checked live:</b> genetic-association score <b>${g.toFixed(2)}</b> for UC (fetched just now). ${g>=0.3?'That backs up the human-genetics rung above.':'The genetics case above rests on the specific variant cited; the summary score alone is modest, which is why we name the variant.'}`;
+    el.classList.add('clive-ok');
+  }catch(e){ el.innerHTML='<span class="clive-off">Live Open Targets check is blocked here (it runs on the hosted site); the curated evidence above stands.</span>'; }
+}
+/* live-derived causal ladder for a target OUTSIDE the curated 30, built from Open Targets right now */
+function liveCausalHTML(m){
+  const g=m.genetic||0; const genLit=g>=0.3;
+  const rungs=[
+    {label:"Human genetics point to it", lit:genLit, ev:g>0?`Open Targets genetic-association score ${g.toFixed(2)} for UC${genLit?'':' (modest, so this rung stays dim)'}`:"No genetic-association score for UC in Open Targets"},
+    {label:"Switched on in the inflamed gut", lit:false, ev:"Single-cell inflamed-gut data is curated for the flagship targets only, not available live for this one"},
+    {label:"Just present in the body", lit:true, ev:"Expressed in tissue (Open Targets / Human Protein Atlas)"}
+  ];
+  const tier=genLit?"Human genetics point to it":"Just present in the body";
+  const ladder=rungs.map(r=>`<div class="clad-rung ${r.lit?'lit':'dim'} ${r.label===tier?'top':''}"><span class="clad-dot"></span><div class="clad-txt"><b>${r.label}${r.label===tier?' <span class="clad-here">strongest evidence here</span>':''}</b><span class="clad-ev">${r.ev}</span></div></div>`).join('');
+  return `<div class="sec"><span class="lbl">Is it a real cause? (live from Open Targets)</span>
+    <p class="clad-intro">Genes we are confident actually cause UC become successful drugs far more often (Minikel, Nature 2024). This is built live from Open Targets for a target outside the curated set. Which way to drug it is not something the association score alone can tell you, so it is left open here.</p>
+    <div class="clad">${ladder}</div>
   </div>`;
 }
 /* ---------- cell-type disease-context signal (additive flag, NOT a re-ranking sort key) ----------
@@ -4276,6 +4310,7 @@ function openMemo(sym){
   document.getElementById('scrim').classList.add('on');
   loadHpaExpression();
   requestAnimationFrame(()=>initMol(sym));
+  if(CAUSAL[sym]&&t.ensembl)verifyCausalLive(sym,t.ensembl);
 }
 function closeMemo(){document.getElementById('drawer').classList.remove('on');document.getElementById('scrim').classList.remove('on');}
 document.getElementById('scrim').addEventListener('click',closeMemo);
@@ -5664,6 +5699,7 @@ function renderAutoMemo(m){
     <div class="memo-body">
       ${structHTML}
       <div class="sec"><span class="lbl">Mechanism thesis</span><p>${m.symbol} shows a UC association of ${(m.assoc||0).toFixed(2)}. ${genTxt}</p></div>
+      ${liveCausalHTML(m)}
       ${translationalEvidenceHTML(m)}
       ${tissueExpressionHTML(m)}
       <div class="sec"><span class="lbl">Supporting evidence</span>${evList(sup)}</div>
