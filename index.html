@@ -3703,9 +3703,9 @@ function decisionFor(t){
 }
 function successFraming(t){
   const c=causalOf(t.symbol); const tier=c?causalTier(c):'Baseline expression';
-  if(tier==='Genetic-causal') return 'Historically, genetically-supported targets have reached approval about <b>twice</b> as often (Minikel, Nature 2024). This target carries that de-risking.';
-  if(tier==='Disease-tissue') return 'No human-genetic de-risking multiplier applies here; the case rests on disease-tissue biology, which is weaker evidence for eventual success.';
-  return 'No genetic or disease-tissue de-risking: treat success odds as the low base rate for the stage until stronger evidence appears.';
+  if(tier==='Genetic-causal') return 'Targets with human-genetics support have historically become approved drugs about <b>twice</b> as often (Minikel, Nature 2024), and this one has it.';
+  if(tier==='Disease-tissue') return 'There is no human-genetics support here, so the case leans on the biology of the diseased tissue, which is weaker evidence that it will work.';
+  return 'No genetics and no diseased-tissue signal, so treat the odds as the low baseline until stronger evidence shows up.';
 }
 function decisionHTML(t){
   const d=decisionFor(t); const c=causalOf(t.symbol);
@@ -3715,17 +3715,18 @@ function decisionHTML(t){
   const pos=[['stronger biology',p.wB*t.bio],['an open field',p.wW*t.whitespace],['tractability',(p.wD||0)*t.drug],['genetic direction',(p.wS||0)*(t.feas!=null?t.feas:0.5)]];
   pos.sort((a,b)=>b[1]-a[1]);
   const drivers=pos.slice(0,2).map(x=>x[0]).join(' and ');
-  const move = d.verdict==='RECOMMEND' ? 'It already clears your bar. Lowering confidence risk means resolving any open safety or tractability question before committing medicinal chemistry.'
-    : d.cf ? 'Resolve the flagged direction / tractability question (below) before this can become a clean recommend.'
-    : t.pfizer_owned ? 'A differentiated asset (new modality, biomarker-defined population) would be needed to justify pursuing a class Pfizer already sells.'
-    : d.verdict==='PASS' && t.status==='graveyard' ? 'Only a mechanism that separates the protective from the pathogenic axis would reopen this.'
-    : `It would need to clear the decision bar (currently ${d.bar}); today it scores ${d.score}.`;
-  return `<div class="sec decision"><span class="lbl">Decision &middot; at your bar of ${d.bar}/100</span>
+  const prof=tprofile(t.symbol); const ps=prof?posEstimate(t,prof):null;
+  const move = d.verdict==='RECOMMEND' ? 'It already clears your bar. Before committing real chemistry, close out any open safety or can-you-drug-it question.'
+    : d.cf ? 'Settle the flagged question below (which way to drug it, or whether it can be drugged) before it can be a clean recommend.'
+    : t.pfizer_owned ? 'Pfizer already sells in this class, so it would need a real edge (a new kind of drug, or a defined group of patients it helps) to be worth pursuing.'
+    : d.verdict==='PASS' && t.status==='graveyard' ? 'Only a smarter version that separates the harmful part of the biology from the helpful part would reopen this.'
+    : `It would need to clear the bar (now ${d.bar}); today it scores ${d.score}.`;
+  return `<div class="sec decision"><span class="lbl">The call &middot; at your bar of ${d.bar}/100</span>
     <div class="dv-row"><span class="dv-badge ${vmeta[1]}">${vmeta[0]}</span>${isFlagged(t)?'<span class="flag-chip">&#9873; Flagged: not RECOMMEND-eligible until resolved</span>':''}
-      <span class="dv-meta">score <b>${d.score}</b> &middot; rank <b>#${d.rank}</b> &middot; causal confidence <b>${d.conf.level}</b></span></div>
-    <p class="dv-why"><b>Why:</b> ${t.symbol} ${d.reason}. Its strongest drivers under the ${POSTURES[posture].name} strategy are ${drivers}. ${successFraming(t)}</p>
+      <span class="dv-meta">score <b>${d.score}</b> &middot; rank <b>#${d.rank}</b> &middot; how sure it is causal: <b>${d.conf.level}</b>${ps?` &middot; odds of success <b class="pos-${ps.tier}">~${ps.pct}%</b>`:''}</span></div>
+    <p class="dv-why"><b>Why:</b> ${t.symbol} ${d.reason}. Its strongest points under the ${POSTURES[posture].name} strategy are ${drivers}. ${successFraming(t)}</p>
     <p class="dv-move"><b>What would move it:</b> ${move}</p>
-    <p class="dv-fine">This is an assumption-explicit gate, not a calibrated probability. Move the <b>decision bar</b> on the ranked board to see the shortlist change; every verdict shows the evidence and threshold behind it.</p>
+    <p class="dv-fine">This is a transparent, assumptions-shown call, not a precise probability. Drag the <b>decision bar</b> on the ranked list to see the shortlist change; every verdict shows the evidence and the threshold behind it.</p>
   </div>`;
 }
 function decisionCounts(sc){
@@ -3822,7 +3823,7 @@ function tissueExpressionHTML(m){
   const v=m.tissueDistribution ?? m.prio?.tissueDistribution;
   const b=expressionBreadthLabel(v);
   const raw=b.raw==null?'NA':b.raw.toFixed(2);
-  return `<div class="sec"><span class="lbl">Tissue expression &middot; HPA + NCBI</span>
+  return `<div class="sec"><span class="lbl">Where it's active in the body</span>
     <div id="hpaexpr" class="expr-card" data-ens="${m.ensembl||''}" data-symbol="${m.symbol}">Loading tissue-level RNA expression from Human Protein Atlas&hellip;</div>
     <p>${b.txt} The safety summary uses <b>Open Targets Platform Target Prioritisation factors</b>, specifically the <span class="mono">tissueDistribution</span> factor (<span class="mono">${raw}</span>). Open Targets derives this expression-distribution annotation from baseline-expression resources including Human Protein Atlas, Expression Atlas and GTEx. The chart above uses Human Protein Atlas tissue-level RNA expression when available.</p>
     ${sourceLinksHTML(m)}
@@ -3905,7 +3906,7 @@ function translationalEvidenceHTML(m){
       active!=null?`ClinicalTrials.gov count is <b>${active} active / ${total} total</b> UC studies. This is activity evidence, not proof that the mechanism works.`
         :'No clinical proof-of-mechanism is embedded for this target.',
       [['ClinicalTrials.gov',ctUrlFor(sym)]]));
-  return `<div class="sec"><span class="lbl">Translational evidence &middot; sourced ladder</span>
+  return `<div class="sec"><span class="lbl">How strong is the evidence?</span>
     <p style="margin-bottom:8px;color:var(--ink-3);font-size:12.5px">This section separates embedded evidence from missing evidence. A row marked <b>Not embedded</b> is not used as support in the recommendation.</p>
     <div class="evladder">${rows.join('')}</div>
   </div>`;
@@ -4199,20 +4200,13 @@ function posEstimate(t,p){
 }
 function targetProfileHTML(t){
   const p=tprofile(t.symbol); if(!p) return "";
-  const gdLabel={protective:"Protective variant",risk:"IBD-risk variant",none:"No genetic link"}[p.g]||"Genetic signal";
-  const les={up:'<span class="tp-les up">&#9650; Up in inflamed mucosa</span>',down:'<span class="tp-les down">&#9660; Down in disease</span>',ns:'<span class="tp-les ns">Not disease-restricted</span>'}[p.l]||"";
   const undrug=/Undruggable|Difficult/.test(p.m)||/Transcription factor|Phosphatase/.test(p.c);
-  const pos=posEstimate(t,p);
-  const posLabel={high:"Higher",mod:"Moderate",low:"Lower"}[pos.tier];
   return `<div class="sec tprofile">
-    <span class="lbl">Target profile: is it real, can you drug it, does it fit patients?</span>
+    <span class="lbl">Can you drug it, does it generalize, is it safe?</span>
     <div class="tp-grid">
-      <div class="tp-item"><span class="tp-k">What the genetics say</span><div class="tp-v"><span class="gd-badge gd-${p.g}">${gdLabel}</span> ${p.gn}</div></div>
       <div class="tp-item"><span class="tp-k">How you would drug it</span><div class="tp-v"><b>${p.m}</b> &middot; ${p.c}${undrug?' <span class="tp-warn">no way to drug it yet</span>':''}</div></div>
-      <div class="tp-item"><span class="tp-k">In diseased tissue</span><div class="tp-v">${les} ${p.ln}</div></div>
       <div class="tp-item"><span class="tp-k">Proven in related diseases?</span><div class="tp-v">${p.p}</div></div>
       <div class="tp-item"><span class="tp-k">Safety of hitting it</span><div class="tp-v">${p.ox}</div></div>
-      <div class="tp-item"><span class="tp-k">Odds of success</span><div class="tp-v"><b class="pos-${pos.tier}">${posLabel} &middot; ~${pos.pct}%</b> <span class="tp-illus">rough estimate: starts at ~10%, ${pos.why}, then adjusted for warning signs.</span></div></div>
     </div>
   </div>`;
 }
