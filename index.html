@@ -3773,9 +3773,17 @@ function drawBoard(sc){
   document.getElementById('board-h').innerHTML=`Ranked &middot; ${POSTURES[posture].name}`;
   const counts=decisionCounts(sc);
   const dec=document.getElementById('decbar');
-  if(dec) dec.innerHTML=`<div class="dec-counts"><span class="dc rec">${counts.rec} recommend</span><span class="dc hold">${counts.hold} hold</span><span class="dc pass">${counts.pass} pass</span></div>
-    <label class="dec-slider"><span>Decision bar <b>${decisionBar}</b>/100</span>
-      <input type="range" min="30" max="90" value="${decisionBar}" oninput="setDecisionBar(this.value)" aria-label="Decision threshold"></label>`;
+  if(dec){
+    // Build the slider ONCE; rebuilding it on every input would cancel the drag. Only the dynamic bits update.
+    if(!document.getElementById('decbar-slider')){
+      dec.innerHTML=`<div class="dec-counts" id="dec-counts"></div>
+    <label class="dec-slider"><span>Decision bar <b id="dec-val">${decisionBar}</b>/100</span>
+      <input type="range" id="decbar-slider" min="30" max="90" value="${decisionBar}" oninput="setDecisionBar(this.value)" aria-label="Decision threshold"></label>`;
+    }
+    document.getElementById('dec-counts').innerHTML=`<span class="dc rec">${counts.rec} recommend</span><span class="dc hold">${counts.hold} hold</span><span class="dc pass">${counts.pass} pass</span>`;
+    const vb=document.getElementById('dec-val'); if(vb)vb.textContent=decisionBar;
+    const sl=document.getElementById('decbar-slider'); if(sl && +sl.value!==decisionBar) sl.value=decisionBar;
+  }
   const b=document.getElementById('board'); b.innerHTML='';
   sc.slice(0,12).forEach(x=>{
     const t=x.t; const dv=decisionFor(t);
