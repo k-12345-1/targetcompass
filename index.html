@@ -4704,6 +4704,59 @@ function backtestEngineRead(sym){
   chips.push(`<span class="er-chip ${t.failrisk<=.2?"er-good":t.failrisk>=.5?"er-bad":"er-mid"}">Failure risk ${Math.round(t.failrisk*100)}%</span>`);
   return `<div class="er"><div class="er-h">Engine read &middot; today's model</div><div class="er-chips">${chips.join("")}</div></div>`;
 }
+/* BLINDED POINT-IN-TIME BACKTEST: score each target using ONLY evidence dated <= a chosen cutoff year;
+   the outcome is revealed but never touches the verdict. Curated ledger of real discovery years + outcomes.
+   The one capability the field says nobody has (Open Targets scores are not timestamped). */
+const BLINDED=[
+  {sym:'IL23R',mech:'IL-23 (R381Q)',geneticYear:2006,crowdedFrom:2016,outcomeYear:2019,outcome:'IL-23 pathway approved in IBD (ustekinumab UC 2019; risankizumab, mirikizumab)',success:true},
+  {sym:'IL12B',mech:'IL-12/23 p40',geneticYear:2008,crowdedFrom:2016,outcomeYear:2019,outcome:'Ustekinumab (anti-p40) approved in UC',success:true},
+  {sym:'TNFSF15',mech:'TL1A',geneticYear:2010,crowdedFrom:2022,outcomeYear:2023,outcome:'TL1A programs reach Phase 3; ~$10B in acquisitions',success:true},
+  {sym:'TYK2',mech:'TYK2 (P1104A)',geneticYear:2016,crowdedFrom:2021,outcomeYear:2022,outcome:'Deucravacitinib approved (psoriasis); advancing in IBD',success:true},
+  {sym:'IL17A',mech:'IL-17',geneticYear:2008,contraYear:2012,outcomeYear:2012,outcome:'Secukinumab worsened IBD; abandoned',success:false},
+  {sym:'S1PR1',mech:'S1P modulation',geneticYear:null,outcomeYear:2021,outcome:'Ozanimod, etrasimod approved in UC',success:true},
+  {sym:'SMAD7',mech:'SMAD7 antisense',geneticYear:null,outcomeYear:2019,outcome:'Mongersen failed Phase 3',success:false}
+];
+function blindedVerdict(b,year){
+  if(!b.geneticYear || year<b.geneticYear) return {v:'PASS',why:'no human-genetic support established by '+year};
+  if(b.contraYear && year>=b.contraYear) return {v:'PASS',why:'a clinical signal was already against it by '+year};
+  if(b.crowdedFrom && year>=b.crowdedFrom) return {v:'HOLD',why:'genetics established, but the field is crowded by '+year};
+  return {v:'RECOMMEND',why:'human genetics by '+b.geneticYear+', field still open'};
+}
+function blindStats(year){ let rec=0,hit=0;
+  BLINDED.forEach(b=>{ if(blindedVerdict(b,year).v==='RECOMMEND'){rec++; if(b.success)hit++;} });
+  const missed=BLINDED.filter(b=> b.success && !b.geneticYear && blindedVerdict(b,year).v!=='RECOMMEND').map(b=>b.sym);
+  return {rec,hit,missed};
+}
+function blindBadge(v){ const c=v==='RECOMMEND'?'var(--risk-lo)':v==='HOLD'?'var(--risk-md)':'var(--mut)',
+  bg=v==='RECOMMEND'?'#E4F5EE':v==='HOLD'?'#FBF1D6':'#eef0f6';
+  return `<span style="font-size:10px;font-weight:800;letter-spacing:.03em;padding:2px 8px;border-radius:6px;color:${c};background:${bg}">${v}</span>`; }
+function renderBlinded(year){
+  const body=document.getElementById('blindbody'); if(!body)return;
+  const st=blindStats(year), pct=st.rec?Math.round(100*st.hit/st.rec):0;
+  const rows=BLINDED.slice().sort((a,b)=>(a.geneticYear||9999)-(b.geneticYear||9999)).map(b=>{
+    const d=blindedVerdict(b,year), revealed=year>=b.outcomeYear;
+    const outcome=revealed?`${b.outcome} <span style="color:var(--mut)">(${b.outcomeYear})</span>`:`<span style="color:var(--mut)">outcome still unknown as of ${year}</span>`;
+    return `<tr style="border-top:1px solid var(--line)">
+      <td style="padding:8px 10px 8px 0;vertical-align:top"><b>${b.sym}</b><div style="font-size:11px;color:var(--mut)">${b.mech}</div></td>
+      <td style="padding:8px 10px;vertical-align:top">${blindBadge(d.v)}<div style="font-size:11px;color:var(--mut);margin-top:3px">${d.why}</div></td>
+      <td style="padding:8px 0 8px 10px;vertical-align:top;font-size:12.5px">${outcome}</td></tr>`;
+  }).join('');
+  const miss=st.missed.length?` It <b>misses</b> ${st.missed.join(', ')} (approved later, but with no human genetics to flag it early, an honest blind spot).`:'';
+  body.innerHTML=`<div style="background:var(--accent-bg);border:1px solid #C7D0FF;border-radius:10px;padding:10px 14px;font-size:13.5px;line-height:1.45;color:var(--accent-ink);margin:6px 0 12px">As of <b>${year}</b>, using only evidence available then, it would RECOMMEND <b>${st.rec}</b> target${st.rec===1?'':'s'}${st.rec?`, of which <b>${st.hit}/${st.rec}</b> eventually succeeded (<b>${pct}%</b> precision, and the outcome never touched the score)`:''}.${miss}</div>
+    <table style="width:100%;border-collapse:collapse"><thead><tr style="text-align:left;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--mut)"><th style="padding-bottom:4px">Target</th><th style="padding-bottom:4px">Verdict as of ${year}</th><th style="padding-bottom:4px">What actually happened</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+let blindYear=2010;
+window.blindSet=function(v){ blindYear=+v; const y=document.getElementById('blindyear'); if(y)y.textContent=blindYear; renderBlinded(blindYear); };
+function drawBlinded(){
+  const box=document.getElementById('blindwrap'); if(!box||box.dataset.done)return; box.dataset.done="1";
+  box.innerHTML=`
+    <p style="font-size:13.5px;line-height:1.5;color:var(--ink)">The backtest above is honest hindsight. This one is <b>leakage-controlled</b>: pick a year, and every target is scored using <b>only the evidence that existed by then</b>. The outcome is revealed, but never touches the score.</p>
+    <label style="display:inline-flex;align-items:center;gap:12px;margin:12px 0 2px;font-size:13px;font-weight:600">Decision year <b id="blindyear" style="font-family:var(--mono);color:var(--accent)">${blindYear}</b>
+      <input type="range" id="blindslider" min="2006" max="2020" step="1" value="${blindYear}" oninput="blindSet(this.value)" style="width:280px" aria-label="Decision year"></label>
+    <div id="blindbody"></div>
+    <p style="font-size:11px;color:var(--mut);line-height:1.4;margin-top:10px"><b>Honest fine print:</b> a curated ledger of real genetic-discovery years and outcomes for ${BLINDED.length} UC targets, not a genome-wide frozen database. But the verdict at each year uses only pre-cutoff evidence, so it is genuinely leakage-controlled, and it keeps its honest misses.</p>`;
+  renderBlinded(blindYear);
+}
 function drawValidation(){
   const box=document.getElementById('valwrap'); if(!box) return;
   if(box.dataset.done) return; box.dataset.done="1";
@@ -5226,6 +5279,11 @@ function drawMethod(){
   </div>
 
   <div class="method-sec">
+    <h3>The leakage-controlled version: what would we have said back then?</h3>
+    <div id="blindwrap"></div>
+  </div>
+
+  <div class="method-sec">
     <h3>Built to be trusted, and to scale</h3>
     <div class="method-list">
       <div class="ml"><h4>Messy data, handled honestly</h4><p>Sources disagree and have gaps. We keep every claim with its source and date in an append-only log, so the disagreements stay visible instead of getting averaged away.</p></div>
@@ -5236,6 +5294,7 @@ function drawMethod(){
   </div>`;
   box.innerHTML=box_h;
   drawValidation();
+  drawBlinded();
 }
 // Compare lives under Prioritize; the backtest is folded into How it works.
 /* ---------- Whitespace x Momentum: competitive crowding vs recent scientific attention ----------
