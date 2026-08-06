@@ -4206,6 +4206,11 @@ async function verifyCausalLive(sym,ens){
         const cnt={}; dirs.forEach(x=>{const k=(x.directionOnTarget||'?')+'|'+(x.directionOnTrait||'?');cnt[k]=(cnt[k]||0)+1;});
         const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0][0].split('|');
         el.innerHTML+=`<div style="margin-top:6px"><b>&#10003; Direction of effect, live:</b> ${directionPhrase(top[0],top[1],sym)} <span style="color:var(--mut)">Open Targets evidence, ${dirs.length} row${dirs.length>1?'s':''}.</span></div>`;
+        try{ const lt=liveTheraDir(top[0],top[1]); const cc=causalOf(sym); const rel=document.getElementById('recon-live-'+sym);
+          if(rel&&lt&&cc&&cc.dir){ const cd=/inhibit/i.test(cc.dir)?'inhibit':/restore/i.test(cc.dir)?'restore':/activate/i.test(cc.dir)?'activate':''; const agree=(lt===cd);
+            rel.innerHTML=agree
+              ? `<b style="color:var(--risk-lo)">&#10003; Live check: Open Targets direction agrees</b> (${top[0]}/${top[1]}), the reconciliation above holds on live data.`
+              : `<b style="color:var(--risk-md)">&#9873; Live check: Open Targets direction differs</b> (${top[0]}/${top[1]}), worth reconciling against the curated call.`; } }catch(_){}
       } else {
         el.innerHTML+=`<div style="margin-top:6px;color:var(--mut)">Direction of effect: Open Targets has not resolved a live LoF/GoF call for this target in UC yet, so the curated direction above stands.</div>`;
       }
@@ -4231,22 +4236,72 @@ function liveCausalHTML(m){
    Honest per the adversarial review: qualitative induction (no false-precision cross-unit deltas), single-atlas
    sourcing, and the load-bearing driver-vs-reactive distinction (induced WITHOUT causal genetics may be a bystander). */
 function inductionLevel(ind){return {up:['Strong','ind-strong',3],moderate:['Moderate','ind-mod',2],flat:['Flat','ind-flat',1],ns:['Flat','ind-flat',1],down:['Lower in disease','ind-down',1]}[ind]||['Flat','ind-flat',1];}
+/* RECONCILIATION ENGINE: reconcile the human-genetic direction (inhibit vs restore) against the
+   diseased-tissue direction (induced vs not), and fire the flag GREEN only when they agree.
+   Fusing genetic direction with lesional induction is the one combination Open Targets, the
+   Genetic Priority Score, DisGeNET and PandaOmics do not do. */
+function reconcile(t){
+  const c=causalOf(t.symbol); if(!c||!c.les) return null;
+  const dir=c.dir||'', ind=c.les.ind||'flat', causal=!!c.gc;
+  const wantsInhibit=/inhibit/i.test(dir), wantsRaise=/restore|activate/i.test(dir), modulate=/modulate/i.test(dir);
+  const up=(ind==='up'||ind==='moderate'), down=(ind==='down');
+  const gLab=wantsInhibit?'block it':wantsRaise?'restore it':modulate?'modulate it':'act on it';
+  const tLab=up?'elevated in disease':down?'reduced in disease':'flat';
+  let status,color,head,detail;
+  // 1) clinically disconfirmed overrules everything: the clinic already ran the experiment
+  if(t.status==='graveyard'){ status='Conflict'; color='var(--risk-hi)'; head='clinically disconfirmed';
+    detail='Whatever the genetics and tissue suggest, blocking this target in the clinic went the wrong way (efficacy failure or worsening). The real-world outcome overrules the paper direction.'; }
+  // 2) a known curated conflict: surface it instead of a false green
+  else if(c.cf){ status='Conflict'; color=wantsRaise?'var(--risk-md)':'var(--risk-hi)'; head=wantsRaise?'restore-direction caution':'direction conflict';
+    detail=(wantsRaise
+      ? 'The obvious move, inhibition, is backwards: human genetics say the target is <b>protective</b>, so it needs restoring, not blocking. '
+      : 'The signals disagree on which way to drug it. ')+'<b>Counter-evidence:</b> '+c.cf; }
+  // 3) induced in tissue but no genetic anchor: reactive vs driver
+  else if(!causal && up){ status='Genetics silent'; color='var(--risk-md)'; head='induced, but unanchored';
+    detail='It is switched on in the inflamed gut, but with no human-genetic direction behind it this could be a <b>bystander reacting to inflammation</b> rather than a driver. Treat the tissue signal as a lead, not proof.'; }
+  // 4) both axes present and agreeing -> GREEN
+  else if(wantsInhibit && up){ status='Concordant'; color='var(--risk-lo)'; head='genetics and tissue agree';
+    detail='Human genetics say <b>block it</b>, and it is <b>switched on in the inflamed gut</b>. Both point the same way, so this reads as a real driver, not a bystander. Highest-confidence disease-context call.'; }
+  else if(wantsRaise && down){ status='Concordant'; color='var(--risk-lo)'; head='genetics and tissue agree';
+    detail='Genetics say the target is <b>protective</b>, and it is <b>reduced in inflamed tissue</b>, consistent with restoring a deficient protective function.'; }
+  // 5) both axes present and disagreeing -> RED
+  else if(wantsInhibit && down){ status='Conflict'; color='var(--risk-hi)'; head='direction conflict';
+    detail='Genetics point to <b>inhibition</b>, yet the target is <b>reduced in inflamed tissue</b>. Resolve that mismatch before committing to a simple inhibitor.'; }
+  else if(wantsRaise && up){ status='Conflict'; color='var(--risk-hi)'; head='restore-direction conflict';
+    detail='Genetics say the target is <b>protective</b> (restore it), yet it is <b>elevated in the inflamed gut</b>, most likely a reactive rise. Blocking it would be backwards, and agonism may not help either.'; }
+  // 6) only one axis is informative -> AMBER, not green
+  else if(modulate){ status='Indeterminate'; color='var(--risk-md)'; head='modulatory, not on/off';
+    detail='The genetic direction is modulatory rather than a clean block-or-boost, so tissue induction cannot confirm a single direction here.'; }
+  else { status='One-sided'; color='var(--risk-md)'; head='genetics anchor it, tissue is quiet';
+    detail='Human genetics set the direction ('+gLab+'), but the target is flat between healthy and inflamed tissue, so the case rests on genetics and mechanism, not lesional induction alone.'; }
+  return {status,color,head,detail,gLab,tLab,up,concordant:color==='var(--risk-lo)'};
+}
+/* map Open Targets live LoF/GoF + risk/protective to a therapeutic direction, to corroborate reconcile() live */
+function liveTheraDir(dot,dtr){
+  const lof=/LoF/i.test(dot),gof=/GoF/i.test(dot),prot=/protect/i.test(dtr),risk=/risk/i.test(dtr);
+  if((lof&&prot)||(gof&&risk)) return 'inhibit';
+  if(lof&&risk) return 'restore';
+  if(gof&&prot) return 'activate';
+  return null;
+}
 function diseaseContextHTML(t){
   const c=causalOf(t.symbol); if(!c||!c.les) return "";
-  const les=c.les, il=inductionLevel(les.ind);
-  const causal=!!c.gc, induced=(les.ind==='up'||les.ind==='moderate');
-  let verdict,vcls;
-  if(induced&&causal){ verdict='Likely a real driver: switched on in the inflamed gut <b>and</b> backed by human genetics.'; vcls='dc-driver'; }
-  else if(induced&&!causal){ verdict='Read with care: it is switched on in the inflamed gut, but with no genetics behind it this could be a <b>bystander</b> reacting to the inflammation rather than a cause of it.'; vcls='dc-reactive'; }
-  else { verdict='Flat between healthy and inflamed tissue: disease relevance rests on genetics or mechanism, not on lesional induction.'; vcls='dc-flat'; }
+  const les=c.les, il=inductionLevel(les.ind), rc=reconcile(t);
   const steps=[1,2,3].map(n=>`<span class="dc-seg ${n<=il[2]?il[1]:''}"></span>`).join('');
-  return `<div class="sec"><span class="lbl">Disease-context expression: is it up where the disease is?</span>
+  const chip=(s)=>`<span style="font-size:11.5px;font-weight:600;padding:3px 9px;border:1px solid var(--line);border-radius:999px;background:#fff;white-space:nowrap">${s}</span>`;
+  const chips=rc?`<div style="display:flex;gap:8px;flex-wrap:wrap;margin:9px 0 2px">${chip('Genetics &rarr; '+rc.gLab)}${chip('Tissue &rarr; '+rc.tLab)}</div>`:'';
+  const box=rc?`<div style="border-left:3px solid ${rc.color};padding:7px 0 2px 12px;margin:7px 0 4px">
+      <p style="margin:0;font-weight:750;color:${rc.color};font-size:14px">${rc.status}: ${rc.head}</p>
+      <p style="margin:4px 0 0;font-size:13px;line-height:1.45;color:var(--ink)">${rc.detail}</p>
+      <div id="recon-live-${t.symbol}" style="margin-top:6px;font-size:12.5px"></div>
+    </div>`:'';
+  return `<div class="sec"><span class="lbl">Reconciliation: do genetics and diseased tissue point the same way?</span>
     <div class="dc-row"><span class="dc-cell">${les.cell||'colonic tissue'}</span>
       <div class="dc-bar" title="Induction in inflamed vs uninflamed mucosa">${steps}</div>
       <span class="dc-lvl">${il[0]}</span></div>
+    ${chips}${box}
     <p class="dc-note">${les.note}</p>
-    <p class="dc-verdict ${vcls}">${verdict}</p>
-    <p class="dc-fine">Baseline healthy-tissue expression alone is weakly informative for IBD targets; whether a gene is switched on in the inflamed lesion, and in which cell, adds mechanism that steady-state atlases (like the Human Protein Atlas used below) miss. This is an interpretive flag, not a ranking factor. Source: UC single-cell atlas (Smillie et al., Cell 2019) and the Gut Cell Atlas; curated, qualitative induction.</p>
+    <p class="dc-fine">The flag goes <b>green only when the diseased-tissue direction agrees with the human-genetic direction</b>, the one combination Open Targets, the Genetic Priority Score and single-cell tools do not fuse. Interpretive flag, not a ranking factor. Source: UC single-cell atlas (Smillie et al., Cell 2019) and the Gut Cell Atlas; curated qualitative induction, genetic direction confirmed live above where Open Targets has it.</p>
   </div>`;
 }
 /* genetic-direction factor folded into the ranking: protective vs risk allele + whether it is up in diseased tissue.
