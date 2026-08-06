@@ -4236,6 +4236,84 @@ function liveCausalHTML(m){
    Honest per the adversarial review: qualitative induction (no false-precision cross-unit deltas), single-atlas
    sourcing, and the load-bearing driver-vs-reactive distinction (induced WITHOUT causal genetics may be a bystander). */
 function inductionLevel(ind){return {up:['Strong','ind-strong',3],moderate:['Moderate','ind-mod',2],flat:['Flat','ind-flat',1],ns:['Flat','ind-flat',1],down:['Lower in disease','ind-down',1]}[ind]||['Flat','ind-flat',1];}
+/* COMBINATION DESIGN ENGINE: score every other target as a combination PARTNER for target t.
+   UC remission plateaus on single mechanisms; the field is moving to combinations and bispecifics
+   (VEGA IL-23+TNF; Pfizer's own p40xTL1A bispecific). No single-target ranker scores pairs. */
+const COMBO_AXIS={IL23R:'il23',IL23A:'il23',IL12B:'il23',TYK2:'jak',JAK1:'jak',JAK2:'jak',JAK3:'jak',
+  TNF:'tnf',TNFSF15:'tl1a',TNFRSF9:'costim',S1PR1:'s1p',ITGA4:'integrin',ITGB7:'integrin',
+  IL17A:'il17',IL17RA:'il17',OSM:'osm',OSMR:'osm',CCR9:'chemokine',CXCR2:'chemokine',GPR35:'gpr35',
+  SMAD7:'tgfb',PTPN2:'reg',IRF5:'irf5',IL10:'il10',IL10RA:'il10',NR3C1:'steroid',
+  PTGS2:'eicosanoid',ALOX5:'eicosanoid',IL13:'il13',PPARG:'ppar'};
+const AXIS_LABEL={il23:'IL-23/12',jak:'JAK-STAT',tnf:'TNF',tl1a:'TL1A',costim:'co-stimulation',s1p:'S1P',
+  integrin:'α4β7 integrin',il17:'IL-17',osm:'OSM/gp130',chemokine:'chemokine',gpr35:'GPR35',
+  tgfb:'TGF-β / SMAD7',reg:'PTPN2 regulatory',irf5:'IRF5',il10:'IL-10',steroid:'glucocorticoid',
+  eicosanoid:'eicosanoid',il13:'IL-13',ppar:'PPAR-γ'};
+const COMBO_BACKBONE=new Set(['TNF','IL23A','IL12B','IL23R','S1PR1','ITGA4','ITGB7','TYK2','JAK1','JAK2']);
+const COMBO_BROAD=new Set(['JAK1','JAK2','JAK3','TYK2','NR3C1']);
+const COMBO_ASSET={S1PR1:'S1P modulator (Velsipity)',JAK1:'JAK inhibitor (Xeljanz)',JAK2:'JAK inhibitor (Xeljanz)',JAK3:'JAK3/TEC inhibitor (Litfulo)'};
+function comboAxis(sym){return COMBO_AXIS[sym]||'other';}
+function comboModality(sym){const p=(typeof TPROFILE!=='undefined')&&TPROFILE[sym]; if(!p)return 'other';
+  if(/Antibody|biologic|replacement|agonism/i.test(p.m))return 'ab'; if(/Oral|small molecule/i.test(p.m))return 'oral'; return 'other';}
+function comboScore(a,b){
+  if(a.symbol===b.symbol) return -9;
+  const ax=comboAxis(a.symbol), bx=comboAxis(b.symbol);
+  if(ax===bx && ax!=='other') return -9;              // same axis = redundant, not a combination
+  if(b.status==='graveyard') return -9;               // do not add a clinically failed mechanism
+  const bc=causalOf(b.symbol);
+  if(bc && /restore|activate/i.test(bc.dir||'')) return -9; // a protective/restore target is not an inhibitory add-on
+  if(bc && bc.cf) return -3;
+  let s=0.35;                                          // complementary mechanism, base
+  if(b.pfizer_owned) s+=0.42;                          // the Pfizer stack-with-owned play
+  else if(COMBO_BACKBONE.has(b.symbol)) s+=0.24;       // add onto an approved backbone
+  const ma=comboModality(a.symbol), mb=comboModality(b.symbol);
+  if(ma==='ab'&&mb==='ab') s+=0.20;                    // antibody + antibody = bispecific option
+  else if(ma==='oral'&&mb==='oral') s+=0.08;           // oral + oral convenience
+  if(bc && causalTier(bc)==='Genetic-causal') s+=0.10; // genetically validated partner
+  if(COMBO_BROAD.has(a.symbol)&&COMBO_BROAD.has(b.symbol)) s-=0.32; // stacked systemic immunosuppression
+  return s;
+}
+function comboPartners(t){
+  const scored=T.map(b=>({b,s:comboScore(t,b)})).filter(x=>x.s>0).sort((x,y)=>y.s-x.s);
+  const seen=new Set(), out=[];                 // one partner per mechanistic axis, so the three are distinct
+  for(const x of scored){ const ax=comboAxis(x.b.symbol); if(ax!=='other'&&seen.has(ax))continue; seen.add(ax); out.push(x); if(out.length>=3)break; }
+  return out;
+}
+function comboWhy(a,b){
+  const parts=[], bx=comboAxis(b.symbol), ax=comboAxis(a.symbol);
+  const ma=comboModality(a.symbol), mb=comboModality(b.symbol);
+  if(b.pfizer_owned) parts.push(`<b>stack with Pfizer's owned ${COMBO_ASSET[b.symbol]||b.symbol}</b>`);
+  else if(COMBO_BACKBONE.has(b.symbol)) parts.push(`adds a novel mechanism onto an approved ${AXIS_LABEL[bx]||b.symbol} backbone`);
+  parts.push(`complementary ${AXIS_LABEL[bx]||'mechanism'}, non-redundant with ${AXIS_LABEL[ax]||a.symbol}`);
+  if(ma==='ab'&&mb==='ab') parts.push(`antibody + antibody: a bispecific option, like Pfizer's own p40&times;TL1A`);
+  if(COMBO_BROAD.has(a.symbol)&&COMBO_BROAD.has(b.symbol)) parts.push(`<span style="color:var(--risk-md)">watch overlapping systemic immunosuppression</span>`);
+  return parts.join('; ')+'.';
+}
+function comboHTML(t){
+  const cc=causalOf(t.symbol);
+  if(t.status==='graveyard') return "";                       // no combinations for a clinically disconfirmed anchor
+  if(cc && /restore|activate/i.test(cc.dir||'')) return "";   // a restore-direction target is not an inhibitory backbone
+  const parts=comboPartners(t); if(!parts.length) return "";
+  const rows=parts.map(({b,s})=>{
+    const pct=Math.round(Math.max(0,Math.min(1,s))*100);
+    const own=b.pfizer_owned?`<span style="margin-left:7px;font-size:10px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;color:var(--owned);background:#EFEAFB;padding:2px 7px;border-radius:999px">Pfizer-owned</span>`:'';
+    return `<div style="border:1px solid var(--line);border-radius:11px;padding:10px 13px;margin-bottom:8px;background:#fff">
+      <div style="display:flex;align-items:center;gap:10px">
+        <b style="font-size:14px;white-space:nowrap">+ ${b.symbol}</b>${own}
+        <div style="flex:1;height:8px;background:var(--ground);border-radius:5px;overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#0B18EC,#4b57f2)"></div></div>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:700;min-width:22px;text-align:right">${pct}</span>
+      </div>
+      <p style="margin:5px 0 0;font-size:12.5px;line-height:1.4;color:var(--mut)">${comboWhy(t,b)}</p>
+    </div>`;
+  }).join('');
+  const owned=parts.find(x=>x.b.pfizer_owned);
+  const head=owned?`Best Pfizer play: pair with your owned ${COMBO_ASSET[owned.b.symbol]||owned.b.symbol}.`:`Where single agents plateau, the combination is the play.`;
+  return `<div class="sec"><span class="lbl">Combination strategy: what to pair it with</span>
+    <p style="font-size:12.5px;color:var(--mut);margin:2px 0 10px">UC remission plateaus on single mechanisms, so the field is moving to combinations and bispecifics. We score every other target as a <b>combination partner</b> on complementary pathway, compatible direction, safety and portfolio fit, the one call single-target rankers cannot make. <b>${head}</b></p>
+    ${rows}
+    <p class="dc-fine">Illustrative pairwise scoring over the curated set: mechanism divergence + direction compatibility + portfolio fit, minus safety overlap. A design aid for combination hypotheses, not a clinical recommendation.</p>
+  </div>`;
+}
+
 /* RECONCILIATION ENGINE: reconcile the human-genetic direction (inhibit vs restore) against the
    diseased-tissue direction (induced vs not), and fire the flag GREEN only when they agree.
    Fusing genetic direction with lesional induction is the one combination Open Targets, the
@@ -4385,6 +4463,7 @@ function openMemo(sym){
       ${diseaseContextHTML(t)}
       ${targetProfileHTML(t)}
       ${translationalEvidenceHTML(t)}
+      ${comboHTML(t)}
       ${tissueExpressionHTML(t)}
       <div class="sec"><span class="lbl">Supporting evidence</span>${evList(supList)}</div>
       <div class="sec contra"><span class="lbl">Disconfirming evidence: why this could fail</span>
