@@ -4332,6 +4332,86 @@ function comboWhy(a,b){
   if(COMBO_BROAD.has(a.symbol)&&COMBO_BROAD.has(b.symbol)) parts.push(`<span style="color:var(--risk-md)">watch overlapping systemic immunosuppression</span>`);
   return parts.join('; ')+'.';
 }
+/* ===== Pfizer decision layer: modality fit, CDx readiness, exportable brief ===== */
+function modalityFit(t){
+  const p=(typeof TPROFILE!=='undefined')&&TPROFILE[t.symbol];
+  const mod=p?(p.m||''):(t.mech||'');
+  const hard=(p&&(/Undruggable|Difficult/i.test(p.m||'')||/Transcription factor|Phosphatase/i.test(p.c||'')))||/Undruggable|Transcription factor/i.test(mod);
+  const oral=!hard&&/Oral|small molecule/i.test(mod);
+  const ab=!hard&&/Antibody|biologic|replacement|agonism/i.test(mod);
+  let bispecific=false;
+  try{ if(ab){ const parts=comboPartners(t)||[]; bispecific=parts.some(x=>comboModality(x.b.symbol)==='ab'); } }catch(e){}
+  let verdict,fit,color,note;
+  if(hard){ verdict="Hard to drug"; fit="low"; color="var(--risk-hi)"; note="No clean modality with current tools (transcription factor, phosphatase or undruggable). A real target, but a technology bet, not a fast program."; }
+  else if(oral){ verdict="Oral small molecule"; fit="high"; color="var(--risk-lo)"; note="Matches Pfizer's oral-first I&amp;I franchise (Xeljanz, Velsipity, Litfulo): the modality Pfizer builds and sells best."; }
+  else if(bispecific){ verdict="Antibody, bispecific opportunity"; fit="med"; color="var(--risk-md)"; note="Antibody-tractable, and it pairs with a second antibody target for a bispecific, the format of Pfizer's own p40&times;TL1A program."; }
+  else if(ab){ verdict="Antibody"; fit="med"; color="var(--risk-md)"; note="Biologic-tractable and effective, but outside Pfizer's oral-first commercial strength: weigh it against an oral option of similar biology."; }
+  else { verdict="Modality unclear"; fit="med"; color="var(--mut)"; note="No clear modality call from the current profile."; }
+  return {verdict,fit,color,note,oral,ab,bispecific,hard};
+}
+function modalityFitHTML(t){
+  const mf=modalityFit(t); const lab={high:"High Pfizer fit",med:"Workable",low:"Technology bet"}[mf.fit];
+  return `<div class="sec"><span class="lbl">Modality fit for Pfizer</span>
+    <div style="display:flex;align-items:center;gap:10px;margin:6px 0 4px;flex-wrap:wrap">
+      <span style="font-weight:750;color:${mf.color}">${mf.verdict}</span>
+      <span style="font-size:11px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;color:${mf.color};border:1px solid var(--line);border-radius:999px;padding:2px 9px">${lab}</span></div>
+    <p style="font-size:13px;line-height:1.45;color:var(--ink)">${mf.note}</p></div>`;
+}
+function cdxReadiness(t){
+  let m=null; try{ m=patientBaseModel(t.symbol); }catch(e){}
+  const bm=m?pfBiomarker(t.symbol,m):{strength:0.2,kind:"None defined",note:""};
+  const s=bm.strength||0; let level,color,label,note;
+  if(s>=0.7){ level="CDx-ready"; color="var(--risk-lo)"; label="high"; note=`A defined responder biomarker exists (${bm.kind}), so a trial can enrich for the patients this mechanism is built for. ${bm.note||""}`; }
+  else if(s>=0.45){ level="Emerging biomarker"; color="var(--risk-md)"; label="medium"; note=`A candidate patient-selection strategy (${bm.kind}) that still needs prospective validation before it anchors a companion diagnostic.`; }
+  else { level="Broad population only"; color="var(--mut)"; label="low"; note="No patient-selection biomarker yet: today this is an all-comers bet, which raises trial size and dilutes the effect."; }
+  return {level,color,label,note,kind:bm.kind,strength:s};
+}
+function cdxHTML(t){
+  const c=cdxReadiness(t);
+  return `<div class="sec"><span class="lbl">Companion-diagnostic readiness</span>
+    <div style="display:flex;align-items:center;gap:10px;margin:6px 0 4px;flex-wrap:wrap">
+      <span style="font-weight:750;color:${c.color}">${c.level}</span>
+      <span style="font-size:11px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;color:${c.color};border:1px solid var(--line);border-radius:999px;padding:2px 9px">${c.label} readiness</span></div>
+    <p style="font-size:13px;line-height:1.45;color:var(--ink)">${c.note}</p></div>`;
+}
+function pfizerPlay(t,d,mf,top){
+  if(t.status==='graveyard') return "Pass: clinically disconfirmed in UC.";
+  if(d.pf==='owned') return "Defend, do not duplicate: Pfizer already sells into this node.";
+  if(d.pf==='contested') return "Differentiate or partner: high-conviction biology in a crowded, partnered field.";
+  if(d.verdict==='RECOMMEND'){
+    let s="Pursue: validated biology in an open field with no Pfizer asset. ";
+    s+= mf.oral?"Oral-tractable, a fit for Pfizer's small-molecule strength.":mf.hard?"Note the modality risk (hard to drug).":"Antibody-tractable.";
+    if(top) s+=` Consider combining with ${top.b.symbol}.`;
+    return s;
+  }
+  return "Hold: watch for the evidence that would lift it above the bar.";
+}
+function decisionBrief(t){
+  const d=decisionFor(t), rc=reconcile(t), mf=modalityFit(t), cdx=cdxReadiness(t);
+  const parts=(function(){try{return comboPartners(t)||[]}catch(e){return[]}})(); const top=parts[0];
+  const strip=s=>String(s||'').replace(/<[^>]+>/g,'');
+  const pfLab={owned:"Pfizer already owns this node",contested:"Contested / partnered field",whitespace:"Whitespace: no Pfizer asset here",neutral:"Portfolio-neutral"}[d.pf||'neutral'];
+  const vcolor=d.verdict==='RECOMMEND'?'#12996A':d.verdict==='HOLD'?'#E0A100':'#D6402F';
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${t.symbol} UC Target Decision Brief</title>
+<style>body{font-family:system-ui,-apple-system,Arial,sans-serif;max-width:760px;margin:40px auto;padding:0 26px;color:#0E1330;line-height:1.5}
+h1{font-size:26px;margin:0 0 2px}.sub{color:#5A6285;margin:0 0 16px;font-size:14px}
+.v{display:inline-block;font-weight:800;color:#fff;background:${vcolor};padding:4px 12px;border-radius:8px;font-size:14px}
+h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#0B18EC;margin:20px 0 3px}
+p{margin:2px 0}.play{background:#E7EBFF;border:1px solid #C7D0FF;border-radius:10px;padding:12px 14px;margin-top:8px;color:#0A12C4;font-weight:600}
+.foot{color:#5A6285;font-size:12px;margin-top:26px;border-top:1px solid #D3DCF3;padding-top:10px}</style></head><body>
+<h1>${t.symbol} <span style="font-weight:400;color:#5A6285">${strip(t.name)}</span></h1>
+<p class="sub">Ulcerative colitis &middot; Target Decision Brief &middot; TargetCompass${t.mech?' &middot; '+strip(t.mech):''}</p>
+<p><span class="v">${d.verdict}</span> &nbsp; <b>${pfLab}</b> &middot; score ${d.score}/100, rank #${d.rank}</p>
+<p style="color:#5A6285">${strip(d.reason)}.</p>
+<div class="play">The Pfizer play: ${pfizerPlay(t,d,mf,top)}</div>
+<h2>Why (auditable)</h2><p>${rc?strip(rc.status+': '+rc.head)+'. ':''}${strip(successFraming(t))}</p>
+<h2>Modality fit</h2><p><b>${mf.verdict}.</b> ${strip(mf.note)}</p>
+<h2>Companion-diagnostic readiness</h2><p><b>${cdx.level}.</b> ${strip(cdx.note)}</p>
+${top?`<h2>Best combination</h2><p><b>+ ${top.b.symbol}:</b> ${strip(comboWhy(t,top.b))}</p>`:''}
+<div class="foot">Grounded in Open Targets and ClinicalTrials.gov. Decision support, not a decision. Generated by TargetCompass.</div>
+</body></html>`;
+}
+window.exportBrief=function(sym){ try{ const t=byId[sym]||(typeof cmpModels!=='undefined'&&cmpModels[sym]); if(!t){ if(typeof toast==='function')toast('Could not find '+sym); return; } downloadBlob(sym+'_TargetCompass_brief.html', decisionBrief(t)); }catch(e){ if(typeof toast==='function')toast('Brief export failed'); } };
 function comboHTML(t){
   const cc=causalOf(t.symbol);
   if(t.status==='graveyard') return "";                       // no combinations for a clinically disconfirmed anchor
@@ -4489,6 +4569,7 @@ function openMemo(sym){
         <button class="pinb${isPinned(sym)?' on':''}" id="memopin">${isPinned(sym)?'&#9733; On shortlist':'&#9734; Add to shortlist'}</button>
         <button class="pinb" id="memoedit">&#9998; Edit inputs</button>
         <button class="pinb" id="memodl">&#8595; Download one-pager</button>
+        <button class="pinb" onclick="exportBrief('${sym}')">&#8595; Decision brief</button>
       </div>
     </div>
     <div class="memo-body">
@@ -4508,6 +4589,8 @@ function openMemo(sym){
       ${targetProfileHTML(t)}
       ${translationalEvidenceHTML(t)}
       ${comboHTML(t)}
+      ${modalityFitHTML(t)}
+      ${cdxHTML(t)}
       ${tissueExpressionHTML(t)}
       <div class="sec"><span class="lbl">Supporting evidence</span>${evList(supList)}</div>
       <div class="sec contra"><span class="lbl">Disconfirming evidence: why this could fail</span>
@@ -5974,6 +6057,7 @@ function renderAutoMemo(m){
       <div style="display:flex;gap:8px;margin-top:14px">
         <button class="pinb${isPinned(m.symbol)?' on':''}" id="memopin">${isPinned(m.symbol)?'&#9733; On shortlist':'&#9734; Add to shortlist'}</button>
         <button class="pinb" id="memodl">&#8595; Download one-pager</button>
+        <button class="pinb" onclick="exportBrief('${sym}')">&#8595; Decision brief</button>
       </div>
     </div>
     <div class="memo-body">
