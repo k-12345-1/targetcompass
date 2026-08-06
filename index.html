@@ -4251,6 +4251,23 @@ const AXIS_LABEL={il23:'IL-23/12',jak:'JAK-STAT',tnf:'TNF',tl1a:'TL1A',costim:'c
 const COMBO_BACKBONE=new Set(['TNF','IL23A','IL12B','IL23R','S1PR1','ITGA4','ITGB7','TYK2','JAK1','JAK2']);
 const COMBO_BROAD=new Set(['JAK1','JAK2','JAK3','TYK2','NR3C1']);
 const COMBO_ASSET={S1PR1:'S1P modulator (Velsipity)',JAK1:'JAK inhibitor (Xeljanz)',JAK2:'JAK inhibitor (Xeljanz)',JAK3:'JAK3/TEC inhibitor (Litfulo)'};
+/* additive patient coverage: a good partner is strong exactly where the anchor is weak,
+   i.e. it rescues the non-responder segments the single agent misses. Posture-independent, cached. */
+const COV_COVERS=62, COV_WEAK=50, _covCache={};
+function coverageProfile(sym){
+  if(_covCache[sym]!==undefined) return _covCache[sym];
+  let m; try{ m=patientBaseModel(sym); }catch(e){ return (_covCache[sym]=null); }
+  if(!m) return (_covCache[sym]=null);
+  const out={};
+  try{ PATIENT_TYPES.forEach(pt=>{ const r=targetTypeFit(sym,m,pt); out[pt.id]=(r&&r.fit!=null)?r.fit:0; }); }
+  catch(e){ return (_covCache[sym]=null); }
+  return (_covCache[sym]=out);
+}
+function addedCoverage(a,b){
+  const ca=coverageProfile(a.symbol), cb=coverageProfile(b.symbol);
+  if(!ca||!cb) return [];
+  return PATIENT_TYPES.filter(pt=> ca[pt.id]<=COV_WEAK && cb[pt.id]>=COV_COVERS).sort((x,y)=>(y.pop||0)-(x.pop||0));
+}
 function comboAxis(sym){return COMBO_AXIS[sym]||'other';}
 function comboModality(sym){const p=(typeof TPROFILE!=='undefined')&&TPROFILE[sym]; if(!p)return 'other';
   if(/Antibody|biologic|replacement|agonism/i.test(p.m))return 'ab'; if(/Oral|small molecule/i.test(p.m))return 'oral'; return 'other';}
@@ -4270,6 +4287,7 @@ function comboScore(a,b){
   else if(ma==='oral'&&mb==='oral') s+=0.08;           // oral + oral convenience
   if(bc && causalTier(bc)==='Genetic-causal') s+=0.10; // genetically validated partner
   if(COMBO_BROAD.has(a.symbol)&&COMBO_BROAD.has(b.symbol)) s-=0.32; // stacked systemic immunosuppression
+  s += Math.min(0.24, addedCoverage(a,b).length*0.08);             // additive patient coverage: rescues segments the anchor misses
   return s;
 }
 function comboPartners(t){
@@ -4284,6 +4302,8 @@ function comboWhy(a,b){
   if(b.pfizer_owned) parts.push(`<b>stack with Pfizer's owned ${COMBO_ASSET[b.symbol]||b.symbol}</b>`);
   else if(COMBO_BACKBONE.has(b.symbol)) parts.push(`adds a novel mechanism onto an approved ${AXIS_LABEL[bx]||b.symbol} backbone`);
   parts.push(`complementary ${AXIS_LABEL[bx]||'mechanism'}, non-redundant with ${AXIS_LABEL[ax]||a.symbol}`);
+  const add=addedCoverage(a,b);
+  if(add.length) parts.push(`<b>covers ${add.slice(0,2).map(p=>p.short).join(' and ')} patients that ${a.symbol} alone leaves thin</b>`);
   if(ma==='ab'&&mb==='ab') parts.push(`antibody + antibody: a bispecific option, like Pfizer's own p40&times;TL1A`);
   if(COMBO_BROAD.has(a.symbol)&&COMBO_BROAD.has(b.symbol)) parts.push(`<span style="color:var(--risk-md)">watch overlapping systemic immunosuppression</span>`);
   return parts.join('; ')+'.';
