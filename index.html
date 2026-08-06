@@ -4215,6 +4215,30 @@ async function verifyCausalLive(sym,ens){
         el.innerHTML+=`<div style="margin-top:6px;color:var(--mut)">Direction of effect: Open Targets has not resolved a live LoF/GoF call for this target in UC yet, so the curated direction above stands.</div>`;
       }
     }catch(e){}
+    /* deepen: live L2G -> credible-set -> variant -> direction chain, inspectable */
+    try{
+      const gq='query($e:String!,$d:String!){disease(efoId:$d){evidences(ensemblIds:[$e],datasourceIds:["gwas_credible_sets"],size:14){rows{credibleSet{beta variant{id rsIds mostSevereConsequence{label}} l2GPredictions{rows{score target{approvedSymbol}}} study{traitFromSource}}}}}}';
+      const gr=await otFetch(gq,{e:ens,d:'MONDO_0005101'});
+      const rows=((((gr.data||{}).disease||{}).evidences||{}).rows)||[];
+      const seen=new Set(), sets=[];
+      rows.forEach(r=>{ const cs=r&&r.credibleSet; if(!cs||!cs.variant)return; const vid=cs.variant.id; if(seen.has(vid))return; seen.add(vid);
+        const l2g=((cs.l2GPredictions||{}).rows||[]).slice().sort((x,y)=>(y.score||0)-(x.score||0))[0]||{};
+        sets.push({rs:((cs.variant.rsIds||[])[0])||vid, id:vid, cons:(((cs.variant.mostSevereConsequence||{}).label)||'').replace(/_/g,' '), l2g:l2g.score||0, gene:((l2g.target||{}).approvedSymbol)||'', beta:cs.beta});
+      });
+      const top=sets.sort((x,y)=>y.l2g-x.l2g).filter(s=>s.l2g>=0.2).slice(0,3);
+      if(top.length){
+        const rowsHTML=top.map(s=>{
+          const dir=s.beta==null?'':(s.beta<0?'<span style="color:var(--risk-lo)">risk-lowering</span>':'<span style="color:var(--risk-hi)">risk-raising</span>');
+          return `<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;padding:5px 0;border-top:1px dashed var(--line);font-size:12px">
+            <a href="https://platform.opentargets.org/variant/${s.id}" target="_blank" rel="noopener" style="font-weight:700">${s.rs}</a>
+            <span style="color:var(--mut)">${s.cons||'variant'}</span>
+            <span>L2G <b>${s.l2g.toFixed(2)}</b> &rarr; ${s.gene||sym}</span>
+            ${dir}${s.beta!=null?`<span style="color:var(--mut)">(β ${s.beta.toFixed(2)})</span>`:''}
+          </div>`;
+        }).join('');
+        el.innerHTML+=`<div style="margin-top:8px"><b>&#10003; Live genetics chain (Open Targets):</b> the fine-mapped credible sets that map to ${sym}. Click a variant to inspect the full evidence.${rowsHTML}</div>`;
+      }
+    }catch(e){}
   }catch(e){ el.innerHTML='<span class="clive-off">Live Open Targets check is blocked here (it runs on the hosted site); the curated evidence above stands.</span>'; }
 }
 /* live-derived causal ladder for a target OUTSIDE the curated 30, built from Open Targets right now */
