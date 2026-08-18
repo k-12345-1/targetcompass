@@ -5723,9 +5723,17 @@ function findCompany(text){
   return Object.keys(COMPANY_PROFILES).find(k=>COMPANY_PROFILES[k].aliases.some(a=>spaced.includes(' '+a+' ')))||null;
 }
 function isFollowUp(text){
-  const s=text.toLowerCase().trim();
-  return /^(explain more|more|tell me more|go deeper|details|why|why\?|can you explain|what do you mean)\b/.test(s);
+  const s=(text||'').toLowerCase().trim();
+  const hasCtx=(typeof CHAT_CONTEXT!=='undefined')&&((CHAT_CONTEXT.lastTargets&&CHAT_CONTEXT.lastTargets.length)||CHAT_CONTEXT.lastKind);
+  if(!hasCtx)return false;
+  if(/\b(it|its|it's|that|this|those|these|them|they|the one|the top one|the pick|the target|the same|the mechanism)\b/.test(s))return true;
+  if(/^(why|why not|how so|and\b|so\b|ok|okay|sure|go on|more|elaborate|explain|expand|continue|really|details|go deeper|tell me more)/.test(s))return true;
+  if(/(catch|downside|weakness|concern|red flag|drawback|caveat|counter|change (your|our) mind|who else|what else|anything else|summar|recap|bottom line|in short|tldr)/.test(s))return true;
+  const words=s.replace(/[^a-z0-9 ]/g,'').split(/\s+/).filter(Boolean);
+  if(words.length<=5&&findTargets(text).length===0&&!findCompany(text))return true;
+  return false;
 }
+
 function classify(text){
   const s=text.toLowerCase(); const tg=findTargets(text);
   const company=findCompany(text);
@@ -5867,14 +5875,38 @@ function portfolioAnswer(){
     <ul class="bot-list">${rows}</ul>
     <p class="bot-ground">Portfolio fit is one of the three business signals TargetCompass adds on top of Open Targets: competition, Pfizer overlap and failure history.</p>`);
 }
-function followUpAnswer(){
-  const c=CHAT_CONTEXT;
-  if(c.lastCompany)return companyAnswer(c.lastCompany,true);
-  if(c.lastKind==='target'&&c.lastTargets[0]){
-    const sym=c.lastTargets[0], t=byId[sym];
-    if(!t)return universeTargetAnswer(sym);
-    const f=t.facts;
-    if(f)return botWrap(`${sym} &middot; deeper read`,`
+function targetCompetitionAnswer(sym){
+  const t=byId[sym]; if(!t)return universeTargetAnswer(sym);
+  const same=T.filter(x=>x.mech===t.mech&&x.symbol!==sym);
+  const owned=t.pfizer_owned?('Pfizer owns this class: '+(PFIZER_ASSET[t.mech]||'an approved asset')+'. '):'';
+  const dens=t.active_trials>=10?'That is a crowded field.':(t.active_trials<=2?'That is close to open field.':'Moderate competition.');
+  return botWrap(`${sym} &middot; competitive read`,`
+    <p class="lead">${sym} sits in the ${t.mech} mechanism class, with ${t.active_trials} active UC trials and ${t.total_trials} total in the embedded snapshot. ${dens} ${owned}</p>
+    ${same.length?`<ul class="bot-list">${same.slice(0,5).map(x=>`<li onclick="chatOpenMemo('${x.symbol}')"><span class="rk">${x.active_trials}</span><div><span class="nm">${x.symbol}</span> <span class="rz">${x.mech}; ${x.status}</span></div><span class="sc">${Math.round((1-x.whitespace)*100)}</span></li>`).join('')}</ul>`:''}
+    <div class="bot-actions"><button onclick="chatOpenMemo('${sym}')">Full memo</button><button onclick="askQuestion('What is the best uncrowded target?')">Show whitespace</button></div>
+    <p class="bot-ground">Crowding uses embedded ClinicalTrials.gov UC interventional trial counts by mechanism.</p>`);
+}
+function recapAnswer(sym){
+  const t=byId[sym]; if(!t)return universeTargetAnswer(sym);
+  const rec=recFor(t); const x=scored(posture).find(y=>y.t.symbol===sym);
+  const tail=t.pfizer_owned?', and Pfizer already owns the class':(t.status==='whitespace'?', in relatively open field':'');
+  return botWrap(`${sym} &middot; in one line`,`
+    <span class="verdict" style="color:${rec.col};border-color:${rec.col}">${rec.txt}</span>
+    <p class="lead">${sym} ranks #${x.rank} of ${T.length} on the ${POSTURES[posture].name} strategy. Genetics ${t.genetic.toFixed(2)}, ${t.active_trials} active rivals, failure risk ${Math.round(t.failrisk*100)}%${tail}.</p>
+    <div class="bot-actions"><button onclick="chatOpenMemo('${sym}')">Full memo</button></div>`);
+}
+function followUpAnswer(text){
+  const s=(text||'').toLowerCase(); const c=CHAT_CONTEXT||{};
+  let sym=(c.lastTargets&&c.lastTargets[0])||null;
+  const entityish=/(safe|risk|toxic|catch|downside|weak|concern|red flag|caveat|drawback|crowd|competit|rival|who else|sponsor|compan|trial|contested|owned|genetic|evidence|science|associat|biolog|pursue|recommend|worth|invest|priorit|summar|recap|\bit\b|\bthat\b|the one|the top|the pick)/;
+  if(!sym&&(c.lastKind==='shortlist'||c.lastKind==='category')&&entityish.test(s)){try{sym=scored(posture)[0].t.symbol;}catch(e){}}
+  if(c.lastCompany&&!sym)return companyAnswer(c.lastCompany,true);
+  if(sym){
+    if(/(safe|risk|toxic|catch|downside|weak|concern|red flag|caveat|fail|why not|against|drawback)/.test(s))return targetAnswer(sym);
+    if(/(crowd|competit|rival|who else|sponsor|compan|trial|contested|owned)/.test(s))return targetCompetitionAnswer(sym);
+    if(/(summar|recap|bottom line|in short|tldr|so what|net net)/.test(s))return recapAnswer(sym);
+    const t=byId[sym];
+    if(t&&t.facts){const f=t.facts;return botWrap(`${sym} &middot; deeper read`,`
       <p class="lead">${f.thesis}</p>
       <div class="sbgrid">
         <div class="sbcol sci"><h4>Why it is attractive</h4>${f.support.map(x=>`<div class="sbrow"><span>${x}</span><b></b></div>`).join('')}</div>
@@ -5882,7 +5914,7 @@ function followUpAnswer(){
       </div>
       <p style="margin:12px 0 0;color:var(--ink-2);font-size:14px;line-height:1.5"><b>Next experiment:</b> ${f.experiment}</p>
       <div class="cites">${(t.evidence||[]).slice(0,3).map(citeChip).join('')}</div>
-      <div class="bot-actions"><button onclick="chatOpenMemo('${sym}')">Full memo</button><button onclick="chatShowMap('${sym}')">See on map</button></div>`);
+      <div class="bot-actions"><button onclick="chatOpenMemo('${sym}')">Full memo</button><button onclick="chatShowMap('${sym}')">See on map</button></div>`);}
     return targetAnswer(sym);
   }
   if(c.lastKind==='shortlist'||c.lastKind==='category'){
@@ -5894,9 +5926,10 @@ function followUpAnswer(){
         <span class="sc">${scored(posture).find(x=>x.t.symbol===t.symbol).s}</span></li>`).join('')}</ul>
       <p class="bot-ground">This is why some obvious clinical classes are demoted: they may work, but they are crowded, already owned by Pfizer, or carry known safety/failure concerns.</p>`);
   }
-  if(c.lastKind==='compare'&&c.lastTargets.length>=2)return compareAnswer(c.lastTargets);
-  return simpleBot(`I can go deeper once there is something specific to explain. Ask about a target, company, competitor field, or ranking first.`);
+  if(c.lastKind==='compare'&&c.lastTargets&&c.lastTargets.length>=2)return compareAnswer(c.lastTargets);
+  return simpleBot(`I answer from the embedded UC evidence set, so I stay grounded rather than guess. I can pull up a specific target, the top picks, a competitor read, or the ranking logic, which would help most?`);
 }
+
 function methodAnswer(){
   return botWrap('How the answer is made',`<p class="lead">The chat is deterministic: it reads the same UC target table as the map, classifies your question, then answers from the relevant evidence fields. The score combines biology, druggability, whitespace, failure risk and Pfizer portfolio fit under the active weighting strategy.</p>
     ${driversHTML(scored(posture)[0].t)}
@@ -6047,6 +6080,9 @@ function pushBot(html){const log=document.getElementById('chatlog');
   const w=document.createElement('div');w.innerHTML=html;const node=w.firstElementChild;log.appendChild(node);return node;}
 function answerHTML(text){
   const c=classify(text);
+  const hasNewTarget=(c.tg&&c.tg.length>0);
+  const prev=CHAT_CONTEXT||{};
+  const hasCtx=((prev.lastTargets&&prev.lastTargets.length)||prev.lastKind);
   let html='';
   if(c.k==='target')html=targetAnswer(c.tg[0]);
   else if(c.k==='compare')html=compareAnswer(c.tg);
@@ -6059,11 +6095,13 @@ function answerHTML(text){
   else if(c.k==='validation')html=validationAnswer();
   else if(c.k==='patient')html=patientAnswer();
   else if(c.k==='shortlist')html=shortlistAnswer();
-  else if(c.k==='followup')return followUpAnswer();
-  else html=simpleBot(`I can answer in plain language about targets, competitors, company activity, patient fit, ranking logic, or evidence sources. Try: <b>"What is Merck doing in UC?"</b>, <b>"What target has the best potential?"</b>, <b>"Compare TL1A vs GPR35"</b>, or <b>"How is the score calculated?"</b>`);
-  CHAT_CONTEXT={lastKind:c.k,lastTargets:c.tg||[],lastCompany:c.company||null,lastQuestion:text};
+  else if(c.k==='followup')html=followUpAnswer(text);
+  else{ if(!hasNewTarget&&hasCtx)html=followUpAnswer(text);
+    else html=simpleBot(`I can answer in plain language about targets, competitors, company activity, patient fit, ranking logic, or evidence sources. Try: <b>"What is Merck doing in UC?"</b>, <b>"What target has the best potential?"</b>, <b>"Compare TL1A vs GPR35"</b>, or <b>"How is the score calculated?"</b>`); }
+  CHAT_CONTEXT={lastKind:(c.k==='followup'?(prev.lastKind||'followup'):c.k),lastTargets:(hasNewTarget?c.tg:(prev.lastTargets||[])),lastCompany:(c.company||prev.lastCompany||null),lastQuestion:text};
   return html;
 }
+
 function askQuestion(text){
   const chatOn=document.getElementById('v-chat').classList.contains('on');
   if(!chatOn){[...document.querySelectorAll('nav.tabs button')].find(b=>b.dataset.view==='chat').click();}
