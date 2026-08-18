@@ -4685,11 +4685,11 @@ function buildPick(){
 let _cmpSearchWired=false;
 function wireCmpSearch(){ if(_cmpSearchWired)return; const si=document.getElementById('cmp-search'),drop=document.getElementById('cmp-acdrop'); if(!si||!drop)return; _cmpSearchWired=true;
   const idx=[],seen=new Set();
-  T.forEach(t=>{if(!seen.has(t.symbol)){seen.add(t.symbol);idx.push({sym:t.symbol,name:t.name,cur:true});}});
+  T.forEach(t=>{if(!seen.has(t.symbol)){seen.add(t.symbol);idx.push({sym:t.symbol,name:t.name,alias:(typeof ALIASREV!=='undefined'?(ALIASREV[t.symbol]||''):''),cur:true});}});
   UNIVERSE.rows.forEach(r=>{if(!seen.has(r[0])){seen.add(r[0]);idx.push({sym:r[0],name:'',cur:false});}});
   let items=[],active=-1; const close=()=>{drop.hidden=true;si.setAttribute('aria-expanded','false');active=-1;};
   function render(){const q=si.value.trim().toUpperCase();if(!q){close();return;}
-    const st=[],inc=[];idx.forEach(o=>{if(o.sym.startsWith(q))st.push(o);else if(o.sym.includes(q)||(o.name&&o.name.toUpperCase().includes(q)))inc.push(o);});
+    const st=[],inc=[];idx.forEach(o=>{if(o.sym.startsWith(q))st.push(o);else if(o.sym.includes(q)||(o.name&&o.name.toUpperCase().includes(q))||(o.alias&&o.alias.toUpperCase().includes(q)))inc.push(o);});
     items=st.concat(inc).slice(0,8);
     if(!items.length){drop.innerHTML='<div class="ac-empty">No listed target matches. Press <b>Enter</b> to pull &ldquo;'+esc(q)+'&rdquo; live from Open Targets.</div>';drop.hidden=false;return;}
     if(active>=items.length)active=items.length-1;
@@ -4708,11 +4708,11 @@ function wireCmpSearch(){ if(_cmpSearchWired)return; const si=document.getElemen
 /* custom autocomplete for the "Analyze any target" input, replacing the native datalist (which floated disconnected) */
 function wireTSearch(){ if(wireTSearch._done)return; const si=document.getElementById('tsearch'),drop=document.getElementById('tsearch-acdrop'); if(!si||!drop)return; wireTSearch._done=true;
   const idx=[],seen=new Set();
-  T.forEach(t=>{if(!seen.has(t.symbol)){seen.add(t.symbol);idx.push({sym:t.symbol,name:t.name,cur:true});}});
+  T.forEach(t=>{if(!seen.has(t.symbol)){seen.add(t.symbol);idx.push({sym:t.symbol,name:t.name,alias:(typeof ALIASREV!=='undefined'?(ALIASREV[t.symbol]||''):''),cur:true});}});
   if(typeof UNIVERSE!=='undefined')UNIVERSE.rows.forEach(r=>{if(!seen.has(r[0])){seen.add(r[0]);idx.push({sym:r[0],name:'',cur:false});}});
   let items=[],active=-1; const close=()=>{drop.hidden=true;si.setAttribute('aria-expanded','false');active=-1;};
   function render(){const q=si.value.trim().toUpperCase();if(!q){close();return;}
-    const st=[],inc=[];idx.forEach(o=>{if(o.sym.startsWith(q))st.push(o);else if(o.sym.includes(q)||(o.name&&o.name.toUpperCase().includes(q)))inc.push(o);});
+    const st=[],inc=[];idx.forEach(o=>{if(o.sym.startsWith(q))st.push(o);else if(o.sym.includes(q)||(o.name&&o.name.toUpperCase().includes(q))||(o.alias&&o.alias.toUpperCase().includes(q)))inc.push(o);});
     items=st.concat(inc).slice(0,8);
     if(!items.length){drop.innerHTML='<div class="ac-empty">No listed target matches. Press <b>Enter</b> to pull &ldquo;'+esc(q)+'&rdquo; live from Open Targets.</div>';drop.hidden=false;return;}
     if(active>=items.length)active=items.length-1;
@@ -4731,11 +4731,11 @@ function wireTSearch(){ if(wireTSearch._done)return; const si=document.getElemen
 /* same custom autocomplete for the Patients "Add target" input; re-render-safe (input is recreated each draw) */
 function wirePtSearch(){ const si=document.getElementById('pttarget'),drop=document.getElementById('pttarget-acdrop'); if(!si||!drop)return;
   const idx=[],seen=new Set();
-  T.forEach(t=>{if(!seen.has(t.symbol)){seen.add(t.symbol);idx.push({sym:t.symbol,name:t.name,cur:true});}});
+  T.forEach(t=>{if(!seen.has(t.symbol)){seen.add(t.symbol);idx.push({sym:t.symbol,name:t.name,alias:(typeof ALIASREV!=='undefined'?(ALIASREV[t.symbol]||''):''),cur:true});}});
   if(typeof UNIVERSE!=='undefined')UNIVERSE.rows.forEach(r=>{if(!seen.has(r[0])){seen.add(r[0]);idx.push({sym:r[0],name:'',cur:false});}});
   let items=[],active=-1; const close=()=>{drop.hidden=true;si.setAttribute('aria-expanded','false');active=-1;};
   function render(){const q=si.value.trim().toUpperCase();if(!q){close();return;}
-    const st=[],inc=[];idx.forEach(o=>{if(o.sym.startsWith(q))st.push(o);else if(o.sym.includes(q)||(o.name&&o.name.toUpperCase().includes(q)))inc.push(o);});
+    const st=[],inc=[];idx.forEach(o=>{if(o.sym.startsWith(q))st.push(o);else if(o.sym.includes(q)||(o.name&&o.name.toUpperCase().includes(q))||(o.alias&&o.alias.toUpperCase().includes(q)))inc.push(o);});
     items=st.concat(inc).slice(0,8);
     if(!items.length){close();return;}
     if(active>=items.length)active=items.length-1;
@@ -5671,6 +5671,7 @@ const ALIAS={tl1a:'TNFSF15',tnfsf15:'TNFSF15',jak:'JAK2',jak2:'JAK2',jak1:'JAK1'
  gpr35:'GPR35',osm:'OSMR',osmr:'OSMR',oncostatin:'OSMR',il17:'IL17A',il17a:'IL17A',secukinumab:'IL17A',
  il13:'IL13',smad7:'SMAD7',mongersen:'SMAD7',ccr9:'CCR9',vercirnon:'CCR9',
  steroid:'NR3C1',steroids:'NR3C1',glucocorticoid:'NR3C1',nr3c1:'NR3C1',irf5:'IRF5',cxcr2:'CXCR2',ptpn2:'PTPN2',il10:'IL10'};
+const ALIASREV=(function(){var m={};for(var k in ALIAS){(m[ALIAS[k]]=m[ALIAS[k]]||[]).push(k);}var o={};for(var s in m)o[s]=m[s].join(' ');return o;})();
 const PFIZER_ASSET={JAK:'tofacitinib (Xeljanz), approved in UC',S1P:'etrasimod (Velsipity), approved in UC'};
 const COMPANY_PROFILES={
   merck:{
