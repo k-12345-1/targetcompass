@@ -732,7 +732,7 @@
   .start-hero h2{font-size:clamp(19px,3.4vw,29px);font-weight:800;letter-spacing:-.02em;line-height:1.14;margin:0 0 12px;color:var(--ink)}
   @media(min-width:700px){.start-hero h2{white-space:nowrap}}
   .start-hero p{font-size:16px;color:var(--ink-2);line-height:1.55;margin:0}
-  .start-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:980px;margin:0 auto}
+  .start-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;max-width:1180px;margin:0 auto}
   @media(max-width:820px){.start-grid{grid-template-columns:1fr}}
   .start-card{text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);
     padding:24px 22px;cursor:pointer;display:flex;flex-direction:column;gap:9px;font-family:inherit;transition:transform .12s,border-color .12s,box-shadow .12s}
@@ -832,6 +832,50 @@
   .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
   .memo-live{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
     color:#0B7A50;background:#DFF3EA;border-radius:999px;padding:3px 9px;display:inline-block}
+
+  /* ---- adoption / governance / value case ---- */
+  .adopt-lead{display:grid;grid-template-columns:1.25fr .75fr;gap:16px;margin-bottom:16px}
+  .adopt-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px 24px;box-shadow:var(--shadow)}
+  .adopt-card h3{font-size:19px;margin:0 0 5px}.adopt-card>.sub{font-size:13px;color:var(--ink-3);line-height:1.5;margin-bottom:16px}
+  .gateflow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .gate{position:relative;background:var(--panel-2);border:1px solid var(--line);border-radius:13px;padding:14px 13px;min-height:126px}
+  .gate:not(:last-child):after{content:'\2192';position:absolute;right:-10px;top:47px;z-index:2;color:var(--accent);font-weight:800;background:var(--panel);border-radius:99px;padding:1px 3px}
+  .gate .n{font-family:var(--mono);font-size:9px;font-weight:800;letter-spacing:.07em;color:var(--accent);text-transform:uppercase}
+  .gate h4{font-size:13.5px;margin:5px 0}.gate p{font-size:11.5px;line-height:1.42;color:var(--ink-3);margin:0}
+  .gate .owner{display:inline-block;margin-top:8px;font-family:var(--mono);font-size:9.5px;font-weight:700;color:var(--accent-ink);background:var(--accent-bg);border-radius:5px;padding:3px 6px}
+  .guardrails{display:grid;gap:8px}.guard{display:flex;gap:10px;align-items:flex-start;border-top:1px solid var(--line);padding-top:10px}
+  .guard:first-child{border-top:0;padding-top:0}.guard .ok{width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:#E4F5EE;color:#0B7A52;font-weight:800;flex:none}
+  .guard b{display:block;font-size:12.5px}.guard span{font-size:11.5px;color:var(--ink-3);line-height:1.4}
+  .pilot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .pilot-kpi{border:1px solid var(--line);border-radius:12px;padding:13px;background:var(--ground)}
+  .pilot-kpi .v{font-family:var(--mono);font-size:20px;font-weight:800;color:var(--accent)}.pilot-kpi b{display:block;font-size:12px;margin:5px 0 2px}.pilot-kpi span{font-size:10.5px;color:var(--ink-3);line-height:1.35;display:block}
+  .value-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.value-inputs{display:grid;gap:10px}
+  .value-row{display:grid;grid-template-columns:1fr 150px 55px;align-items:center;gap:10px;font-size:12px;color:var(--ink-2)}
+  .value-row input{width:100%;accent-color:var(--accent)}.value-row output{font-family:var(--mono);font-weight:700;text-align:right;color:var(--ink)}
+  .value-out{background:var(--accent-bg);border:1px solid #C7D0FF;border-radius:14px;padding:18px}
+  .value-out .big{font-family:var(--mono);font-size:34px;font-weight:800;color:var(--accent);line-height:1}.value-out h4{margin:7px 0 4px}.value-out p{font-size:11.5px;line-height:1.45;color:var(--accent-ink);margin:0}
+  .value-split{display:flex;gap:16px;border-top:1px solid #C7D0FF;margin-top:13px;padding-top:10px}.value-split span{font-size:10.5px;color:var(--ink-3)}.value-split b{display:block;font-family:var(--mono);font-size:14px;color:var(--ink)}
+  .assump-actions{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}.assump-actions button{border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink-2);font:700 11px var(--mono);padding:7px 12px;cursor:pointer}.assump-actions button:first-child{background:var(--accent-bg);border-color:#C7D0FF;color:var(--accent-ink)}
+  .value-row input[type=number]{width:100%;border:1px solid var(--line);border-radius:9px;background:var(--ground);color:var(--ink);font:700 12px var(--mono);padding:8px 9px}.value-row .need{display:block;font-size:9.5px;color:var(--ink-4);line-height:1.3;margin-top:2px}.formula-box{margin-top:13px;border-top:1px solid #C7D0FF;padding-top:11px;font:600 10.5px/1.55 var(--mono);color:var(--accent-ink)}
+  .org-grid,.finance-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.org-unit,.fin-card{border:1px solid var(--line);border-radius:13px;padding:15px;background:var(--ground)}
+  .finance-grid.levers{grid-template-columns:repeat(4,1fr)}
+  .org-unit .tag,.fin-card .tag{font-family:var(--mono);font-size:9px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--accent)}
+  .org-unit h4,.fin-card h4{font-size:14px;margin:6px 0}.org-unit p,.fin-card p{font-size:11.5px;line-height:1.45;color:var(--ink-3);margin:0}
+  .org-unit ul,.fin-card ul{padding-left:17px;margin:8px 0 0;color:var(--ink-2);font-size:11.5px;line-height:1.5}
+  .raci{width:100%;border-collapse:collapse;font-size:11.5px}.raci th{background:var(--panel-2);color:var(--ink-3);font-size:10px;text-transform:uppercase;letter-spacing:.04em}.raci th,.raci td{border:1px solid var(--line);padding:8px;text-align:center}.raci th:first-child,.raci td:first-child{text-align:left;font-weight:700}.raci .r{background:#E4F5EE;color:#0B7A52;font-weight:800}.raci .a{background:var(--accent-bg);color:var(--accent-ink);font-weight:800}.raci .c{background:#FBF1D6;color:#8A5A00;font-weight:800}
+  .rollout{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.roll{border-top:4px solid var(--accent);background:var(--panel-2);border-radius:10px;padding:13px}.roll .when{font-family:var(--mono);font-size:10px;color:var(--accent);font-weight:800}.roll h4{font-size:13px;margin:5px 0}.roll p{font-size:11px;line-height:1.4;color:var(--ink-3);margin:0}
+  .fin-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}.fin-kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}.fin-kpi .v{font-family:var(--mono);font-size:25px;font-weight:800;color:var(--accent)}.fin-kpi b{display:block;font-size:12px;margin:5px 0}.fin-kpi span{font-size:10.5px;line-height:1.35;color:var(--ink-3)}
+  .econ-table{width:100%;border-collapse:collapse;font-size:12px}.econ-table th{text-align:left;color:var(--ink-3);font-size:10px;text-transform:uppercase;letter-spacing:.05em;background:var(--panel-2)}.econ-table th,.econ-table td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}.econ-table td:last-child{font-family:var(--mono);font-weight:700}.econ-table small{display:block;color:var(--ink-3);line-height:1.4;margin-top:2px}
+  .fin-gates{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.fin-gate{border:1px solid var(--line);border-radius:12px;padding:14px}.fin-gate .q{font-family:var(--mono);font-size:9px;font-weight:800;color:var(--accent)}.fin-gate h4{font-size:13px;margin:5px 0}.fin-gate p{font-size:11px;color:var(--ink-3);line-height:1.4;margin:0}
+  .method-eq{background:#10183B;color:#fff;border-radius:13px;padding:15px 17px;font:600 12px/1.65 var(--mono);overflow-x:auto}.method-eq .mut{color:#AEBCEB}.method-eq .plus{color:#92E3C2}.method-eq .minus{color:#FFB2A9}
+  .spec-table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:12px}.spec-table th{text-align:left;background:var(--panel-2);color:var(--ink-3);font-size:9.5px;text-transform:uppercase;letter-spacing:.05em}.spec-table th,.spec-table td{padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:top}.spec-table td:first-child{font-weight:700}.spec-table small{display:block;color:var(--ink-3);line-height:1.35;margin-top:2px}
+  .prov-kind{display:inline-block;font:800 8.5px var(--mono);letter-spacing:.05em;border-radius:5px;padding:2px 5px;margin:0 5px 3px 0}.pk-direct{color:#0B7A52;background:#E4F5EE}.pk-derived{color:var(--accent-ink);background:var(--accent-bg)}.pk-curated{color:#8A5A00;background:#FBF1D6}.pk-internal{color:#6A3FB3;background:#EFE8FA}
+  .proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}.proof-card{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--ground)}.proof-card .state{display:inline-block;font:800 9px var(--mono);letter-spacing:.05em;text-transform:uppercase;border-radius:5px;padding:3px 6px;margin-bottom:7px}.state-done{color:#0B7A52;background:#E4F5EE}.state-partial{color:#8A5A00;background:#FBF1D6}.state-next{color:var(--accent-ink);background:var(--accent-bg)}.proof-card h4{font-size:13px;margin:0 0 5px}.proof-card p,.proof-card li{font-size:11px;line-height:1.45;color:var(--ink-3)}.proof-card ul{margin:7px 0 0;padding-left:16px}
+  .scale-line{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}.scale-node{position:relative;border:1px solid var(--line);border-radius:11px;padding:12px;background:var(--panel-2)}.scale-node:not(:last-child):after{content:'\2192';position:absolute;right:-9px;top:38%;z-index:2;color:var(--accent);font-weight:800}.scale-node b{display:block;font-size:11.5px;margin-bottom:4px}.scale-node span{font-size:10px;line-height:1.35;color:var(--ink-3)}
+  @media(max-width:900px){.adopt-lead,.value-grid{grid-template-columns:1fr}.gateflow,.pilot-grid{grid-template-columns:1fr 1fr}.gate:nth-child(2):after{display:none}}
+  @media(max-width:900px){.org-grid,.finance-grid,.finance-grid.levers{grid-template-columns:1fr 1fr}.rollout,.fin-summary,.fin-gates{grid-template-columns:1fr 1fr}}
+  @media(max-width:900px){.proof-grid{grid-template-columns:1fr 1fr}.scale-line{grid-template-columns:1fr}.scale-node:after{display:none}}
+  @media(max-width:560px){.gateflow,.pilot-grid,.org-grid,.finance-grid,.rollout,.fin-summary,.fin-gates{grid-template-columns:1fr}.gate:after{display:none}.value-row{grid-template-columns:1fr 110px 48px}.raci{font-size:9.5px}.raci th,.raci td{padding:5px}}
 </style>
 
 <div class="topnav">
@@ -841,6 +885,8 @@
     <button role="tab" aria-selected="false" data-view="chat">Ask</button>
     <button role="tab" aria-selected="false" data-view="land">Prioritize</button>
     <button role="tab" aria-selected="false" data-view="pt">Patients</button>
+    <button role="tab" aria-selected="false" data-view="adopt">Adopt</button>
+    <button role="tab" aria-selected="false" data-view="finance">Finance</button>
     <button role="tab" aria-selected="false" data-view="method">How it works</button>
   </nav>
 </div>
@@ -871,6 +917,18 @@
         <h3>Test on patients &amp; design a trial</h3>
         <p>See how any target, or one you create yourself, fits real UC patient populations, then get the trial and recruitment plan.</p>
         <span class="sc-go">See patient fit &#8594;</span>
+      </button>
+      <button class="start-card" data-goto="adopt" type="button">
+        <span class="sc-n">4</span>
+        <h3>Take it into a review</h3>
+        <p>See the owners, governance gates, pilot measures and an assumptions-shown value case for putting TargetCompass into practice.</p>
+        <span class="sc-go">See the adoption plan &#8594;</span>
+      </button>
+      <button class="start-card" data-goto="finance" type="button">
+        <span class="sc-n">5</span>
+        <h3>Make the investment case</h3>
+        <p>Connect target selection to R&amp;D capital, competitive timing, commercial evidence and risk-adjusted value.</p>
+        <span class="sc-go">Open the financial case &#8594;</span>
       </button>
     </div>
   </section>
@@ -1005,6 +1063,161 @@
       <p>"AI-powered" gets thrown around a lot, so here's where the AI really does something. The ranking math stays simple and easy to audit. The AI handles the messy judgment: reading the literature, squaring up sources that disagree, and writing an explanation you can push back on. Here's the whole pipeline, why our answer comes out different from Open Targets, and how the same calls would have aged since 2015.</p>
     </div>
     <div id="methodwrap"></div>
+  </section>
+
+  <!-- ADOPTION + GOVERNANCE -->
+  <section class="view" id="v-adopt">
+    <div class="hero">
+      <span class="eyebrow">A proposed Pfizer pilot &middot; People, process and safeguards</span>
+      <h2>How Pfizer could use it safely, without letting AI make the decision.</h2>
+      <p>A practical pilot design that Pfizer could adapt to its existing review process. TargetCompass gathers and explains the evidence; Pfizer experts challenge it and make the final decision. The first step would be one small UC pilot.</p>
+    </div>
+
+    <div class="adopt-lead">
+      <div class="adopt-card">
+        <h3>A simple four-step review</h3><p class="sub">Every step has a person responsible and leaves a record that can be checked later.</p>
+        <div class="gateflow">
+          <div class="gate"><span class="n">Step 1</span><h4>Collect the evidence</h4><p>Record every source and date. Clearly show what is missing or disagrees.</p><span class="owner">A DATA OWNER CHECKS IT</span></div>
+          <div class="gate"><span class="n">Step 2</span><h4>Challenge the science</h4><p>Scientists ask: is the target really causal, and are we trying to drug it in the right direction?</p><span class="owner">SCIENTISTS SIGN OFF</span></div>
+          <div class="gate"><span class="n">Step 3</span><h4>Check risk and value</h4><p>Safety, clinical and business experts test whether it could help patients and make strategic sense.</p><span class="owner">EXPERTS REVIEW TOGETHER</span></div>
+          <div class="gate"><span class="n">Step 4</span><h4>Make the decision</h4><p>A Pfizer committee chooses GO, HOLD or STOP and records why.</p><span class="owner">PEOPLE DECIDE, NOT AI</span></div>
+        </div>
+      </div>
+      <div class="adopt-card">
+        <h3>Five rules we would not compromise</h3><p class="sub">These keep the tool useful without turning it into an unchecked decision-maker.</p>
+        <div class="guardrails">
+          <div class="guard"><span class="ok">&#10003;</span><div><b>Human sign-off</b><span>No target advances from the score alone.</span></div></div>
+          <div class="guard"><span class="ok">&#10003;</span><div><b>Source lineage</b><span>Every claim keeps its URL, snapshot date and extraction status.</span></div></div>
+          <div class="guard"><span class="ok">&#10003;</span><div><b>Conflict hold</b><span>Unresolved direction or safety conflicts block RECOMMEND.</span></div></div>
+          <div class="guard"><span class="ok">&#10003;</span><div><b>Versioned decisions</b><span>Weights, evidence, overrides and committee rationale are retained.</span></div></div>
+          <div class="guard"><span class="ok">&#10003;</span><div><b>Quarterly monitoring</b><span>Drift, stale evidence, false confidence and user overrides are reviewed.</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="adopt-card" style="margin-bottom:16px">
+      <h3>A proposed team around the product</h3><p class="sub">These are roles the pilot needs, not confirmed Pfizer job titles. Pfizer would map them to its real teams and process.</p>
+      <div class="org-grid">
+        <div class="org-unit"><span class="tag">Proposed business owner</span><h4>Portfolio representative</h4><p>Makes sure the product supports a real decision and defines what success means.</p><ul><li>Chooses the pilot questions</li><li>Approves the scoring strategy</li><li>Decides whether to scale</li></ul></div>
+        <div class="org-unit"><span class="tag">Proposed product owner</span><h4>Digital product team</h4><p>Keeps the product useful, reliable and supported.</p><ul><li>Manages improvements</li><li>Coordinates design and engineering</li><li>Provides training and support</li></ul></div>
+        <div class="org-unit"><span class="tag">Scientific authority</span><h4>Target scientists</h4><p>Own the scientific interpretation; that responsibility is never delegated to AI.</p><ul><li>Set evidence standards</li><li>Resolve scientific conflicts</li><li>Sign the recommendation</li></ul></div>
+        <div class="org-unit"><span class="tag">Expert reviewers</span><h4>Safety, clinical, legal and privacy</h4><p>Check risks the scientists or AI may miss.</p><ul><li>Raise safety concerns</li><li>Protect confidential data</li><li>Set boundaries for AI use</li></ul></div>
+        <div class="org-unit"><span class="tag">Decision owner</span><h4>Authorized review committee</h4><p>Uses the evidence pack but keeps GO, HOLD or STOP authority.</p><ul><li>Records disagreements</li><li>Sets the next evidence needed</li><li>Owns the final decision</li></ul></div>
+        <div class="org-unit"><span class="tag">Independent check</span><h4>Data and model governance</h4><p>Checks that the information and AI remain reliable over time.</p><ul><li>Approves data sources</li><li>Tracks model versions</li><li>Reviews performance quarterly</li></ul></div>
+      </div>
+    </div>
+
+    <div class="adopt-card" style="margin-bottom:16px">
+      <h3>What would have to change before real use</h3><p class="sub">The hackathon build demonstrates the experience. A real version would need Pfizer-approved login, data, AI and record-keeping services.</p>
+      <div class="org-grid">
+        <div class="org-unit"><span class="tag">Login and permissions</span><h4>Only the right people get access</h4><p>Use Pfizer sign-in and give each user only the access required for their role.</p></div>
+        <div class="org-unit"><span class="tag">Data</span><h4>Use approved information</h4><p>Connect approved public sources and permitted internal portfolio, experiment, safety and clinical data.</p></div>
+        <div class="org-unit"><span class="tag">AI protection</span><h4>Keep confidential data protected</h4><p>Use approved AI services; record prompts and model versions; never send confidential data to public tools.</p></div>
+        <div class="org-unit"><span class="tag">Workflow</span><h4>Fit the current review process</h4><p>Send the evidence pack and final decision into Pfizer's approved system instead of creating a competing record.</p></div>
+        <div class="org-unit"><span class="tag">Operations</span><h4>Know what to do when it fails</h4><p>Alert on stale data or failed updates, name a support owner and allow rollback to the last reliable release.</p></div>
+        <div class="org-unit"><span class="tag">Records</span><h4>Keep an auditable history</h4><p>Save the sources, model version, weights, human edits, approvals and final reason for each decision.</p></div>
+      </div>
+    </div>
+
+    <div class="adopt-card" style="margin-bottom:16px">
+      <h3>Rollout without disrupting target review</h3><p class="sub">Earn permission to scale in four controlled releases.</p>
+      <div class="rollout">
+        <div class="roll"><span class="when">0-30 DAYS</span><h4>Design + controls</h4><p>Map the current UC review, confirm owners, data boundaries, decision rights and baseline metrics.</p></div>
+        <div class="roll"><span class="when">31-90 DAYS</span><h4>Shadow pilot</h4><p>Run beside 6-10 real reviews. No decision automation; compare time, traceability and reviewer conclusions.</p></div>
+        <div class="roll"><span class="when">3-6 MONTHS</span><h4>Controlled production</h4><p>SSO, governed sources, signed evidence packs, support model and approved UC users.</p></div>
+        <div class="roll"><span class="when">6-12 MONTHS</span><h4>Scale by evidence</h4><p>Add one indication at a time after control performance, adoption and financial value meet thresholds.</p></div>
+      </div>
+    </div>
+
+    <div class="adopt-card">
+      <h3>A 90-day UC pilot with pre-agreed success criteria</h3><p class="sub">Run beside the existing process first. Compare the same decisions, without changing decision rights.</p>
+      <div class="pilot-grid">
+        <div class="pilot-kpi"><div class="v">&ge;30%</div><b>Faster evidence preparation</b><span>Median analyst hours from question to review-ready pack.</span></div>
+        <div class="pilot-kpi"><div class="v">100%</div><b>Traceable material claims</b><span>Claims with source, date and confidence status.</span></div>
+        <div class="pilot-kpi"><div class="v">&ge;80%</div><b>Reviewer usefulness</b><span>Scientific and portfolio reviewers rating the pack useful.</span></div>
+        <div class="pilot-kpi"><div class="v">0</div><b>Unsupported auto-decisions</b><span>Targets advanced without required human approvals.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINANCE + PORTFOLIO ECONOMICS -->
+  <section class="view" id="v-finance">
+    <div class="hero">
+      <span class="eyebrow">Proposed value framework &middot; How better choices save money</span>
+      <h2>The biggest value is choosing better R&amp;D bets earlier.</h2>
+      <p>TargetCompass can save preparation time, but that is only the beginning. The larger opportunity is to <b>stop weak ideas before more money is spent</b>, focus the next experiment on the biggest uncertainty, and notice promising targets before competitors make them expensive.</p>
+    </div>
+
+    <div class="fin-summary">
+      <div class="fin-kpi"><div class="v">1 decision</div><b>Earlier can matter most</b><span>A single well-supported early stop can outweigh years of software and analyst cost.</span></div>
+      <div class="fin-kpi"><div class="v">4 sources</div><b>Keep each benefit separate</b><span>Time saved, spending avoided, earlier decisions and better portfolio choices are not the same thing.</span></div>
+      <div class="fin-kpi"><div class="v">3 cases</div><b>Show a range, not one answer</b><span>Conservative, expected and upside cases make uncertainty visible.</span></div>
+      <div class="fin-kpi"><div class="v">Step by step</div><b>Numbers improve with evidence</b><span>Early estimates stay broad; Finance tightens them as the program learns more.</span></div>
+    </div>
+
+    <div class="adopt-card" style="margin-bottom:16px">
+      <h3>Four ways the product could create value</h3><p class="sub">Measure each one separately so the same benefit is not counted twice.</p>
+      <div class="finance-grid levers">
+        <div class="fin-card"><span class="tag">01 &middot; Time</span><h4>Prepare reviews faster</h4><p>Reusable evidence packs give scientists and analysts more time for experiments and judgment.</p><ul><li>Measure: hours per review</li><li>Who checks it: R&amp;D operations</li><li>Can be tested in the pilot</li></ul></div>
+        <div class="fin-card"><span class="tag">02 &middot; Avoided spending</span><h4>Stop weak ideas earlier</h4><p>Contradictory evidence, safety problems and overlap with existing Pfizer programs appear before avoidable work begins.</p><ul><li>Measure: money spent before STOP</li><li>Who checks it: Finance</li><li>Compare with real decisions</li></ul></div>
+        <div class="fin-card"><span class="tag">03 &middot; Timing</span><h4>Decide before the field gets crowded</h4><p>Finding an open opportunity earlier may avoid paying more later or arriving after competitors.</p><ul><li>Measure: months to decision</li><li>Who checks it: Portfolio and BD</li><li>Initially only a scenario</li></ul></div>
+        <div class="fin-card"><span class="tag">04 &middot; Better choices</span><h4>Build a stronger mix of projects</h4><p>Look at science, safety, patients, competition and Pfizer fit together instead of choosing on scientific association alone.</p><ul><li>Measure: decisions and outcomes over time</li><li>Who checks it: Portfolio team</li><li>Needs longer-term evidence</li></ul></div>
+      </div>
+    </div>
+
+    <div class="adopt-card" style="margin-bottom:16px">
+      <h3>Seven business questions to ask about a target</h3><p class="sub">TargetCompass organizes the questions beside the science. Finance and Commercial experts would supply the approved numbers.</p>
+      <table class="econ-table"><thead><tr><th>Dimension</th><th>Decision question</th><th>Evidence / owner</th><th>How it changes value</th></tr></thead><tbody>
+        <tr><td><b>Addressable patients</b></td><td>Which UC segment is biologically reachable?</td><td>Epidemiology + biomarker prevalence<small>Commercial / Clinical</small></td><td>Eligible population</td></tr>
+        <tr><td><b>Unmet need</b></td><td>Does the target solve failure, safety or durability?</td><td>Treatment journeys + outcomes<small>Medical / Commercial</small></td><td>Adoption and value proposition</td></tr>
+        <tr><td><b>Differentiation</b></td><td>What is better than the future standard of care?</td><td>Competitor TPPs + trial readouts<small>Competitive intelligence</small></td><td>Share, access and pricing resilience</td></tr>
+        <tr><td><b>How the drug is made and delivered</b></td><td>Can Pfizer create the right drug at a reasonable cost?</td><td>Formulation, dose and manufacturing assumptions<small>Development / Finance</small></td><td>Development cost and future margin</td></tr>
+        <tr><td><b>Time to convincing evidence</b></td><td>Which next experiment answers the biggest unknown?</td><td>Biomarker and early proof plan<small>Translational / Clinical</small></td><td>How soon Pfizer can decide to continue or stop</td></tr>
+        <tr><td><b>Portfolio fit</b></td><td>Does it complement or cannibalize Pfizer assets?</td><td>Internal pipeline and combinations<small>Portfolio strategy</small></td><td>Incremental versus redundant value</td></tr>
+        <tr><td><b>Chance of technical success</b></td><td>What must be true for the program to work?</td><td>Causality, safety, ability to drug and translation to patients<small>Target team</small></td><td>The probability used in later financial estimates</td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="adopt-card" style="margin-bottom:16px">
+      <h3>Build the value example from explicit assumptions</h3><p class="sub">No Pfizer values are assumed. Enter reviewed inputs, or load a clearly labelled illustrative example to demonstrate the calculation.</p>
+      <div class="assump-actions"><button type="button" onclick="loadValueExample()">Load illustrative example (not Pfizer data)</button><button type="button" onclick="clearValueInputs()">Clear assumptions</button></div>
+      <div class="value-grid">
+        <div class="value-inputs">
+          <label class="value-row"><span>Target reviews per year<small class="need">Needed from: pilot owner / review-volume baseline</small></span><input id="val_reviews" type="number" min="0" step="1" placeholder="Enter" oninput="calcValue()"><output id="vo_reviews">—</output></label>
+          <label class="value-row"><span>Hours saved per review<small class="need">Needed from: measured before/after pilot time</small></span><input id="val_hours" type="number" min="0" step="1" placeholder="Enter" oninput="calcValue()"><output id="vo_hours">—</output></label>
+          <label class="value-row"><span>Total cost per analyst hour<small class="need">Needed from: Pfizer Finance-approved rate</small></span><input id="val_rate" type="number" min="0" step="1" placeholder="Enter $" oninput="calcValue()"><output id="vo_rate">—</output></label>
+          <label class="value-row"><span>Earlier STOP decisions per year<small class="need">Needed from: pilot decision audit</small></span><input id="val_avoided" type="number" min="0" step="1" placeholder="Enter" oninput="calcValue()"><output id="vo_avoided">—</output></label>
+          <label class="value-row"><span>Spend avoided per earlier STOP<small class="need">Needed from: Finance / project cost history</small></span><input id="val_spend" type="number" min="0" step="1000" placeholder="Enter $" oninput="calcValue()"><output id="vo_spend">—</output></label>
+          <label class="value-row"><span>Share credited to TargetCompass<small class="need">Needed from: agreed pilot attribution method</small></span><input id="val_attr" type="number" min="0" max="100" step="1" placeholder="Enter %" oninput="calcValue()"><output id="vo_attr">—</output></label>
+        </div>
+        <div class="value-out" aria-live="polite">
+          <div class="big" id="value_total">Not calculated</div><h4 id="value_title">Waiting for reviewed assumptions</h4>
+          <p>Counts preparation capacity plus a conservative share of earlier stops. Competitive timing, probability-of-success improvement, launch revenue and patient value stay outside the total until evidence supports attribution.</p>
+          <div class="value-split"><span><b id="value_time">—</b>review capacity</span><span><b id="value_avoid">—</b>credited avoided spend</span></div>
+          <div class="formula-box" id="value_formula">Formula: (reviews × hours saved × hourly cost) + (earlier STOPs × avoided spend × credited share)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="adopt-card" style="margin-bottom:16px">
+      <h3>Three honest ways to describe the result</h3><p class="sub">Start conservatively. Claim more only after the pilot shows that TargetCompass caused the improvement.</p>
+      <div class="finance-grid">
+        <div class="fin-card"><span class="tag">Conservative case</span><h4>It only saves time</h4><p>TargetCompass makes preparation faster but does not change any decision. Count only the measured staff time saved.</p></div>
+        <div class="fin-card" style="border-color:var(--accent);background:var(--accent-bg)"><span class="tag">Expected case</span><h4>It saves time and supports one earlier STOP</h4><p>Preparation is faster and one weak project is stopped earlier. Credit only a conservative portion to the tool.</p></div>
+        <div class="fin-card"><span class="tag">Upside case</span><h4>It also helps Pfizer move earlier</h4><p>One promising target reaches a decision sooner. Put a number on this only after several real decisions show the effect.</p></div>
+      </div>
+    </div>
+
+    <div class="adopt-card">
+      <h3>When financial estimates become more detailed</h3><p class="sub">At the beginning, use broad ranges. Make the financial model more precise only as scientific evidence improves.</p>
+      <div class="fin-gates">
+        <div class="fin-gate"><span class="q">1 &middot; TARGET REVIEW</span><h4>Is it strategically interesting?</h4><p>Use broad ranges for patients, competition, drug type and Pfizer fit. Fund the next experiment, not the whole future program.</p></div>
+        <div class="fin-gate"><span class="q">2 &middot; EARLY BIOLOGY PROOF</span><h4>Is the next experiment worth funding?</h4><p>Estimate the cost, time and chance that the next experiment will answer the most important question.</p></div>
+        <div class="fin-gate"><span class="q">3 &middot; DRUG CANDIDATE / FIRST HUMAN STUDY</span><h4>What would development require?</h4><p>Add expected development cost, timeline, technical success chance and the intended product profile.</p></div>
+        <div class="fin-gate"><span class="q">4 &middot; EARLY CLINICAL SIGNAL</span><h4>Is there enough evidence for formal valuation?</h4><p>Finance can now build more detailed scenarios for patients, access, price, share, manufacturing cost and risk-adjusted value.</p></div>
+      </div>
+      <p class="val-foot" style="margin-top:14px"><b>Financial guardrail:</b> TargetCompass organizes questions and assumptions; Finance owns the official valuation. No number should enter a decision deck without a named owner, date, range and source.</p>
+    </div>
   </section>
 
   <!-- PATIENT IMPACT -->
@@ -5503,6 +5716,94 @@ function drawMethod(){
   </div>
 
   <div class="method-sec">
+    <h3>The scoring method, with every assumption visible</h3>
+    <p class="sub">The LLM does not choose the rank. It produces structured evidence; deterministic code applies the formula below. The displayed 0-100 score is a relative position within the current target set, not a probability of clinical success.</p>
+    <div class="method-eq"><span class="mut">raw score = </span><span class="plus">(wB * biology + wD * druggability + wW * open field + wS * feasibility) * tractability gate</span><br><span class="minus">- wF * failure risk - wR * Pfizer redundancy</span><br><span class="mut">display score = 100 * (raw - minimum raw) / (maximum raw - minimum raw)</span></div>
+    <p style="font-size:12.5px;line-height:1.55;margin:13px 0 4px"><b>Read it in four steps:</b> (1) convert each input to 0-1; (2) multiply by the selected strategy weight; (3) discount the positive subtotal if the target is hard to drug; (4) subtract failure and portfolio-overlap penalties. Under Balanced, the weights are biology 0.34, druggability 0.12, open field 0.28, feasibility 0.22, failure risk 0.26 and redundancy 0.20.</p>
+    <div class="method-eq" style="margin-top:10px"><span class="mut">Worked example (illustrative inputs):</span><br><span class="plus">positive subtotal = 0.34*0.70 + 0.12*0.80 + 0.28*0.60 + 0.22*0.75 = 0.667</span><br><span class="plus">tractability discount = 0.667 * 1.00 = 0.667</span><br><span class="minus">risk penalties = 0.26*0.20 + 0.20*0.00 = 0.052</span><br><b>raw score = 0.667 - 0.052 = 0.615</b><br><span class="mut">The same target with a difficult-to-drug gate of 0.82 would score 0.495. The final 0-100 display then depends on the lowest and highest raw scores in the compared set.</span></div>
+    <p class="val-foot"><b>Important naming clarification:</b> this prototype does not calculate a continuous 3D pocket-quality score. Its “pocket” input is a binary flag derived from Open Targets tractability labels. Likewise, “genetic-direction quality” is not a downloaded Open Targets score: it is a manually curated category mapped to a number. The table below separates downloaded facts from team-defined transformations so they cannot be mistaken for the same kind of evidence.</p>
+    <table class="spec-table"><thead><tr><th>Exact component</th><th>Where the current value comes from</th><th>Transformation into the score</th><th>Status and limitation</th></tr></thead><tbody>
+      <tr><td>UC disease association</td><td><span class="prov-kind pk-direct">DIRECT</span>Open Targets GraphQL: target-associated disease row for MONDO_0005101, field <b>score</b>; embedded snapshot 25.06 dated 2026-07-23</td><td>Already 0-1; used as <b>association</b></td><td>Open Targets aggregate association, not proof of causality</td></tr>
+      <tr><td>Human-genetic association</td><td><span class="prov-kind pk-direct">DIRECT</span>Same Open Targets row, <b>datatypeScores[id = genetic_association].score</b></td><td>Already 0-1; used as <b>genetics</b></td><td>A datatype aggregate; variant-level causality is inspected separately</td></tr>
+      <tr><td>Biology</td><td><span class="prov-kind pk-derived">DERIVED</span>The two Open Targets fields above</td><td><b>0.55 * association + 0.45 * genetics</b></td><td>The 55/45 split is a team-defined, editable heuristic</td></tr>
+
+      <tr><td>Structure / pocket flag</td><td><span class="prov-kind pk-direct">DIRECT</span>Open Targets target <b>tractability</b> labels; true when a high-confidence pocket/structure tractability label is present</td><td>true = 1, false = 0; contributes <b>0.45</b> to druggability</td><td>Presence of a pocket is not proof that a selective drug can be made</td></tr>
+      <tr><td>Known ligand flag</td><td><span class="prov-kind pk-direct">DIRECT</span>Open Targets <b>tractability</b> labels; true when a ligand/binder label is present</td><td>true = 1, false = 0; contributes <b>0.25</b></td><td>Does not assess ligand quality, selectivity or exposure</td></tr>
+      <tr><td>Clinical modality precedent</td><td><span class="prov-kind pk-direct">DIRECT</span>Open Targets tractability labels indicating approved or advanced-clinical precedent</td><td>true = 1, false = 0; contributes <b>0.15</b></td><td>Mechanism precedent may come from another indication</td></tr>
+      <tr><td>Druggability</td><td><span class="prov-kind pk-derived">DERIVED</span>The three tractability flags above</td><td><b>0.15 base + 0.45*pocket + 0.25*ligand + 0.15*clinical</b>, clipped to 0-1</td><td>Coefficients are transparent heuristics, not a trained prediction</td></tr>
+
+      <tr><td>Active competitor trials</td><td><span class="prov-kind pk-direct">DIRECT</span>ClinicalTrials.gov API v2 count of active interventional UC studies matching the target's <b>mechanism search terms</b></td><td>Integer count per mechanism class</td><td>Search-term mapping is curated; sponsor and mechanism aliases can cause misses</td></tr>
+      <tr><td>Open field</td><td><span class="prov-kind pk-derived">DERIVED</span>Active-trial count above</td><td><b>1 - log(1 + active trials) / log(41)</b>, clipped to 0-1</td><td>40 is the current crowding reference; it must be sensitivity-tested</td></tr>
+
+      <tr><td>Genetic-direction category</td><td><span class="prov-kind pk-curated">CURATED</span><b>TPROFILE.g</b>: protective, risk or none, manually assigned from named coding variants/GWAS and checked against linked papers; live Open Targets direction evidence is shown separately</td><td>protective = 0.95, risk = 0.60, none = 0.35</td><td>Not yet automatically derived variant by variant; requires source-level audit</td></tr>
+      <tr><td>Disease-tissue direction</td><td><span class="prov-kind pk-curated">CURATED</span><b>TPROFILE.l</b>: up, down or not significant, based on UC literature and disease-tissue summaries; HPA supplies baseline tissue nTPM but not inflamed-vs-healthy direction</td><td>up = 0.75, down = 0.30, neutral/unknown = 0.50</td><td>Qualitative and target-curated; HPA alone cannot validate disease induction</td></tr>
+      <tr><td>Feasibility / direction</td><td><span class="prov-kind pk-derived">DERIVED</span>The two curated direction categories above</td><td><b>0.60 * genetic-direction quality + 0.40 * disease-tissue direction</b></td><td>The mappings and 60/40 split are provisional heuristics</td></tr>
+
+      <tr><td>Failure risk</td><td><span class="prov-kind pk-curated">CURATED</span>Target-level field assembled from linked clinical failures, FDA safety communications and disconfirming evidence</td><td>Manual 0-1 severity score; subtracted using the strategy weight</td><td>Current build lacks a formal event-to-score rubric; this is a major validation gap</td></tr>
+      <tr><td>Pfizer redundancy</td><td><span class="prov-kind pk-curated">CURATED</span>Publicly visible Pfizer marketed/pipeline mechanism overlap</td><td>0 = no known overlap, 1 = known owned class; subtracted</td><td>Public snapshot only; real use requires Pfizer internal portfolio confirmation</td></tr>
+      <tr><td>Tractability gate</td><td><span class="prov-kind pk-curated">CURATED</span><b>TPROFILE.m/c</b> modality and target-class labels, supported by Open Targets tractability</td><td>1.00 workable, 0.82 difficult/phosphatase, 0.70 no current modality/transcription factor</td><td>Rule-based class discount; must be tested by target class</td></tr>
+    </tbody></table>
+    <p class="val-foot"><b>Tractability gate:</b> 1.00 when a workable modality is known, 0.82 for historically difficult classes such as phosphatases, and 0.70 when no current modality is known or the target is a transcription factor. <b>Decision gate:</b> unresolved direction-of-effect or safety conflicts prevent RECOMMEND even when the numeric score is high. A separate user-set decision bar converts rank into RECOMMEND, HOLD or PASS.</p>
+  </div>
+
+  <div class="method-sec">
+    <h3>Validation: what is evidence today, and what is still required</h3>
+    <p class="sub">A polished demo is not validation. We separate completed checks, partial evidence and the prospective work needed before real decision use.</p>
+    <div class="proof-grid">
+      <div class="proof-card"><span class="state state-done">Implemented now</span><h4>Code and decision transparency</h4><ul><li>One deterministic scoring function</li><li>Source-linked target memos</li><li>Explicit missing-data states and conflict holds</li><li>Live +/-25% weight perturbation over 400 runs</li></ul></div>
+      <div class="proof-card"><span class="state state-partial">Evidence, with limits</span><h4>Historical plausibility</h4><ul><li>Eight documented UC mechanism cases</li><li>Seven-target point-in-time ledger</li><li>Outcomes excluded from the historical verdict</li><li>Curated cases, not a frozen genome-wide dataset</li></ul></div>
+      <div class="proof-card"><span class="state state-next">Team can do now</span><h4>Public time-split benchmark</h4><ul><li>Choose a historical cutoff year</li><li>Score only evidence published before it</li><li>Reveal later approvals, failures and safety outcomes afterward</li><li>Publish every included case and exclusion rule</li></ul></div>
+      <div class="proof-card"><span class="state state-next">Team can do now</span><h4>Baseline comparison</h4><ul><li>Compare with Open Targets association alone</li><li>Measure top-k later validation, rank movement and failure flags</li><li>Report results with and without each scoring factor</li><li>No external reviewer required</li></ul></div>
+      <div class="proof-card"><span class="state state-next">Team can do now</span><h4>Reliability and extraction QA</h4><ul><li>Repeat-run consistency</li><li>Missing-source stress tests</li><li>Team members independently check sampled claims</li><li>Publish disagreements instead of hiding them</li></ul></div>
+      <div class="proof-card"><span class="state state-next">Future with Pfizer</span><h4>Prospective shadow pilot</h4><ul><li>Only after Pfizer provides real users and reviews</li><li>Run beside the current process, not instead of it</li><li>Freeze recommendations before committee outcomes</li><li>Measure time, traceability and usefulness</li></ul></div>
+    </div>
+    <h3 style="margin-top:24px">Executable validation without an external review panel</h3>
+    <p class="sub">These tests use public records, mathematical checks and frozen historical outcomes. They test whether the system is reproducible and useful; they do not replace scientific expert judgment.</p>
+    <table class="spec-table"><thead><tr><th>Test</th><th>Exactly how it would be run</th><th>Metric and pre-declared pass condition</th><th>What it proves — and does not prove</th></tr></thead><tbody>
+      <tr><td><b>Source reproduction audit</b></td><td>Randomly sample target-component pairs; re-fetch the dated Open Targets and ClinicalTrials.gov source fields, then independently recompute every transformation shown above.</td><td>Source match rate, formula match rate and missing-field rate. Target: 100% formula reproduction; every source mismatch logged.</td><td>Proves traceability and implementation correctness, not biological validity.</td></tr>
+      <tr><td><b>Mathematical invariant tests</b></td><td>Generate synthetic targets and change one input at a time: higher failure risk or redundancy must never improve raw score; more active trials must never improve open-field score; identical inputs must return identical ranks.</td><td>Number of violated invariants. Pass condition: zero violations.</td><td>Catches scoring-code defects without needing any human labels.</td></tr>
+      <tr><td><b>Temporal holdout</b></td><td>Choose and publish a cutoff date, hide all later evidence, rank targets using only the earlier snapshot, then reveal later approvals, efficacy failures and safety outcomes.</td><td>Top-k later positive outcomes, failure/safety recall, and rank of known later outcomes; report confidence intervals and all exclusions.</td><td>Tests historical predictive usefulness; does not prove future transportability.</td></tr>
+      <tr><td><b>Positive and negative controls</b></td><td>Before scoring, freeze a public list of later validated UC mechanisms and disconfirmed or harmful mechanisms. No case may be selected after seeing its score.</td><td>Separation of positive versus negative controls; proportion of serious negative controls blocked by the conflict gate.</td><td>Tests whether obvious wins and harms move in the expected direction; a small curated set can still be biased.</td></tr>
+      <tr><td><b>Baseline and ablation</b></td><td>Compare the full model with Open Targets disease association alone, equal weights, and versions that remove one component at a time.</td><td>Change in temporal-holdout metrics, top-k overlap and rank stability. A component is retained only if it adds measurable value or a documented safety function.</td><td>Shows whether complexity earns its place; it does not establish causal importance.</td></tr>
+      <tr><td><b>Permutation placebo</b></td><td>Shuffle historical outcome labels many times and rerun the same evaluation. Compare the real result with the distribution obtained by chance.</td><td>Empirical percentile / p-value of the real result versus shuffled labels; publish the full null distribution.</td><td>Tests whether apparent performance exceeds chance on that dataset, not whether the dataset is representative.</td></tr>
+      <tr><td><b>Sensitivity and subgroup stress test</b></td><td>Vary each weight, category mapping and the crowding reference across predeclared ranges; repeat by target class and by missing-data pattern.</td><td>Top-k retention, rank intervals, subgroup error rates and decisions that flip. Unstable targets must be labelled HOLD rather than presented as robust picks.</td><td>Reveals fragile assumptions and class bias; it cannot repair poor source data.</td></tr>
+    </tbody></table>
+    <p class="val-foot"><b>Status:</b> these are proposed validation protocols, not completed results. Before claiming model performance, the team must freeze the dataset, cutoff, controls, metrics and pass conditions, then publish failures as well as successes.</p>
+  </div>
+
+  <div class="method-sec">
+    <h3>How the AI literature layer would be validated</h3>
+    <p class="sub">The AI is a claim extractor and explainer, not the scoring authority. Its job can be tested against a human-reviewed answer key before it is allowed to populate a decision pack.</p>
+    <table class="spec-table"><thead><tr><th>AI task</th><th>Test set</th><th>Metric</th><th>Release rule</th></tr></thead><tbody>
+      <tr><td>Extract a claim</td><td>Public papers and trial records independently checked by two team members; expert review is a later Pfizer step</td><td>Claim precision and recall</td><td>Low-confidence or disputed claims are flagged, not silently accepted</td></tr>
+      <tr><td>Attach the right citation</td><td>Claim-to-passage pairs with exact source location</td><td>Citation correctness; unsupported-claim rate</td><td>No material uncited claim enters a memo</td></tr>
+      <tr><td>Detect contradictions</td><td>Known supporting and disconfirming evidence pairs</td><td>Contradiction recall</td><td>Missed high-risk conflicts block release</td></tr>
+      <tr><td>Classify direction of effect</td><td>Published genetic and pharmacology cases with an explicit reported direction</td><td>Agreement with the source statement</td><td>Ambiguous cases abstain and enter the conflict queue</td></tr>
+      <tr><td>Write an explanation</td><td>Team review of factuality and completeness now; blinded expert review later with Pfizer</td><td>Rubric score plus error severity</td><td>Generated prose never changes the numeric score</td></tr>
+    </tbody></table>
+    <p class="val-foot"><b>What is feasible without external reviewers:</b> build a small transparent check set from public sources, have two team members label it independently, resolve disagreements against the cited passage, and publish the examples and rubric. Call this internal QA, not expert validation. A held-out test set and Pfizer expert review remain future production requirements.</p>
+  </div>
+
+  <div class="method-sec">
+    <h3>How more diseases, data sources and use cases scale</h3>
+    <p class="sub">Scaling does not mean sending more documents to one larger prompt. It means a modular evidence pipeline where each source has a tested adapter and every disease uses the same structured contract.</p>
+    <div class="scale-line">
+      <div class="scale-node"><b>1. Source adapters</b><span>One connector per API or licensed dataset; schema, freshness and quality tests live with the connector.</span></div>
+      <div class="scale-node"><b>2. Evidence contract</b><span>All sources become the same fields: target, disease, claim, direction, date, confidence and citation.</span></div>
+      <div class="scale-node"><b>3. Incremental refresh</b><span>Update only changed trials, papers or targets; cache unchanged evidence and keep dated snapshots.</span></div>
+      <div class="scale-node"><b>4. Deterministic ranking</b><span>Reuse the scoring service; disease and strategy configuration changes weights and gates, not code.</span></div>
+      <div class="scale-node"><b>5. Review by risk</b><span>Auto-pass clean extraction; route conflicts, missing data and high-impact claims to experts.</span></div>
+    </div>
+    <table class="spec-table"><thead><tr><th>What is added</th><th>Reusable</th><th>Must be configured or validated</th><th>Cost control</th></tr></thead><tbody>
+      <tr><td>New disease</td><td>Connectors, evidence schema, ranking engine, UI</td><td>Disease ID, patient context, failure history, relevant target classes</td><td>Fetch ranked candidates first; enrich only the shortlist</td></tr>
+      <tr><td>New data source</td><td>Claim schema, provenance log, evaluation harness</td><td>Adapter mapping, license, freshness, missingness and gold-set examples</td><td>Incremental ingestion; deduplicate at claim and citation level</td></tr>
+      <tr><td>New use case</td><td>Evidence store and target profiles</td><td>Decision question, output template, weights, hard gates and owners</td><td>Reuse stored evidence instead of re-reading documents</td></tr>
+      <tr><td>Higher volume</td><td>Batch jobs, cache and deterministic scoring</td><td>Service-level targets, monitoring and review capacity</td><td>Small models/rules for extraction; LLM only for ambiguous text</td></tr>
+    </tbody></table>
+    <p class="val-foot"><b>Current proof versus future architecture:</b> the live cross-disease panel demonstrates reusable Open Targets ingestion today. The full adapter, evaluation and monitoring layer above is the production design that still has to be built and validated.</p>
+  </div>
+
+  <div class="method-sec">
     <h3>Same targets, different answer</h3>
     <p class="sub">Open Targets ranks on the science alone. We add competition, portfolio and failure risk, so the order shifts. Here's what moves today, under the <b>${POSTURES[posture].name}</b> strategy.</p>
     <div class="movers">
@@ -5634,6 +5935,33 @@ function drawMomentum(){
   if(cap) cap.innerHTML = prizeSyms.length?`<b>White space that is heating up:</b> <span class="pk">${prizeSyms.join(' &middot; ')}</span>. Low competition, rising attention: the defensible, well-timed bets. Momentum is a curated estimate of recent publication, funding and dealmaking activity. Click any dot for its memo.`:`Momentum is a curated estimate of recent attention. Click any dot for its memo.`;
 }
 const VIEW_PARENT={cmp:'land'};
+function moneyM(v){return '$'+(v/1000000).toFixed(2)+'M';}
+let valueExampleLoaded=false;
+window.loadValueExample=function(){
+  const example={val_reviews:24,val_hours:40,val_rate:175,val_avoided:1,val_spend:1500000,val_attr:20};
+  Object.entries(example).forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.value=v;});
+  valueExampleLoaded=true;calcValue();
+};
+window.clearValueInputs=function(){
+  ['val_reviews','val_hours','val_rate','val_avoided','val_spend','val_attr'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  valueExampleLoaded=false;calcValue();
+};
+window.calcValue=function(){
+  const ids=['val_reviews','val_hours','val_rate','val_avoided','val_spend','val_attr'];
+  const raw=Object.fromEntries(ids.map(id=>[id,(document.getElementById(id)||{}).value]));
+  const ready=ids.every(id=>raw[id]!==''&&Number.isFinite(+raw[id])&&+raw[id]>=0);
+  const n=id=>+raw[id]||0;
+  const reviews=n('val_reviews'),hours=n('val_hours'),rate=n('val_rate'),avoided=n('val_avoided'),spend=n('val_spend'),attr=n('val_attr')/100;
+  const capacity=reviews*hours*rate,avoidedValue=avoided*spend*attr,total=capacity+avoidedValue;
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  set('vo_reviews',raw.val_reviews===''?'—':reviews);set('vo_hours',raw.val_hours===''?'—':hours+' h');set('vo_rate',raw.val_rate===''?'—':'$'+rate.toLocaleString());set('vo_avoided',raw.val_avoided===''?'—':avoided);
+  set('vo_spend',raw.val_spend===''?'—':'$'+spend.toLocaleString());set('vo_attr',raw.val_attr===''?'—':Math.round(attr*100)+'%');
+  if(!ready){set('value_time','—');set('value_avoid','—');set('value_total','Not calculated');set('value_title','Waiting for reviewed assumptions');set('value_formula','Formula: (reviews × hours saved × hourly cost) + (earlier STOPs × avoided spend × credited share)');return;}
+  const isExample=reviews===24&&hours===40&&rate===175&&avoided===1&&spend===1500000&&Math.round(attr*100)===20;
+  set('value_time',moneyM(capacity));set('value_avoid',moneyM(avoidedValue));set('value_total',moneyM(total));
+  set('value_title',isExample?'Illustrative example - not Pfizer data':'Calculated from entered assumptions');
+  set('value_formula',`Calculation: (${reviews} * ${hours} * $${rate.toLocaleString()}) + (${avoided} * $${spend.toLocaleString()} * ${Math.round(attr*100)}%) = $${total.toLocaleString()}`);
+};
 function activateView(v){
   const parent=VIEW_PARENT[v]||v;
   document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected', x.dataset.view===parent ? 'true':'false'));
@@ -5642,6 +5970,7 @@ function activateView(v){
   if(v==='cmp'){buildPick();drawCompare();}
   if(v==='method'){drawMethod();}
   if(v==='pt'){drawPatients();}
+  if(v==='finance'){calcValue();}
   window.scrollTo(0,0);
 }
 document.querySelectorAll('nav.tabs button').forEach(b=>b.addEventListener('click',()=>activateView(b.dataset.view)));
