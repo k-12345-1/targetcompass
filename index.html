@@ -5717,7 +5717,7 @@ function drawMethod(){
   </div>
 
   <details class="disclose"><summary style="font-size:18px;font-weight:700">The method in full<span class="dsub" style="font-weight:400">scoring, combinations, validation and scaling</span><span class="chev">&#9656;</span></summary><details class="msub"><summary>The scoring method, with every assumption visible<span class="chev">&#9656;</span></summary>
-    <p class="sub">The LLM does not choose the rank. It produces structured evidence; deterministic code applies the formula below. The displayed 0-100 score is a relative position within the current target set, not a probability of clinical success.</p>
+    <p class="sub">The displayed 0-100 score is a relative position within the current target set, not a probability of clinical success. Deterministic code, not the LLM, applies the formula below.</p>
     <div class="method-eq"><span class="mut">raw score = </span><span class="plus">(wB * biology + wD * druggability + wW * open field + wS * feasibility) * tractability gate</span><br><span class="minus">- wF * failure risk - wR * Pfizer redundancy</span><br><span class="mut">display score = 100 * (raw - minimum raw) / (maximum raw - minimum raw)</span></div>
     
     
@@ -5727,9 +5727,7 @@ function drawMethod(){
       <tr><td>Human-genetic association</td><td><span class="prov-kind pk-direct">DIRECT</span>Same Open Targets row, <b>datatypeScores[id = genetic_association].score</b></td><td>Already 0-1; used as <b>genetics</b></td><td>A datatype aggregate; variant-level causality is inspected separately</td></tr>
       <tr><td>Biology</td><td><span class="prov-kind pk-derived">DERIVED</span>The two Open Targets fields above</td><td><b>0.55 * association + 0.45 * genetics</b></td><td>The 55/45 split is a team-defined, editable heuristic</td></tr>
 
-      <tr><td>Structure / pocket flag</td><td><span class="prov-kind pk-direct">DIRECT</span>Open Targets target <b>tractability</b> labels; true when a high-confidence pocket/structure tractability label is present</td><td>true = 1, false = 0; contributes <b>0.45</b> to druggability</td><td>Presence of a pocket is not proof that a selective drug can be made</td></tr>
-      <tr><td>Known ligand flag</td><td><span class="prov-kind pk-direct">DIRECT</span>Open Targets <b>tractability</b> labels; true when a ligand/binder label is present</td><td>true = 1, false = 0; contributes <b>0.25</b></td><td>Does not assess ligand quality, selectivity or exposure</td></tr>
-      <tr><td>Clinical modality precedent</td><td><span class="prov-kind pk-direct">DIRECT</span>Open Targets tractability labels indicating approved or advanced-clinical precedent</td><td>true = 1, false = 0; contributes <b>0.15</b></td><td>Mechanism precedent may come from another indication</td></tr>
+      <tr><td>Tractability flags</td><td><span class="prov-kind pk-direct">DIRECT</span>Open Targets <b>tractability</b> labels: high-confidence pocket/structure, ligand/binder, and approved or advanced-clinical precedent</td><td>each true = 1; contribute <b>0.45 / 0.25 / 0.15</b> to druggability</td><td>A pocket or ligand label is not proof a selective, well-exposed drug can be made</td></tr>
       <tr><td>Druggability</td><td><span class="prov-kind pk-derived">DERIVED</span>The three tractability flags above</td><td><b>0.15 base + 0.45*pocket + 0.25*ligand + 0.15*clinical</b>, clipped to 0-1</td><td>Coefficients are transparent heuristics, not a trained prediction</td></tr>
 
       <tr><td>Active competitor trials</td><td><span class="prov-kind pk-direct">DIRECT</span>ClinicalTrials.gov API v2 count of active interventional UC studies matching the target's <b>mechanism search terms</b></td><td>Integer count per mechanism class</td><td>Search-term mapping is curated; sponsor and mechanism aliases can cause misses</td></tr>
@@ -5743,7 +5741,7 @@ function drawMethod(){
       <tr><td>Pfizer redundancy</td><td><span class="prov-kind pk-curated">CURATED</span>Publicly visible Pfizer marketed/pipeline mechanism overlap</td><td>0 = no known overlap, 1 = known owned class; subtracted</td><td>Public snapshot only; real use requires Pfizer internal portfolio confirmation</td></tr>
       <tr><td>Tractability gate</td><td><span class="prov-kind pk-curated">CURATED</span><b>TPROFILE.m/c</b> modality and target-class labels, supported by Open Targets tractability</td><td>1.00 workable, 0.82 difficult/phosphatase, 0.70 no current modality/transcription factor</td><td>Rule-based class discount; must be tested by target class</td></tr>
     </tbody></table>
-    <p class="val-foot"><b>Tractability gate:</b> 1.00 when a workable modality is known, 0.82 for historically difficult classes such as phosphatases, and 0.70 when no current modality is known or the target is a transcription factor. <b>Decision gate:</b> unresolved direction-of-effect or safety conflicts prevent RECOMMEND even when the numeric score is high. A separate user-set decision bar converts rank into RECOMMEND, HOLD or PASS.</p>
+    <p class="val-foot"><b>Decision gate:</b> unresolved direction-of-effect or safety conflicts prevent RECOMMEND even when the numeric score is high. A separate user-set decision bar converts rank into RECOMMEND, HOLD or PASS.</p>
   </details>
 
   <details class="msub"><summary>Scoring the pair: the combination engine, with every assumption visible<span class="chev">&#9656;</span></summary>
