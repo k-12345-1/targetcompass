@@ -838,7 +838,7 @@
   .adopt-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px 24px;box-shadow:var(--shadow)}
   .adopt-card h3{font-size:19px;margin:0 0 5px}.adopt-card>.sub{font-size:13px;color:var(--ink-3);line-height:1.5;margin-bottom:16px}
   .gateflow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-  .gate{position:relative;background:var(--panel-2);border:1px solid var(--line);border-radius:13px;padding:14px 13px;min-height:126px;display:flex;flex-direction:column}.gate .owner{margin-top:auto}
+  .gate{position:relative;background:var(--panel-2);border:1px solid var(--line);border-radius:13px;padding:14px 13px;min-height:126px;display:flex;flex-direction:column}
   .gate:not(:last-child):after{content:'\2192';position:absolute;right:-10px;top:50%;transform:translateY(-50%);z-index:2;color:var(--accent);font-weight:800;background:var(--panel);border-radius:99px;padding:1px 3px}
   .gate .n{font-family:var(--mono);font-size:9px;font-weight:800;letter-spacing:.07em;color:var(--accent);text-transform:uppercase}
   .gate h4{font-size:13.5px;margin:5px 0}.gate p{font-size:11.5px;line-height:1.42;color:var(--ink-3);margin:0}
@@ -5850,45 +5850,39 @@ function drawMethod(){
     <p class="sub"><b>Read it honestly:</b> this measures what each ranking surfaces, not a claim of clinical prediction. TargetCompass weights genetics and open field on purpose, so the result shows that Open Targets' default disease-association ranking dilutes its own genetic signal and floats owned and legacy targets to the top. Whether the surfaced targets go on to succeed is the separate, out-of-sample question the leakage-controlled backtest below answers. Curated 30-target set today; the same comparison runs on any field once the deep layer is scaled.</p>
   </div>
 
-  <div class="method-sec">
-    <h3>Same targets, different answer</h3>
+  <details class="disclose"><summary style="font-size:17px;font-weight:700">Same targets, different answer<span class="dsub" style="font-weight:400">what moves up and down once we add competition and portfolio</span><span class="chev">&#9656;</span></summary>
     <p class="sub">Open Targets ranks on the science alone. We add competition, portfolio and failure risk, so the order shifts. Here's what moves today, under the <b>${POSTURES[posture].name}</b> strategy.</p>
     <div class="movers">
       <div class="mv-col"><h4>&#9650; We move up</h4>${ups.map(m=>mv(m,true)).join('')}</div>
       <div class="mv-col"><h4>&#9660; We move down</h4>${downs.map(m=>mv(m,false)).join('')}</div>
     </div>
-  </div>
+  </details>
 
-  <div class="method-sec">
-    <h3>Does it actually work?</h3>
+  <details class="disclose"><summary style="font-size:17px;font-weight:700">Does it actually work?<span class="dsub" style="font-weight:400">the 2015 rewind: what this logic would have called, and how it aged</span><span class="chev">&#9656;</span></summary>
     <p class="sub">Showing you today's rankings proves nothing, of course we like our own answers. So here's a fairer check: rewind to 2015 and look at the calls this same logic would have made from only what was known then. We already know how each one turned out. It's hindsight, not a blinded trial, so read it as a gut-check on the reasoning, not a victory lap.</p>
     <div id="valwrap"></div>
-  </div>
+  </details>
 
-  <div class="method-sec">
-    <h3>The leakage-controlled version: what would we have said back then?</h3>
+  <details class="disclose"><summary style="font-size:17px;font-weight:700">The leakage-controlled version: what would we have said back then?<span class="dsub" style="font-weight:400">pick a year, score on pre-cutoff evidence only, then reveal the outcome</span><span class="chev">&#9656;</span></summary>
     <div id="blindwrap"></div>
-  </div>
+  </details>
 
-  <div class="method-sec">
-    <h3>Do the weights decide the answer? No.</h3>
+  <details class="disclose"><summary style="font-size:17px;font-weight:700">Do the weights decide the answer? No.<span class="dsub" style="font-weight:400">shake every weight 25 percent: the top five holds 92%, the calls hold 95%</span><span class="chev">&#9656;</span></summary>
     <div id="robustwrap"></div>
-  </div>
+  </details>
 
-  <div class="method-sec">
-    <h3>Platform proof: point it at any disease, live</h3>
+  <details class="disclose"><summary style="font-size:17px;font-weight:700">Platform proof: point it at any disease, live<span class="dsub" style="font-weight:400">point it at any disease and it ranks the field live from Open Targets</span><span class="chev">&#9656;</span></summary>
     <div id="platwrap"></div>
-  </div>
+  </details>
 
-  <div class="method-sec">
-    <h3>Built to be trusted, and to scale</h3>
+  <details class="disclose"><summary style="font-size:17px;font-weight:700">Built to be trusted, and to scale<span class="dsub" style="font-weight:400">handled honestly, it supports the call rather than making it, and you can always see why</span><span class="chev">&#9656;</span></summary>
     <div class="method-list">
       <div class="ml"><h4>Messy data, handled honestly</h4><p>Sources disagree and have gaps. We keep every claim with its source and date in an append-only log, so the disagreements stay visible instead of getting averaged away.</p></div>
       <div class="ml"><h4>It helps, it doesn't decide</h4><p>There's no perfect answer for the "best" target, so the tool supports your call, it doesn't make it for you. The backtest above shows the reasoning would have held up over the last decade.</p></div>
       <div class="ml"><h4>You can always see why</h4><p>Every pick opens up to its evidence and its counter-case, each linked straight to the source.</p></div>
     </div>
     <p class="val-foot" style="margin-top:16px"><b>It scales past UC:</b> none of this is UC-specific. Point the same pipeline at any disease and it pulls, scores and explains a fresh landscape, which is how a one-disease demo becomes a platform for the whole portfolio.</p>
-  </div>`;
+  </details>`;
   box.innerHTML=box_h;
   drawValidation();
   drawBlinded();
