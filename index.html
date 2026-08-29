@@ -5715,7 +5715,8 @@ function drawMethod(){
     </div>
   </div>
 
-  <details class="disclose"><summary style="font-size:17px;font-weight:700">The scoring method, with every assumption visible<span class="dsub" style="font-weight:400">the formula, every weight, and each input labeled by its source</span><span class="chev">&#9656;</span></summary>
+  <details class="disclose"><summary style="font-size:18px;font-weight:700">The method in full<span class="dsub" style="font-weight:400">the scoring formula, the combination engine, the validation tests, and how it scales</span><span class="chev">&#9656;</span></summary><div class="method-sec">
+    <h3>The scoring method, with every assumption visible</h3>
     <p class="sub">The LLM does not choose the rank. It produces structured evidence; deterministic code applies the formula below. The displayed 0-100 score is a relative position within the current target set, not a probability of clinical success.</p>
     <div class="method-eq"><span class="mut">raw score = </span><span class="plus">(wB * biology + wD * druggability + wW * open field + wS * feasibility) * tractability gate</span><br><span class="minus">- wF * failure risk - wR * Pfizer redundancy</span><br><span class="mut">display score = 100 * (raw - minimum raw) / (maximum raw - minimum raw)</span></div>
     <p style="font-size:12.5px;line-height:1.55;margin:13px 0 4px"><b>Read it in four steps:</b> (1) convert each input to 0-1; (2) multiply by the selected strategy weight; (3) discount the positive subtotal if the target is hard to drug; (4) subtract failure and portfolio-overlap penalties. Under Balanced, the weights are biology 0.34, druggability 0.12, open field 0.28, feasibility 0.22, failure risk 0.26 and redundancy 0.20.</p>
@@ -5743,9 +5744,10 @@ function drawMethod(){
       <tr><td>Tractability gate</td><td><span class="prov-kind pk-curated">CURATED</span><b>TPROFILE.m/c</b> modality and target-class labels, supported by Open Targets tractability</td><td>1.00 workable, 0.82 difficult/phosphatase, 0.70 no current modality/transcription factor</td><td>Rule-based class discount; must be tested by target class</td></tr>
     </tbody></table>
     <p class="val-foot"><b>Tractability gate:</b> 1.00 when a workable modality is known, 0.82 for historically difficult classes such as phosphatases, and 0.70 when no current modality is known or the target is a transcription factor. <b>Decision gate:</b> unresolved direction-of-effect or safety conflicts prevent RECOMMEND even when the numeric score is high. A separate user-set decision bar converts rank into RECOMMEND, HOLD or PASS.</p>
-  </details>
+  </div>
 
-  <details class="disclose"><summary style="font-size:17px;font-weight:700">Scoring the pair: the combination engine, with every assumption visible<span class="dsub" style="font-weight:400">how the pair score is computed, with the worked example for p40 = 89</span><span class="chev">&#9656;</span></summary>
+  <div class="method-sec">
+    <h3>Scoring the pair: the combination engine, with every assumption visible</h3>
     <p class="sub">Every other ranker scores one target at a time. This one also scores the pair. The pairing runs the same way as the single-target score: deterministic code over the curated set, with no LLM in the number. The pair score is an ordering of hypotheses worth testing, not a prediction of clinical synergy.</p>
     <div class="method-eq">
       <span class="mut">excluded (pair scored 0, dropped): </span><span class="minus">same mechanistic axis (redundant) &middot; partner clinically failed &middot; partner is protective / restore-direction &middot; unresolved causal conflict</span><br>
@@ -5762,9 +5764,10 @@ function drawMethod(){
       <tr><td>Additive patient coverage</td><td><span class="prov-kind pk-curated">CURATED</span>Partner rescues UC patient segments the anchor alone does not cover</td><td>+0.08 each, capped +0.24</td><td>Segment map is curated; a modelled complement, not trial data</td></tr>
       <tr><td>Direction and safety guards</td><td><span class="prov-kind pk-curated">CURATED</span>Protective / restore partners and clinical failures are excluded; two broad immunosuppressants are penalised</td><td>exclude / -0.32</td><td>Rule-based safety proxy, not a quantified interaction risk</td></tr>
     </tbody></table>
-  </details>
+  </div>
 
-  <details class="disclose"><summary style="font-size:17px;font-weight:700">Would the pair hold up biologically, and how the engine scales<span class="dsub" style="font-weight:400">the four biological checks, and how pair-scoring scales</span><span class="chev">&#9656;</span></summary>
+  <div class="method-sec">
+    <h3>Would the pair hold up biologically, and how the engine scales</h3>
     <p class="sub">The score ranks pairs worth testing; it does not claim synergy. A pairing is only biologically reasonable if four things are true, and each is a pre-declared, testable check before any pair reaches expensive wet-lab work. Same discipline as the single-target validation, applied to pairs.</p>
     <table class="spec-table"><thead><tr><th>What must be true</th><th>How it would be tested</th><th>Pre-declared pass condition</th><th>What it proves, and does not</th></tr></thead><tbody>
       <tr><td><b>Independent causality</b> &mdash; each target causes the disease on its own, not one riding the other</td><td>Colocalisation and Mendelian randomisation on each target's own genetic locus; for TL1A + p40 these are separate loci, TNFSF15 versus IL12B / IL23R</td><td>Two independent human-genetic signals, not one shared</td><td>Proves two real causal arms; not that blocking both adds up</td></tr>
@@ -5774,9 +5777,10 @@ function drawMethod(){
     </tbody></table>
     <p class="sub">Only a pair that clears the in-silico screen and these four checks earns the in-vivo and clinical work. That is the point of scoring pairs first: it puts a genetics-grounded, non-redundant, co-expressed, safety-checked hypothesis at the top of the queue, instead of spending the wet-lab budget on pairs that were never coherent.</p>
     <p class="sub"><b>How pair-scoring scales.</b> Ranking every pair is quadratic in the number of targets, so the engine never scores the full 7,161-target field pairwise: it scores partners only against a shortlisted anchor, reusing evidence already computed for the single-target rank, so each partner's genetics, modality, portfolio and coverage are read, not re-fetched. Because it uses the same evidence contract, a new disease or data source extends the combination engine at no extra modelling cost, and the four biological checks above are identical across indications. <b>Current build:</b> pair-scoring is curated over the 30-target UC set; the live adapter and evaluation path is the same production design described in the scaling section below.</p>
-  </details>
+  </div>
 
-  <details class="disclose"><summary style="font-size:17px;font-weight:700">Validation: what is evidence today, and what is still required<span class="dsub" style="font-weight:400">what is proven now, and the seven pre-declared tests we can run</span><span class="chev">&#9656;</span></summary>
+  <div class="method-sec">
+    <h3>Validation: what is evidence today, and what is still required</h3>
     <p class="sub">A polished demo is not validation. We separate completed checks, partial evidence and the prospective work needed before real decision use.</p>
     <div class="proof-grid">
       <div class="proof-card"><span class="state state-done">Implemented now</span><h4>Code and decision transparency</h4><ul><li>One deterministic scoring function</li><li>Source-linked target memos</li><li>Explicit missing-data states and conflict holds</li><li>Live +/-25% weight perturbation over 400 runs</li></ul></div>
@@ -5798,9 +5802,10 @@ function drawMethod(){
       <tr><td><b>Sensitivity and subgroup stress test</b></td><td>Vary each weight, category mapping and the crowding reference across predeclared ranges; repeat by target class and by missing-data pattern.</td><td>Top-k retention, rank intervals, subgroup error rates and decisions that flip. Unstable targets must be labelled HOLD rather than presented as robust picks.</td><td>Reveals fragile assumptions and class bias; it cannot repair poor source data.</td></tr>
     </tbody></table>
     <p class="val-foot"><b>Status:</b> these are proposed validation protocols, not completed results. Before claiming model performance, the team must freeze the dataset, cutoff, controls, metrics and pass conditions, then publish failures as well as successes.</p>
-  </details>
+  </div>
 
-  <details class="disclose"><summary style="font-size:17px;font-weight:700">How the AI literature layer would be validated<span class="dsub" style="font-weight:400">how each AI task is tested before it enters a memo</span><span class="chev">&#9656;</span></summary>
+  <div class="method-sec">
+    <h3>How the AI literature layer would be validated</h3>
     <p class="sub">The AI is a claim extractor and explainer, not the scoring authority. Its job can be tested against a human-reviewed answer key before it is allowed to populate a decision pack.</p>
     <table class="spec-table"><thead><tr><th>AI task</th><th>Test set</th><th>Metric</th><th>Release rule</th></tr></thead><tbody>
       <tr><td>Extract a claim</td><td>Public papers and trial records independently checked by two team members; expert review is a later Pfizer step</td><td>Claim precision and recall</td><td>Low-confidence or disputed claims are flagged, not silently accepted</td></tr>
@@ -5810,9 +5815,10 @@ function drawMethod(){
       <tr><td>Write an explanation</td><td>Team review of factuality and completeness now; blinded expert review later with Pfizer</td><td>Rubric score plus error severity</td><td>Generated prose never changes the numeric score</td></tr>
     </tbody></table>
     <p class="val-foot"><b>What is feasible without external reviewers:</b> build a small transparent check set from public sources, have two team members label it independently, resolve disagreements against the cited passage, and publish the examples and rubric. Call this internal QA, not expert validation. A held-out test set and Pfizer expert review remain future production requirements.</p>
-  </details>
+  </div>
 
-  <details class="disclose"><summary style="font-size:17px;font-weight:700">How more diseases, data sources and use cases scale<span class="dsub" style="font-weight:400">the modular pipeline that ports to any disease</span><span class="chev">&#9656;</span></summary>
+  <div class="method-sec">
+    <h3>How more diseases, data sources and use cases scale</h3>
     <p class="sub">Scaling does not mean sending more documents to one larger prompt. It means a modular evidence pipeline where each source has a tested adapter and every disease uses the same structured contract.</p>
     <div class="scale-line">
       <div class="scale-node"><b>1. Source adapters</b><span>One connector per API or licensed dataset; schema, freshness and quality tests live with the connector.</span></div>
@@ -5828,9 +5834,9 @@ function drawMethod(){
       <tr><td>Higher volume</td><td>Batch jobs, cache and deterministic scoring</td><td>Service-level targets, monitoring and review capacity</td><td>Small models/rules for extraction; LLM only for ambiguous text</td></tr>
     </tbody></table>
     <p class="val-foot"><b>Current proof versus future architecture:</b> the live cross-disease panel demonstrates reusable Open Targets ingestion today. The full adapter, evaluation and monitoring layer above is the production design that still has to be built and validated.</p>
-  </details>
+  </div></details>
 
-  <div class="method-sec">
+  <details class="disclose"><summary style="font-size:18px;font-weight:700">Benchmarked against Open Targets<span class="dsub" style="font-weight:400">7 of our top 10 are genetically backed, versus 2 for raw association</span><span class="chev">&#9656;</span></summary><div class="method-sec">
     <h3>Benchmarked head-to-head against Open Targets</h3>
     <p class="sub">The objection we have to answer is whether re-ranking actually beats the free tool. So we ran it, live. We rank the same 30 curated UC targets two ways, by raw Open Targets disease-association alone and by the full TargetCompass score, then compare the top 10 each surfaces on objective, source-anchored criteria. This is computed in your browser right now, not a saved screenshot.</p>
     ${(function(){
@@ -5848,41 +5854,47 @@ function drawMethod(){
     })()}
     <p class="sub">Ranked by raw association alone, the top of the list is dominated by classes Pfizer already owns and by decades-old non-genetic pharmacology, steroids, COX-2, 5-LOX and anti-TNF, and only a couple carry human-genetic support, the one factor that raises approval odds about 2.6x (Minikel, Nature 2024). TargetCompass surfaces the genetically-backed, open-field targets that raw association buries.</p>
     <p class="sub"><b>Read it honestly:</b> this measures what each ranking surfaces, not a claim of clinical prediction. TargetCompass weights genetics and open field on purpose, so the result shows that Open Targets' default disease-association ranking dilutes its own genetic signal and floats owned and legacy targets to the top. Whether the surfaced targets go on to succeed is the separate, out-of-sample question the leakage-controlled backtest below answers. Curated 30-target set today; the same comparison runs on any field once the deep layer is scaled.</p>
-  </div>
+  </div></details>
 
-  <details class="disclose"><summary style="font-size:17px;font-weight:700">Same targets, different answer<span class="dsub" style="font-weight:400">what moves up and down once we add competition and portfolio</span><span class="chev">&#9656;</span></summary>
+  <details class="disclose"><summary style="font-size:18px;font-weight:700">Does it actually work?<span class="dsub" style="font-weight:400">what moves versus Open Targets, the 2015 backtest, and the robustness check</span><span class="chev">&#9656;</span></summary><div class="method-sec">
+    <h3>Same targets, different answer</h3>
     <p class="sub">Open Targets ranks on the science alone. We add competition, portfolio and failure risk, so the order shifts. Here's what moves today, under the <b>${POSTURES[posture].name}</b> strategy.</p>
     <div class="movers">
       <div class="mv-col"><h4>&#9650; We move up</h4>${ups.map(m=>mv(m,true)).join('')}</div>
       <div class="mv-col"><h4>&#9660; We move down</h4>${downs.map(m=>mv(m,false)).join('')}</div>
     </div>
-  </details>
+  </div>
 
-  <details class="disclose"><summary style="font-size:17px;font-weight:700">Does it actually work?<span class="dsub" style="font-weight:400">the 2015 rewind: what this logic would have called, and how it aged</span><span class="chev">&#9656;</span></summary>
+  <div class="method-sec">
+    <h3>Does it actually work?</h3>
     <p class="sub">Showing you today's rankings proves nothing, of course we like our own answers. So here's a fairer check: rewind to 2015 and look at the calls this same logic would have made from only what was known then. We already know how each one turned out. It's hindsight, not a blinded trial, so read it as a gut-check on the reasoning, not a victory lap.</p>
     <div id="valwrap"></div>
-  </details>
+  </div>
 
-  <details class="disclose"><summary style="font-size:17px;font-weight:700">The leakage-controlled version: what would we have said back then?<span class="dsub" style="font-weight:400">pick a year, score on pre-cutoff evidence only, then reveal the outcome</span><span class="chev">&#9656;</span></summary>
+  <div class="method-sec">
+    <h3>The leakage-controlled version: what would we have said back then?</h3>
     <div id="blindwrap"></div>
-  </details>
+  </div>
 
-  <details class="disclose"><summary style="font-size:17px;font-weight:700">Do the weights decide the answer? No.<span class="dsub" style="font-weight:400">shake every weight 25 percent: the top five holds 92%, the calls hold 95%</span><span class="chev">&#9656;</span></summary>
+  <div class="method-sec">
+    <h3>Do the weights decide the answer? No.</h3>
     <div id="robustwrap"></div>
-  </details>
+  </div></details>
 
-  <details class="disclose"><summary style="font-size:17px;font-weight:700">Platform proof: point it at any disease, live<span class="dsub" style="font-weight:400">point it at any disease and it ranks the field live from Open Targets</span><span class="chev">&#9656;</span></summary>
+  <details class="disclose"><summary style="font-size:18px;font-weight:700">A platform, built to be trusted<span class="dsub" style="font-weight:400">point it at any disease live, and how we keep it honest</span><span class="chev">&#9656;</span></summary><div class="method-sec">
+    <h3>Platform proof: point it at any disease, live</h3>
     <div id="platwrap"></div>
-  </details>
+  </div>
 
-  <details class="disclose"><summary style="font-size:17px;font-weight:700">Built to be trusted, and to scale<span class="dsub" style="font-weight:400">handled honestly, it supports the call rather than making it, and you can always see why</span><span class="chev">&#9656;</span></summary>
+  <div class="method-sec">
+    <h3>Built to be trusted, and to scale</h3>
     <div class="method-list">
       <div class="ml"><h4>Messy data, handled honestly</h4><p>Sources disagree and have gaps. We keep every claim with its source and date in an append-only log, so the disagreements stay visible instead of getting averaged away.</p></div>
       <div class="ml"><h4>It helps, it doesn't decide</h4><p>There's no perfect answer for the "best" target, so the tool supports your call, it doesn't make it for you. The backtest above shows the reasoning would have held up over the last decade.</p></div>
       <div class="ml"><h4>You can always see why</h4><p>Every pick opens up to its evidence and its counter-case, each linked straight to the source.</p></div>
     </div>
     <p class="val-foot" style="margin-top:16px"><b>It scales past UC:</b> none of this is UC-specific. Point the same pipeline at any disease and it pulls, scores and explains a fresh landscape, which is how a one-disease demo becomes a platform for the whole portfolio.</p>
-  </details>`;
+  </div></details>`;
   box.innerHTML=box_h;
   drawValidation();
   drawBlinded();
