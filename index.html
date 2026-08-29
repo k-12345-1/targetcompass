@@ -5837,6 +5837,26 @@ function drawMethod(){
   </div>
 
   <div class="method-sec">
+    <h3>Benchmarked head-to-head against Open Targets</h3>
+    <p class="sub">The objection we have to answer is whether re-ranking actually beats the free tool. So we ran it, live. We rank the same 30 curated UC targets two ways, by raw Open Targets disease-association alone and by the full TargetCompass score, then compare the top 10 each surfaces on objective, source-anchored criteria. This is computed in your browser right now, not a saved screenshot.</p>
+    ${(function(){
+      var byA=T.slice().sort(function(a,b){return (b.uc_score||0)-(a.uc_score||0);}).slice(0,10);
+      var sc=scored('balanced'), byT=sc.slice(0,10).map(function(x){return x.t;});
+      var gen=function(x){return (x.genetic||0)>=0.5;}, opn=function(x){return x.status==='whitespace'||x.status==='emerging';}, own=function(x){return !!x.pfizer_owned;};
+      var c=function(a,f){return a.filter(f).length;};
+      var row=function(lbl,a){return '<tr><td><b>'+lbl+'</b></td><td>'+c(a,gen)+' of 10</td><td>'+c(a,opn)+' of 10</td><td>'+c(a,own)+' of 10</td></tr>';};
+      return '<table class="spec-table"><thead><tr><th>Top 10 ranked by</th><th>Human-genetic support</th><th>Open-field opportunity</th><th>Class Pfizer already owns</th></tr></thead><tbody>'
+        +row('Raw Open Targets association',byA)
+        +row('TargetCompass',byT)
+        +'</tbody></table>'
+        +'<p class="sub" style="font-family:var(--mono);font-size:12px;color:var(--ink-2)">Open Targets top 10: '+byA.map(function(t){return t.symbol;}).join(', ')
+        +'<br>TargetCompass top 10: '+byT.map(function(t){return t.symbol;}).join(', ')+'</p>';
+    })()}
+    <p class="sub">Ranked by raw association alone, the top of the list is dominated by classes Pfizer already owns and by decades-old non-genetic pharmacology, steroids, COX-2, 5-LOX and anti-TNF, and only a couple carry human-genetic support, the one factor that raises approval odds about 2.6x (Minikel, Nature 2024). TargetCompass surfaces the genetically-backed, open-field targets that raw association buries.</p>
+    <p class="sub"><b>Read it honestly:</b> this measures what each ranking surfaces, not a claim of clinical prediction. TargetCompass weights genetics and open field on purpose, so the result shows that Open Targets' default disease-association ranking dilutes its own genetic signal and floats owned and legacy targets to the top. Whether the surfaced targets go on to succeed is the separate, out-of-sample question the leakage-controlled backtest below answers. Curated 30-target set today; the same comparison runs on any field once the deep layer is scaled.</p>
+  </div>
+
+  <div class="method-sec">
     <h3>Same targets, different answer</h3>
     <p class="sub">Open Targets ranks on the science alone. We add competition, portfolio and failure risk, so the order shifts. Here's what moves today, under the <b>${POSTURES[posture].name}</b> strategy.</p>
     <div class="movers">
