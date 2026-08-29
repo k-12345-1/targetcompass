@@ -869,6 +869,7 @@
   .fin-gates{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.fin-gate{border:1px solid var(--line);border-radius:12px;padding:14px}.fin-gate .q{font-family:var(--mono);font-size:9px;font-weight:800;color:var(--accent)}.fin-gate h4{font-size:13px;margin:5px 0}.fin-gate p{font-size:11px;color:var(--ink-3);line-height:1.4;margin:0}
   .method-eq{background:#10183B;color:#fff;border-radius:13px;padding:15px 17px;font:600 12px/1.65 var(--mono);overflow-x:auto}.method-eq .mut{color:#AEBCEB}.method-eq .plus{color:#92E3C2}.method-eq .minus{color:#FFB2A9}
   .spec-table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:12px}.spec-table th{text-align:left;background:var(--panel-2);color:var(--ink-3);font-size:9.5px;text-transform:uppercase;letter-spacing:.05em}.spec-table th,.spec-table td{padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:top}.spec-table td:first-child{font-weight:700}.spec-table small{display:block;color:var(--ink-3);line-height:1.35;margin-top:2px}
+details.msub>summary~table.spec-table{width:calc(100% - 44px)}
   .prov-kind{display:inline-block;font:800 8.5px var(--mono);letter-spacing:.05em;border-radius:5px;padding:2px 5px;margin:0 5px 3px 0}.pk-direct{color:#0B7A52;background:#E4F5EE}.pk-derived{color:var(--accent-ink);background:var(--accent-bg)}.pk-curated{color:#8A5A00;background:#FBF1D6}.pk-internal{color:#6A3FB3;background:#EFE8FA}
   .proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}.proof-card{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--ground)}.proof-card .state{display:inline-block;font:800 9px var(--mono);letter-spacing:.05em;text-transform:uppercase;border-radius:5px;padding:3px 6px;margin-bottom:7px}.state-done{color:#0B7A52;background:#E4F5EE}.state-partial{color:#8A5A00;background:#FBF1D6}.state-next{color:var(--accent-ink);background:var(--accent-bg)}.proof-card h4{font-size:13px;margin:0 0 5px}.proof-card p,.proof-card li{font-size:11px;line-height:1.45;color:var(--ink-3)}.proof-card ul{margin:7px 0 0;padding-left:16px}
   .scale-line{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}.scale-node{position:relative;border:1px solid var(--line);border-radius:11px;padding:12px;background:var(--panel-2)}.scale-node:not(:last-child):after{content:'\2192';position:absolute;right:-9px;top:38%;z-index:2;color:var(--accent);font-weight:800}.scale-node b{display:block;font-size:11.5px;margin-bottom:4px}.scale-node span{font-size:10px;line-height:1.35;color:var(--ink-3)}
@@ -5772,7 +5773,7 @@ function drawMethod(){
       <tr><td><b>Co-active in the same patients</b> &mdash; both pathways fire in the same people at once</td><td>Single-cell co-expression in inflamed UC mucosa, plus a biomarker that finds the co-active subgroup</td><td>Co-expression in the disease tissue and an enrichable patient segment</td><td>Proves a treatable population exists; not its size</td></tr>
       <tr><td><b>Directional and safety coherence</b> &mdash; both are inhibit targets and the combined risk is acceptable</td><td>Mouse colitis models, mono versus combination, with an infection and immunosuppression readout</td><td>Additive efficacy without a disproportionate safety cost</td><td>Proves a tolerability signal in model; human safety is a later clinical step</td></tr>
     </tbody></table>
-    <p class="sub">Only a pair that clears the in-silico screen and these four checks earns the in-vivo and clinical work. That is the point of scoring pairs first: it puts a genetics-grounded, non-redundant, co-expressed, safety-checked hypothesis at the top of the queue, instead of spending the wet-lab budget on pairs that were never coherent.</p>
+    
     
   </details>
 
@@ -5786,10 +5787,7 @@ function drawMethod(){
       <div class="proof-card"><span class="state state-next">Team can do now</span><h4>Reliability and extraction QA</h4><ul><li>Repeat-run consistency</li><li>Missing-source stress tests</li><li>Team members independently check sampled claims</li><li>Publish disagreements instead of hiding them</li></ul></div>
       <div class="proof-card"><span class="state state-next">Future with Pfizer</span><h4>Prospective shadow pilot</h4><ul><li>Only after Pfizer provides real users and reviews</li><li>Run beside the current process, not instead of it</li><li>Freeze recommendations before committee outcomes</li><li>Measure time, traceability and usefulness</li></ul></div>
     </div>
-    <h3 style="margin-top:24px">Executable validation without an external review panel</h3>
-    <p class="sub">These tests use public records, mathematical checks and frozen historical outcomes. They test whether the system is reproducible and useful; they do not replace scientific expert judgment.</p>
     
-    <p class="val-foot"><b>Status:</b> these are proposed validation protocols, not completed results. Before claiming model performance, the team must freeze the dataset, cutoff, controls, metrics and pass conditions, then publish failures as well as successes.</p>
   </details>
 
   <details class="msub"><summary>How the AI literature layer would be validated<span class="chev">&#9656;</span></summary>
@@ -5801,7 +5799,7 @@ function drawMethod(){
       <tr><td>Classify direction of effect</td><td>Published genetic and pharmacology cases with an explicit reported direction</td><td>Agreement with the source statement</td><td>Ambiguous cases abstain and enter the conflict queue</td></tr>
       <tr><td>Write an explanation</td><td>Team review of factuality and completeness now; blinded expert review later with Pfizer</td><td>Rubric score plus error severity</td><td>Generated prose never changes the numeric score</td></tr>
     </tbody></table>
-    <p class="val-foot"><b>What is feasible without external reviewers:</b> build a small transparent check set from public sources, have two team members label it independently, resolve disagreements against the cited passage, and publish the examples and rubric. Call this internal QA, not expert validation. A held-out test set and Pfizer expert review remain future production requirements.</p>
+    
   </details>
 
   <details class="msub"><summary>How more diseases, data sources and use cases scale<span class="chev">&#9656;</span></summary>
@@ -5814,7 +5812,7 @@ function drawMethod(){
       <div class="scale-node"><b>5. Review by risk</b><span>Auto-pass clean extraction; route conflicts, missing data and high-impact claims to experts.</span></div>
     </div>
     
-    <p class="val-foot"><b>Current proof versus future architecture:</b> the live cross-disease panel demonstrates reusable Open Targets ingestion today. The full adapter, evaluation and monitoring layer above is the production design that still has to be built and validated.</p>
+    
   </details></details>
 
   <details class="disclose"><summary style="font-size:18px;font-weight:700">Benchmarked against Open Targets<span class="dsub" style="font-weight:400">7 of our top 10 are genetically backed, versus 2 for raw association</span><span class="chev">&#9656;</span></summary><div class="method-sec">
