@@ -5747,6 +5747,39 @@ function drawMethod(){
   </div>
 
   <div class="method-sec">
+    <h3>Scoring the pair: the combination engine, with every assumption visible</h3>
+    <p class="sub">Every other ranker scores one target at a time. This one also scores the pair. The pairing runs the same way as the single-target score: deterministic code over the curated set, with no LLM in the number. The pair score is an ordering of hypotheses worth testing, not a prediction of clinical synergy.</p>
+    <div class="method-eq">
+      <span class="mut">excluded (pair scored 0, dropped): </span><span class="minus">same mechanistic axis (redundant) &middot; partner clinically failed &middot; partner is protective / restore-direction &middot; unresolved causal conflict</span><br>
+      <span class="mut">pair score(anchor, partner) = </span><span class="plus">0.35 complementary base + portfolio + modality + genetics + coverage</span> <span class="minus">- stacked-immunosuppression</span><br>
+      <span class="mut">display = round(100 &times; pair score)</span>
+    </div>
+    <p class="sub">Each term is a transparent rule: <b>portfolio</b> = +0.42 if the partner is a Pfizer-owned class, else +0.24 if it is an approved backbone; <b>modality</b> = +0.20 for antibody + antibody (a bispecific option) or +0.08 for oral + oral; <b>genetics</b> = +0.10 if the partner is genetically causal; <b>coverage</b> = up to +0.24 for patient segments the anchor alone misses; <b>stacked-immunosuppression</b> = -0.32 if both are broad systemic immunosuppressants.</p>
+    <p class="sub"><b>Worked example, TL1A + p40 (IL-12/23):</b> 0.35 complementary base + 0.24 partner is an approved IL-12/23 backbone + 0.20 antibody + antibody, a bispecific option + 0.10 genetically-causal partner = <b>0.89, shown as 89</b>. No coverage bonus and no stacked-immunosuppression penalty, because neither is a broad systemic agent. Pair the same anchor with a JAK partner and it loses 0.32 for stacked immunosuppression; pair it with a protective, restore-direction target and it is excluded outright.</p>
+    <table class="spec-table"><thead><tr><th>Pair-score term</th><th>What triggers it</th><th>Value</th><th>Status and limitation</th></tr></thead><tbody>
+      <tr><td>Complementary mechanism</td><td><span class="prov-kind pk-curated">CURATED</span>Anchor and partner sit on different mechanistic axes; the same axis is excluded as redundant</td><td>+0.35 base</td><td>Axis map is team-defined; base credit is a heuristic, not measured synergy</td></tr>
+      <tr><td>Portfolio fit</td><td><span class="prov-kind pk-curated">CURATED</span>Partner is a Pfizer-owned class, or an approved therapeutic backbone</td><td>+0.42 owned / +0.24 backbone</td><td>Public portfolio snapshot; real use needs internal confirmation</td></tr>
+      <tr><td>Modality fit</td><td><span class="prov-kind pk-curated">CURATED</span>Antibody + antibody (bispecific-able), or oral + oral</td><td>+0.20 / +0.08</td><td>Format feasibility, not a developability guarantee</td></tr>
+      <tr><td>Partner genetics</td><td><span class="prov-kind pk-derived">DERIVED</span>Partner reaches the Genetic-causal tier of its own causal ladder</td><td>+0.10</td><td>Inherits the single-target genetics limitations</td></tr>
+      <tr><td>Additive patient coverage</td><td><span class="prov-kind pk-curated">CURATED</span>Partner rescues UC patient segments the anchor alone does not cover</td><td>+0.08 each, capped +0.24</td><td>Segment map is curated; a modelled complement, not trial data</td></tr>
+      <tr><td>Direction and safety guards</td><td><span class="prov-kind pk-curated">CURATED</span>Protective / restore partners and clinical failures are excluded; two broad immunosuppressants are penalised</td><td>exclude / -0.32</td><td>Rule-based safety proxy, not a quantified interaction risk</td></tr>
+    </tbody></table>
+  </div>
+
+  <div class="method-sec">
+    <h3>Would the pair hold up biologically, and how the engine scales</h3>
+    <p class="sub">The score ranks pairs worth testing; it does not claim synergy. A pairing is only biologically reasonable if four things are true, and each is a pre-declared, testable check before any pair reaches expensive wet-lab work. Same discipline as the single-target validation, applied to pairs.</p>
+    <table class="spec-table"><thead><tr><th>What must be true</th><th>How it would be tested</th><th>Pre-declared pass condition</th><th>What it proves, and does not</th></tr></thead><tbody>
+      <tr><td><b>Independent causality</b> &mdash; each target causes the disease on its own, not one riding the other</td><td>Colocalisation and Mendelian randomisation on each target's own genetic locus; for TL1A + p40 these are separate loci, TNFSF15 versus IL12B / IL23R</td><td>Two independent human-genetic signals, not one shared</td><td>Proves two real causal arms; not that blocking both adds up</td></tr>
+      <tr><td><b>Non-redundant nodes</b> &mdash; the two hit different points, and dual blockade beats the best single agent</td><td>Patient-derived mucosal tissue and primary-cell assays with formal synergy math (Bliss / Loewe, combination index)</td><td>Combination suppression exceeds the best single agent, additive or synergistic</td><td>Proves complementarity in human tissue; not the effect size in patients</td></tr>
+      <tr><td><b>Co-active in the same patients</b> &mdash; both pathways fire in the same people at once</td><td>Single-cell co-expression in inflamed UC mucosa, plus a biomarker that finds the co-active subgroup</td><td>Co-expression in the disease tissue and an enrichable patient segment</td><td>Proves a treatable population exists; not its size</td></tr>
+      <tr><td><b>Directional and safety coherence</b> &mdash; both are inhibit targets and the combined risk is acceptable</td><td>Mouse colitis models, mono versus combination, with an infection and immunosuppression readout</td><td>Additive efficacy without a disproportionate safety cost</td><td>Proves a tolerability signal in model; human safety is a later clinical step</td></tr>
+    </tbody></table>
+    <p class="sub">Only a pair that clears the in-silico screen and these four checks earns the in-vivo and clinical work. That is the point of scoring pairs first: it puts a genetics-grounded, non-redundant, co-expressed, safety-checked hypothesis at the top of the queue, instead of spending the wet-lab budget on pairs that were never coherent.</p>
+    <p class="sub"><b>How pair-scoring scales.</b> Ranking every pair is quadratic in the number of targets, so the engine never scores the full 7,161-target field pairwise: it scores partners only against a shortlisted anchor, reusing evidence already computed for the single-target rank, so each partner's genetics, modality, portfolio and coverage are read, not re-fetched. Because it uses the same evidence contract, a new disease or data source extends the combination engine at no extra modelling cost, and the four biological checks above are identical across indications. <b>Current build:</b> pair-scoring is curated over the 30-target UC set; the live adapter and evaluation path is the same production design described in the scaling section below.</p>
+  </div>
+
+  <div class="method-sec">
     <h3>Validation: what is evidence today, and what is still required</h3>
     <p class="sub">A polished demo is not validation. We separate completed checks, partial evidence and the prospective work needed before real decision use.</p>
     <div class="proof-grid">
