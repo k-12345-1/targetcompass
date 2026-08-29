@@ -1083,8 +1083,7 @@
           <div class="gate"><span class="n">Step 4</span><h4>Make the decision</h4><p>A Pfizer committee chooses GO, HOLD or STOP and records why.</p><span class="owner">PEOPLE DECIDE, NOT AI</span></div>
         </div>
       </div>
-      <div class="adopt-card">
-        <details class="disclose"><summary>Five rules we would not compromise<span class="dsub">human sign-off, source lineage, conflict holds, versioned decisions, monitoring</span><span class="chev">&#9656;</span></summary><p class="sub">These keep the tool useful without turning it into an unchecked decision-maker.</p>
+      <details class="disclose"><summary style="font-size:19px;font-weight:700">Five rules we would not compromise<span class="dsub" style="font-weight:400">human sign-off, source lineage, conflict holds, versioned decisions, monitoring</span><span class="chev">&#9656;</span></summary><p class="sub">These keep the tool useful without turning it into an unchecked decision-maker.</p>
         <div class="guardrails">
           <div class="guard"><span class="ok">&#10003;</span><div><b>Human sign-off</b><span>No target advances from the score alone.</span></div></div>
           <div class="guard"><span class="ok">&#10003;</span><div><b>Source lineage</b><span>Every claim keeps its URL, snapshot date and extraction status.</span></div></div>
@@ -1092,11 +1091,10 @@
           <div class="guard"><span class="ok">&#10003;</span><div><b>Versioned decisions</b><span>Weights, evidence, overrides and committee rationale are retained.</span></div></div>
           <div class="guard"><span class="ok">&#10003;</span><div><b>Quarterly monitoring</b><span>Drift, stale evidence, false confidence and user overrides are reviewed.</span></div></div>
         </div>
-      </div>
+      </details>
     </div>
 
-    <div class="adopt-card" style="margin-bottom:16px">
-      </details><details class="disclose"><summary>A proposed team around the product<span class="dsub">the six roles a pilot needs, mapped to real Pfizer teams</span><span class="chev">&#9656;</span></summary><p class="sub">These are roles the pilot needs, not confirmed Pfizer job titles. Pfizer would map them to its real teams and process.</p>
+    <details class="disclose"><summary style="font-size:19px;font-weight:700">A proposed team around the product<span class="dsub" style="font-weight:400">the six roles a pilot needs, mapped to real Pfizer teams</span><span class="chev">&#9656;</span></summary><p class="sub">These are roles the pilot needs, not confirmed Pfizer job titles. Pfizer would map them to its real teams and process.</p>
       <div class="org-grid">
         <div class="org-unit"><span class="tag">Proposed business owner</span><h4>Portfolio representative</h4><p>Makes sure the product supports a real decision and defines what success means.</p><ul><li>Chooses the pilot questions</li><li>Approves the scoring strategy</li><li>Decides whether to scale</li></ul></div>
         <div class="org-unit"><span class="tag">Proposed product owner</span><h4>Digital product team</h4><p>Keeps the product useful, reliable and supported.</p><ul><li>Manages improvements</li><li>Coordinates design and engineering</li><li>Provides training and support</li></ul></div>
@@ -1105,10 +1103,9 @@
         <div class="org-unit"><span class="tag">Decision owner</span><h4>Authorized review committee</h4><p>Uses the evidence pack but keeps GO, HOLD or STOP authority.</p><ul><li>Records disagreements</li><li>Sets the next evidence needed</li><li>Owns the final decision</li></ul></div>
         <div class="org-unit"><span class="tag">Independent check</span><h4>Data and model governance</h4><p>Checks that the information and AI remain reliable over time.</p><ul><li>Approves data sources</li><li>Tracks model versions</li><li>Reviews performance quarterly</li></ul></div>
       </div>
-    </div>
+    </details>
 
-    <div class="adopt-card" style="margin-bottom:16px">
-      </details><details class="disclose"><summary>What would have to change before real use<span class="dsub">login, approved data, AI protection, workflow fit, auditable records</span><span class="chev">&#9656;</span></summary><p class="sub">The hackathon build demonstrates the experience. A real version would need Pfizer-approved login, data, AI and record-keeping services.</p>
+    <details class="disclose"><summary style="font-size:19px;font-weight:700">What would have to change before real use<span class="dsub" style="font-weight:400">login, approved data, AI protection, workflow fit, auditable records</span><span class="chev">&#9656;</span></summary><p class="sub">The hackathon build demonstrates the experience. A real version would need Pfizer-approved login, data, AI and record-keeping services.</p>
       <div class="org-grid">
         <div class="org-unit"><span class="tag">Login and permissions</span><h4>Only the right people get access</h4><p>Use Pfizer sign-in and give each user only the access required for their role.</p></div>
         <div class="org-unit"><span class="tag">Data</span><h4>Use approved information</h4><p>Connect approved public sources and permitted internal portfolio, experiment, safety and clinical data.</p></div>
@@ -1117,20 +1114,19 @@
         <div class="org-unit"><span class="tag">Operations</span><h4>Know what to do when it fails</h4><p>Alert on stale data or failed updates, name a support owner and allow rollback to the last reliable release.</p></div>
         <div class="org-unit"><span class="tag">Records</span><h4>Keep an auditable history</h4><p>Save the sources, model version, weights, human edits, approvals and final reason for each decision.</p></div>
       </div>
-    </div>
+    </details>
 
-    <div class="adopt-card" style="margin-bottom:16px">
-      </details><details class="disclose"><summary>Rollout without disrupting target review<span class="dsub">four controlled releases, from design to scale-by-evidence</span><span class="chev">&#9656;</span></summary><p class="sub">Earn permission to scale in four controlled releases.</p>
+    <details class="disclose"><summary style="font-size:19px;font-weight:700">Rollout without disrupting target review<span class="dsub" style="font-weight:400">four controlled releases, from design to scale-by-evidence</span><span class="chev">&#9656;</span></summary><p class="sub">Earn permission to scale in four controlled releases.</p>
       <div class="rollout">
         <div class="roll"><span class="when">0-30 DAYS</span><h4>Design + controls</h4><p>Map the current UC review, confirm owners, data boundaries, decision rights and baseline metrics.</p></div>
         <div class="roll"><span class="when">31-90 DAYS</span><h4>Shadow pilot</h4><p>Run beside 6-10 real reviews. No decision automation; compare time, traceability and reviewer conclusions.</p></div>
         <div class="roll"><span class="when">3-6 MONTHS</span><h4>Controlled production</h4><p>SSO, governed sources, signed evidence packs, support model and approved UC users.</p></div>
         <div class="roll"><span class="when">6-12 MONTHS</span><h4>Scale by evidence</h4><p>Add one indication at a time after control performance, adoption and financial value meet thresholds.</p></div>
       </div>
-    </div>
+    </details>
 
     <div class="adopt-card">
-      </details><h3>A 90-day UC pilot with pre-agreed success criteria</h3><p class="sub">Run beside the existing process first. Compare the same decisions, without changing decision rights.</p>
+      <h3>A 90-day UC pilot with pre-agreed success criteria</h3><p class="sub">Run beside the existing process first. Compare the same decisions, without changing decision rights.</p>
       <div class="pilot-grid">
         <div class="pilot-kpi"><div class="v">&ge;30%</div><b>Faster evidence preparation</b><span>Median analyst hours from question to review-ready pack.</span></div>
         <div class="pilot-kpi"><div class="v">100%</div><b>Traceable material claims</b><span>Claims with source, date and confidence status.</span></div>
@@ -1165,8 +1161,7 @@
       </div>
     </div>
 
-    <div class="adopt-card" style="margin-bottom:16px">
-      <details class="disclose"><summary>Seven business questions to ask about a target<span class="dsub">addressable patients, differentiation, manufacturability, portfolio fit, and more</span><span class="chev">&#9656;</span></summary><p class="sub">TargetCompass organizes the questions beside the science. Finance and Commercial experts would supply the approved numbers.</p>
+    <details class="disclose"><summary style="font-size:19px;font-weight:700">Seven business questions to ask about a target<span class="dsub" style="font-weight:400">addressable patients, differentiation, manufacturability, portfolio fit, and more</span><span class="chev">&#9656;</span></summary><p class="sub">TargetCompass organizes the questions beside the science. Finance and Commercial experts would supply the approved numbers.</p>
       <table class="econ-table"><thead><tr><th>Dimension</th><th>Decision question</th><th>Evidence / owner</th><th>How it changes value</th></tr></thead><tbody>
         <tr><td><b>Addressable patients</b></td><td>Which UC segment is biologically reachable?</td><td>Epidemiology + biomarker prevalence<small>Commercial / Clinical</small></td><td>Eligible population</td></tr>
         <tr><td><b>Unmet need</b></td><td>Does the target solve failure, safety or durability?</td><td>Treatment journeys + outcomes<small>Medical / Commercial</small></td><td>Adoption and value proposition</td></tr>
@@ -1176,10 +1171,9 @@
         <tr><td><b>Portfolio fit</b></td><td>Does it complement or cannibalize Pfizer assets?</td><td>Internal pipeline and combinations<small>Portfolio strategy</small></td><td>Incremental versus redundant value</td></tr>
         <tr><td><b>Chance of technical success</b></td><td>What must be true for the program to work?</td><td>Causality, safety, ability to drug and translation to patients<small>Target team</small></td><td>The probability used in later financial estimates</td></tr>
       </tbody></table>
-    </div>
+    </details>
 
-    <div class="adopt-card" style="margin-bottom:16px">
-      </details><details class="disclose"><summary>Build the value example from explicit assumptions<span class="dsub">the calculator, with no Pfizer numbers assumed</span><span class="chev">&#9656;</span></summary><p class="sub">No Pfizer values are assumed. Enter reviewed inputs, or load a clearly labelled illustrative example to demonstrate the calculation.</p>
+    <details class="disclose"><summary style="font-size:19px;font-weight:700">Build the value example from explicit assumptions<span class="dsub" style="font-weight:400">the calculator, with no Pfizer numbers assumed</span><span class="chev">&#9656;</span></summary><p class="sub">No Pfizer values are assumed. Enter reviewed inputs, or load a clearly labelled illustrative example to demonstrate the calculation.</p>
       <div class="assump-actions"><button type="button" onclick="loadValueExample()">Load illustrative example (not Pfizer data)</button><button type="button" onclick="clearValueInputs()">Clear assumptions</button></div>
       <div class="value-grid">
         <div class="value-inputs">
@@ -1197,10 +1191,10 @@
           <div class="formula-box" id="value_formula">Formula: (reviews × hours saved × hourly cost) + (earlier STOPs × avoided spend × credited share)</div>
         </div>
       </div>
-    </div>
+    </details>
 
     <div class="adopt-card" style="margin-bottom:16px">
-      </details><h3>Three honest ways to describe the result</h3><p class="sub">Start conservatively. Claim more only after the pilot shows that TargetCompass caused the improvement.</p>
+      <h3>Three honest ways to describe the result</h3><p class="sub">Start conservatively. Claim more only after the pilot shows that TargetCompass caused the improvement.</p>
       <div class="finance-grid">
         <div class="fin-card"><span class="tag">Conservative case</span><h4>It only saves time</h4><p>TargetCompass makes preparation faster but does not change any decision. Count only the measured staff time saved.</p></div>
         <div class="fin-card" style="border-color:var(--accent);background:var(--accent-bg)"><span class="tag">Expected case</span><h4>It saves time and supports one earlier STOP</h4><p>Preparation is faster and one weak project is stopped earlier. Credit only a conservative portion to the tool.</p></div>
@@ -1208,8 +1202,7 @@
       </div>
     </div>
 
-    <div class="adopt-card">
-      <details class="disclose"><summary>When financial estimates become more detailed<span class="dsub">how precision grows from target review to clinical signal</span><span class="chev">&#9656;</span></summary><p class="sub">At the beginning, use broad ranges. Make the financial model more precise only as scientific evidence improves.</p>
+    <details class="disclose"><summary style="font-size:19px;font-weight:700">When financial estimates become more detailed<span class="dsub" style="font-weight:400">how precision grows from target review to clinical signal</span><span class="chev">&#9656;</span></summary><p class="sub">At the beginning, use broad ranges. Make the financial model more precise only as scientific evidence improves.</p>
       <div class="fin-gates">
         <div class="fin-gate"><span class="q">1 &middot; TARGET REVIEW</span><h4>Is it strategically interesting?</h4><p>Use broad ranges for patients, competition, drug type and Pfizer fit. Fund the next experiment, not the whole future program.</p></div>
         <div class="fin-gate"><span class="q">2 &middot; EARLY BIOLOGY PROOF</span><h4>Is the next experiment worth funding?</h4><p>Estimate the cost, time and chance that the next experiment will answer the most important question.</p></div>
@@ -1217,8 +1210,8 @@
         <div class="fin-gate"><span class="q">4 &middot; EARLY CLINICAL SIGNAL</span><h4>Is there enough evidence for formal valuation?</h4><p>Finance can now build more detailed scenarios for patients, access, price, share, manufacturing cost and risk-adjusted value.</p></div>
       </div>
       <p class="val-foot" style="margin-top:14px"><b>Financial guardrail:</b> TargetCompass organizes questions and assumptions; Finance owns the official valuation. No number should enter a decision deck without a named owner, date, range and source.</p>
-    </div>
-  </details></section>
+    </details>
+  </section>
 
   <!-- PATIENT IMPACT -->
   <section class="view" id="v-pt">
