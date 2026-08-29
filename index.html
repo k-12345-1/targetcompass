@@ -1060,7 +1060,7 @@
     <div class="hero">
       <span class="eyebrow">Pfizer Immunology &amp; Inflammation &middot; How it works</span>
       <h2>Simple math, plus AI where it actually helps.</h2>
-      <p>"AI-powered" gets thrown around a lot, so here's where the AI really does something. The ranking math stays simple and easy to audit. The AI handles the messy judgment: reading the literature, squaring up sources that disagree, and writing an explanation you can push back on. Here's the whole pipeline, why our answer comes out different from Open Targets, and how the same calls would have aged since 2015.</p>
+      <p>The ranking math is simple and auditable. The AI only does the messy judgment: reading the literature, reconciling conflicting sources, and writing a case you can push back on.</p>
     </div>
     <div id="methodwrap"></div>
   </section>
@@ -5706,16 +5706,16 @@ function drawMethod(){
   const box_h=`
   <div class="method-sec">
     <h3>Where the AI actually works</h3>
-    <p class="sub">Four steps. Two are plain, auditable math; two are the real AI, turning a mess of evidence into something you can argue with.</p>
+    <p class="sub">Four steps: two are plain math, two are the real AI.</p>
     <div class="pipe">
-      <div class="pstep"><span class="pn">STEP 1</span><h4>Gather the evidence</h4><p>Open Targets, ClinicalTrials.gov, PubMed and drug databases, all pulled together for each target.</p></div>
-      <div class="pstep isai"><span class="pn">STEP 2</span><h4>Read &amp; make sense of it</h4><p>An LLM reads the messy trial and paper text, pulls out the actual claims, and squares up sources that disagree.</p><span class="ai">AI</span></div>
-      <div class="pstep"><span class="pn">STEP 3</span><h4>Score &amp; rank</h4><p>A simple weighted model over the seven factors. Every point traces back to a source and a weight you set.</p></div>
-      <div class="pstep isai"><span class="pn">STEP 4</span><h4>Explain &amp; push back</h4><p>The AI writes the memo, the plain-English answer, and the case against each pick.</p><span class="ai">AI</span></div>
+      <div class="pstep"><span class="pn">STEP 1</span><h4>Gather the evidence</h4><p>Open Targets, ClinicalTrials.gov, PubMed and drug databases, per target.</p></div>
+      <div class="pstep isai"><span class="pn">STEP 2</span><h4>Read &amp; make sense of it</h4><p>An LLM reads the papers, pulls the claims, and reconciles sources that disagree.</p><span class="ai">AI</span></div>
+      <div class="pstep"><span class="pn">STEP 3</span><h4>Score &amp; rank</h4><p>A weighted model over seven factors. Every point traces to a source.</p></div>
+      <div class="pstep isai"><span class="pn">STEP 4</span><h4>Explain &amp; push back</h4><p>The AI writes the memo and the case against each pick.</p><span class="ai">AI</span></div>
     </div>
   </div>
 
-  <details class="disclose"><summary style="font-size:18px;font-weight:700">The method in full<span class="dsub" style="font-weight:400">the scoring formula, the combination engine, the validation tests, and how it scales</span><span class="chev">&#9656;</span></summary><div class="method-sec">
+  <details class="disclose"><summary style="font-size:18px;font-weight:700">The method in full<span class="dsub" style="font-weight:400">scoring, combinations, validation and scaling</span><span class="chev">&#9656;</span></summary><div class="method-sec">
     <h3>The scoring method, with every assumption visible</h3>
     <p class="sub">The LLM does not choose the rank. It produces structured evidence; deterministic code applies the formula below. The displayed 0-100 score is a relative position within the current target set, not a probability of clinical success.</p>
     <div class="method-eq"><span class="mut">raw score = </span><span class="plus">(wB * biology + wD * druggability + wW * open field + wS * feasibility) * tractability gate</span><br><span class="minus">- wF * failure risk - wR * Pfizer redundancy</span><br><span class="mut">display score = 100 * (raw - minimum raw) / (maximum raw - minimum raw)</span></div>
@@ -5856,7 +5856,7 @@ function drawMethod(){
     <p class="sub"><b>Read it honestly:</b> this measures what each ranking surfaces, not a claim of clinical prediction. TargetCompass weights genetics and open field on purpose, so the result shows that Open Targets' default disease-association ranking dilutes its own genetic signal and floats owned and legacy targets to the top. Whether the surfaced targets go on to succeed is the separate, out-of-sample question the leakage-controlled backtest below answers. Curated 30-target set today; the same comparison runs on any field once the deep layer is scaled.</p>
   </div></details>
 
-  <details class="disclose"><summary style="font-size:18px;font-weight:700">Does it actually work?<span class="dsub" style="font-weight:400">what moves versus Open Targets, the 2015 backtest, and the robustness check</span><span class="chev">&#9656;</span></summary><div class="method-sec">
+  <details class="disclose"><summary style="font-size:18px;font-weight:700">Does it actually work?<span class="dsub" style="font-weight:400">the movers, the 2015 backtest, and the robustness check</span><span class="chev">&#9656;</span></summary><div class="method-sec">
     <h3>Same targets, different answer</h3>
     <p class="sub">Open Targets ranks on the science alone. We add competition, portfolio and failure risk, so the order shifts. Here's what moves today, under the <b>${POSTURES[posture].name}</b> strategy.</p>
     <div class="movers">
